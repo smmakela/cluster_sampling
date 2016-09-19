@@ -1,0 +1,37 @@
+---
+title: "Negative Binomial Simulation Study"
+author: "Susanna Makela"
+date: "September 19, 2016"
+output: html_document
+---
+
+We're using the negative binomial to model the distribution of cluster sizes for unsampled clusters. How well does it actually predict the missing sizes under PPS sampling? This is a small simulation study to find out.
+
+Note to self: add bibliography and Patil/Rao citation.
+
+Let's first simulate a population of clusters.
+```{r, cache = TRUE, warning = FALSE}
+library(ggplot2)
+source("src/rspps.r")
+J <- 100 # number of clusters in pop
+K <- 30 # number of clusters to sample
+k <- 200
+p <- 0.5
+Nj.pop <- rnbinom(n = J, size = k, prob = p)
+```
+
+Here's a histogram of the cluster sizes:
+```{r, cache = TRUE, echo = FALSE, warning = FALSE}
+pop.data <- data.frame(ids = c(1:J), Nj.pop)
+ggplot(pop.data, aes(x = Nj.pop)) +
+  geom_histogram() +
+  theme_bw()
+```
+
+Now let's do PPS sampling of the clusters.
+```{r, cache = TRUE}
+sample.inds <- rspps(Nj.pop, c(1:J), K)
+Nj.sample <- Nj.pop[sample.inds]
+```
+
+Patil and Rao's paper (CITE HERE) says that if the distribution of cluster sizes in the population is $NegBin(k, p)$, then the distribution of the nonsampled cluster sizes is $NegBin(k+1, p)$. Let's see if that's true.
