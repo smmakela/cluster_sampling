@@ -124,3 +124,35 @@ ggplot(Nj.sims, aes(x = Nj, group = simno)) +
   ylab("Density") +
   theme_bw()
 ```
+
+The densities seem reasonably well-matched. Let's see how well the model captures the min, max, mean, median, and quartiles of the nonsampled cluster sizes.
+```{r}
+true.min <- min(missing.data$Nj.pop)
+true.max <- max(missing.data$Nj.pop)
+true.mean <- mean(missing.data$Nj.pop)
+true.median <- median(missing.data$Nj.pop)
+true.q1 <- quantile(missing.data$Nj.pop, probs = 0.25)
+true.q3 <- max(missing.data$Nj.pop, probs = 0.75)
+true.df <- data.frame(value = c(true.min, true.max, true.mean,
+                                true.median, true.q1, true.q3),
+                      stat = c("min", "max", "mean", "median", "Q1", "Q3"))
+summary.df <- data.frame()
+for (j in 1:n.sims) {
+  tmp <- Nj.sims[Nj.sims$simno == j, ]
+  sim.min <- min(tmp$Nj)
+  sim.max <- max(tmp$Nj)
+  sim.mean <- mean(tmp$Nj)
+  sim.median <- median(tmp$Nj)
+  sim.q1 <- quantile(tmp$Nj, probs = 0.25)
+  sim.q3 <- quantile(tmp$Nj, probs = 0.75)
+  dd <- data.frame(value = c(sim.min, sim.max, sim.mean,
+                             sim.median, sim.q1, sim.q3),
+                   stat = c("min", "max", "mean", "median", "Q1", "Q3"))
+  summary.df <- rbind(summary.df, dd)
+}
+ggplot(summary.df, aes(x = value)) +
+  geom_histogram() +
+  geom_vline(data = true.df, aes(xintercept = value)) +
+  facet_wrap(~ stat, scales = "free") +
+  theme_bw()
+```
