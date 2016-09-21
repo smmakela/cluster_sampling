@@ -9,17 +9,25 @@ We're using the negative binomial to model the distribution of cluster sizes for
 
 Note to self: add bibliography and Patil/Rao citation.
 
-Let's first simulate a population of clusters.
+Let's first simulate a population of clusters and see how well Stan can recover the true population parameters and simulate the nonsampled cluster sizes.
 ```{r, warning = FALSE}
 library(ggplot2)
 library(rstan)
 library(shinystan)
 source("src/rspps.r")
+source("src/negbin_sim.R")
 J <- 100 # number of clusters in pop
-K <- 30 # number of clusters to sample
+K <- 10 # number of clusters to sample
 k <- 200
-p <- 0.25
+p <- 0.2
 Nj.pop <- rnbinom(n = J, size = k, prob = p)
+m <- (1 - p) * k / p
+v <- (1 - p) * k / p^2
+stan.model <- stan_model(file = "src/negbin.stan")
+n.iter <- 1000
+n.chains <- 4
+n.sims <- 500
+sim.res <- negbin_sim(Nj.pop, J, K, stan.model, n.iter, n.chains, n.sims)
 ```
 
 Here's a histogram of the cluster sizes:
@@ -27,132 +35,62 @@ Here's a histogram of the cluster sizes:
 pop.data <- data.frame(ids = c(1:J), Nj.pop)
 ggplot(pop.data, aes(x = Nj.pop)) +
   geom_histogram() +
+  xlab("Population cluster sizes") +
+  ylab("Count") +
   theme_bw()
 ```
 
-Now let's do PPS sampling of the clusters.
-```{r}
-sample.inds <- rspps(Nj.pop, c(1:J), K)
-Nj.sample <- Nj.pop[sample.inds]
-sample.data <- data.frame(sample.ids = c(1:K), orig.ids = sample.inds, Nj.sample)
-ggplot(sample.data, aes(x = Nj.sample)) +
-  geom_histogram() +
-  theme_bw()
-```
-
-In order to get reasonable priors on $\mu$ and $\phi$, calculate the empirical mean and variance of the sampled cluster sizes. Back-calculate to get estimates of the population $
-```{r}
-# Calculate mean, var to get empirical priors for mu, phi
-mean_Nj_sample <- mean(Nj.sample)
-var_Nj_sample <- var(Nj.sample)
-mu_empirical <- mean_Nj_sample
-phi_empirical <- (mu_empirical^2 / (var_Nj_sample - mu_empirical)) - 1
+Here's the stan model we fit to our data:
+```{r, engine = "bash", comment = "", echo = FALSE}
+cat src/negbin.stan
 ```
 
 Patil and Rao's paper (CITE HERE) says that if the distribution of cluster sizes in the population is $NegBin(k, p)$, then the distribution of the nonsampled cluster sizes is $NegBin(k+1, p)$. Let's see if that's true.
 
-First, let's fit a Stan model to our data.
-
+Let's make a density plot of the nonsampled cluster sizes and see how the posterior predictive samples compare.
 ```{r}
-stan.data <- list(JminusK = J - K, K = K, Nj_sample = Nj.sample, mu_empirical = mu_empirical, phi_empirical = phi_empirical)
-stan.code <- '
-  data {
-    int JminusK;
-    int K;
-    int Nj_sample[K];
-    real mu_empirical;
-    real phi_empirical;
-  }
-  parameters {
-    real<lower=0> phi;
-    real<lower=0> mu;
-  }
-  transformed parameters {
-    real<lower=0> mu_star;
-    real<lower=0> phi_star;
-    real<lower=0> k;
-    real<lower=0> p;
-
-    k <- phi;
-    p <- phi / (phi + mu);
-
-    phi_star <- k + 1;
-    mu_star <- (k + 1) * (1 - p) / p;
-  }
-  model {
-    mu ~ normal(mu_empirical, 10);
-    phi ~ normal(phi_empirical, 10);
-    Nj_sample ~ neg_binomial_2(mu_star, phi_star);
-  }
-'
-
-stan.model <- stan_model(model_code = stan.code)
-```
-
-Extract the Stan results.
-```{r, results = "hide", include = FALSE}
-stan.fit <- sampling(stan.model, data = stan.data, iter = 1000, chains = 4)
-samps <- extract(stan.fit, permute = FALSE)
-res.summary <- summary(stan.fit)$summary
-print(round(res.summary, digits = 2))
-#my_sso <- launch_shinystan(stan.fit)
-```
-
-Now simulate several sets of $J-K$ clusters from the size-biased distribution and see how the sizes compare to the actual sizes.
-```{r}
-# Pull out info for true unsampled values
-missing.data <- pop.data[-sample.inds, ]
-Nj.sims <- data.frame(Nj = missing.data$Nj.pop, simno = 0) # simno = 0 for truth
-
-# Draw n.sims simulations from posterior predictive distribution
-k.est <- res.summary["k", "mean"]
-p.est <- res.summary["p", "mean"]
-n.sims <- 100
-test.stat.mat <- matrix(NA, nrow = n.sims, ncol = 4)
-for (j in 1:n.sims) {
-  tmp <- rnbinom(n = J - K, size = k.est + 1, prob = p.est)
-  tmp2 <- data.frame(Nj = tmp, simno = j)
-  Nj.sims <- rbind(Nj.sims, tmp2)
-}
-
 # Plot density of true nonsampled cluster sizes vs the simulated ones
-ggplot(Nj.sims, aes(x = Nj, group = simno)) +
-  geom_line(stat = "density", colour = "grey80") +
-  geom_line(data = Nj.sims[Nj.sims$simno == 0, ], aes(x = Nj),
-            stat = "density", colour = "black", size = 1.5) +
-  xlab("Nonsampled cluster size") +
+Nj.sims <- sim.res[["Nj.sims"]]
+ggplot(Nj.sims, aes(x = Nj)) +
+  geom_line(stat = "density", aes(group = simno, colour = "Posterior samples")) +
+  geom_line(data = pop.data, aes(x = Nj.pop, colour = "Population sizes"),
+            stat = "density", size = 1.5) +
+  geom_line(data = Nj.sims[Nj.sims$simno == 0, ],
+            aes(x = Nj, colour = "Missing sizes"), stat = "density", size = 1.5) +
+  scale_colour_manual("",
+                      values = c("Posterior samples" = "grey80",
+                                 "Population sizes" = "grey50",
+                                 "Missing sizes" = "black")) +
+  xlab("Cluster size") +
   ylab("Density") +
   theme_bw()
 ```
 
 The densities seem reasonably well-matched. Let's see how well the model captures the min, max, mean, median, and quartiles of the nonsampled cluster sizes.
-```{r}
-true.min <- min(missing.data$Nj.pop)
-true.max <- max(missing.data$Nj.pop)
-true.mean <- mean(missing.data$Nj.pop)
-true.median <- median(missing.data$Nj.pop)
-true.q1 <- quantile(missing.data$Nj.pop, probs = 0.25)
-true.q3 <- max(missing.data$Nj.pop, probs = 0.75)
-true.df <- data.frame(value = c(true.min, true.max, true.mean,
-                                true.median, true.q1, true.q3),
-                      stat = c("min", "max", "mean", "median", "Q1", "Q3"))
-summary.df <- data.frame()
-for (j in 1:n.sims) {
-  tmp <- Nj.sims[Nj.sims$simno == j, ]
-  sim.min <- min(tmp$Nj)
-  sim.max <- max(tmp$Nj)
-  sim.mean <- mean(tmp$Nj)
-  sim.median <- median(tmp$Nj)
-  sim.q1 <- quantile(tmp$Nj, probs = 0.25)
-  sim.q3 <- quantile(tmp$Nj, probs = 0.75)
-  dd <- data.frame(value = c(sim.min, sim.max, sim.mean,
-                             sim.median, sim.q1, sim.q3),
-                   stat = c("min", "max", "mean", "median", "Q1", "Q3"))
-  summary.df <- rbind(summary.df, dd)
-}
+```{r, echo = FALSE}
+summary.df <- sim.res[["summary.df"]]
 ggplot(summary.df, aes(x = value)) +
   geom_histogram() +
-  geom_vline(data = true.df, aes(xintercept = value)) +
+  geom_vline(aes(xintercept = truth)) +
   facet_wrap(~ stat, scales = "free") +
   theme_bw()
+p.vals <- sim.res[["p.vals"]]
+print(p.vals)
+```
+
+Hmm... this was just one simulation. How do we know that the results we're seeing aren't a result of the cluster sizes we happened to draw? Let's repeat the above simulation many times and see what the *distribution* of posterior p-values looks like.
+
+```{r, include = FALSE}
+n.reps <- 1000
+p.vals.df <- data.frame()
+for (j in 1:n.reps) {
+  res <- negbin_sim(Nj.pop, J, K, stan.model, n.iter, n.chains, n.sims)
+  p.vals <- res[["p.vals"]]
+  p.vals$rep <- j
+  p.vals.df <- rbind(p.vals.df, p.vals)
+}
+```
+```{r, echo = FALSE}
+dplyr::summarise(group_by(p.vals.df, stat),
+                 mean_pval = mean(p_value))
 ```
