@@ -1,31 +1,28 @@
-negbin_sim <- function(J, K, k, p, stan.model, n.iter, n.chains, n.sims) {
+negbin_sim <- function(Nj.pop, J, K, stan.model, n.iter, n.chains, n.sims) {
   # Purpose: Simulate cluster sizes from negative binomial, do PPS sampling, and
   #   fit stan model to see how well it fits
   #
   # Author: Susanna Makela
   #
   # Arguments:
+  #   Nj.pop -- cluster sizes in simulated population
   #   J -- number of clusters in population
-  #   K -- number of clusters to sample
-  #   k -- parameter for negative binomial population distribution
-  #   p -- parameter for negative binomial population distribution
+  #   K -- number of clusters sampled
   #   stan.mod -- compiled stan model
   #   n.iter -- number of iterations to run stan for
   #   n.chains -- number of chains to use in stan model
   #   n.sims -- number of posterior predictive simulations to do
   #
   # Returns:
-  #   Nj.pop -- population cluster sizes
   #   Nj.sims -- data frame of "true" missing cluster sizes and posterior
-  #     predictive simulations
+  #     predictive simulations (true sizes have simno = 0)
   #   summary.df -- data frame of summary statistics of Nj.sims
   #   p.vals -- posterior p-values
   
   
   library(dplyr)
   
-  # Generate population data
-  Nj.pop <- rnbinom(n = J, size = k, prob = p)
+  # Generate population data frame
   pop.data <- data.frame(ids = c(1:J), Nj.pop)
   
   # Do PPS sampling
@@ -45,11 +42,16 @@ negbin_sim <- function(J, K, k, p, stan.model, n.iter, n.chains, n.sims) {
                     mu_empirical = mu_empirical,
                     phi_empirical = phi_empirical)
   stan.fit <- sampling(stan.model, data = stan.data,
-                       iter = n.iter, chains = n.chans)
+                       iter = n.iter, chains = n.chains)
   samps <- extract(stan.fit, permute = FALSE)
   res.summary <- summary(stan.fit)$summary
-  cat("###################### Stan results ###############################\n")
-  cat(round(res.summary, digits = 2))
+  cat("###############################################",
+      "Stan results ###############################################\n")
+  print(round(res.summary, digits = 2))
+  
+  # Pull out info for true unsampled values
+  missing.data <- pop.data[-sample.inds, ]
+  Nj.sims <- data.frame(Nj = missing.data$Nj.pop, simno = 0) # simno = 0 for truth
   
   # Calculate test statistics in "true" data
   true.min <- min(missing.data$Nj.pop)
@@ -58,19 +60,15 @@ negbin_sim <- function(J, K, k, p, stan.model, n.iter, n.chains, n.sims) {
   true.median <- median(missing.data$Nj.pop)
   true.q1 <- quantile(missing.data$Nj.pop, probs = 0.25)
   true.q3 <- max(missing.data$Nj.pop, probs = 0.75)
-  summary.df <- data.frame(value = c(true.min, true.max, true.mean,
-                                     true.median, true.q1, true.q3),
-                           stat = c("min", "max", "mean",
-                                    "median", "Q1", "Q3"),
-                           simno = 0)
   
   # Do posterior predictive sampling
   k.est <- res.summary["k", "mean"]
   p.est <- res.summary["p", "mean"]
+  summary.df <- data.frame()
   for (j in 1:n.sims) {
     Nj.draw <- rnbinom(n = J - K, size = k.est + 1, prob = p.est)
-    tmp2 <- data.frame(Nj = Nj.draw, simno = j)
-    Nj.sims <- rbind(Nj.sims, tmp2)
+    tmp <- data.frame(Nj = Nj.draw, simno = j)
+    Nj.sims <- rbind(Nj.sims, tmp)
     sim.min <- min(Nj.draw)
     sim.max <- max(Nj.draw)
     sim.mean <- mean(Nj.draw)
@@ -84,14 +82,19 @@ negbin_sim <- function(J, K, k, p, stan.model, n.iter, n.chains, n.sims) {
     summary.df <- rbind(summary.df, dd)
   }
   
-  for (j in 1:n.sims) {
-    tmp <- Nj.sims[Nj.sims$simno == j, ]
-    
-  }
-  summary.df <- cbind(summary.df, truth = c(true.min, true.max, true.mean,
-                                            true.median, true.q1, true.q3))
+  # Add true values to summary.df
+  true.vals <- data.frame(truth = c(true.min, true.max, true.mean,
+                                    true.median, true.q1, true.q3),
+                          stat = c("min", "max", "mean",
+                                   "median", "Q1", "Q3"))
+  summary.df <- left_join(summary.df, true.vals, by = "stat")
   
   # Calculate p-values
   p.vals <- dplyr::summarise(group_by(summary.df, stat),
-                             p_value = mean(stat > truth))
+                             p_value = mean(value > truth))
+  
+  # Return
+  toreturn <- list(Nj.sims = Nj.sims, summary.df = summary.df, p.vals = p.vals)
+  return(toreturn)
+
 }

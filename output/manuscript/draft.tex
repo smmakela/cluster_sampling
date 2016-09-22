@@ -1,0 +1,158 @@
+\documentclass[12pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{graphicx}
+\usepackage{setspace}
+\usepackage[space]{grffile}
+\usepackage[round]{natbib}
+\usepackage[margin=1in]{geometry}
+\graphicspath{{/Users/susanna/Dropbox/PhD/Research/Survey Sampling/Clusters/Figures/Simplify/}}
+\author{Susanna Makela}
+\title{Bayesian Analysis of Cluster Sampling}
+\begin{document}
+\maketitle
+\singlespacing
+
+\section*{Introduction}
+One basic goal of survey analysis is making inferences about the finite population from which the sample was drawn, such as means and totals for particular outcomes of interest. We consider the analysis of a survey with a two-stage cluster sampling design, where the first stage involves probability proportional to size (PPS) sampling. Two-stage survey designs are common when generating a sample frame of every unit in the population is infeasible or impractical. For example, in designing a nationally representative household survey, generating a complete listing of every household in the country requires essentially as much effort as a complete census of all households. Instead, the sampling proceeds in stages, first sampling primary sampling units (PSUs) such as counties, cities, or census tracts. The PSUs are sampled with probability proportional to a measure of size, which is commonly the number of secondary units in the PSU but can be a more general measure of size, such as annual revenue or agricultural yield. Secondary sampling units (SSUs) are then sampled within selected PSUs. This design requires a complete listing of PSUs and a complete listing of units only within selected PSUs. Often a fixed number of SSUs are sampled within each selected PSU, yielding what is known as a self-weighting survey design, where each SSU has the same probability of being selected.\footnote{To see this, let $M_j$ represent the measure of size for cluster $j$ and $M=\sum_{j=1}^J M_j$ represent the total size in the population. If we sample $K$ clusters and a fixed number of units $n$ in each selected cluster, the probability $\pi_{ij}$ of unit $i$ in cluster $j$ being included in the sample is $\pi_{ij} = (KM_j/M)(n/M_j) = Kn/M$, which is constant across units $i$ and clusters $j$.} Because the SSUs are naturally clustered within PSUs, we refer to the PSUs as clusters and the SSUs as simply units.
+
+Unlike other areas of statistics, inference in survey sampling is often design-based, meaning it is based on the randomization distribution of whether a unit is included in the sample instead of directly modeling the survey outcomes themselves \citep{little2004}. However, a Bayesian approach to survey inference has many advantages over the design-based approach, including the ability to handle complex design features like clustering, better inference for small-sample problems like small area estimation, incorporation of prior information, and large-sample efficiency \citep{little2004}.
+
+Bayesian inference of sample surveys considers both the survey inclusion indicators $I$ and the outcomes $Y$ to be random. Following \cite{bda3}, we can decompose the outcome $Y$ into $Y=(Y_{obs}, Y_{mis})$, where $Y_{obs}$ represents the values of $Y$ among the sampled units with $I=1$ and $Y_{mis}$ represents the values for the nonsampled units with $I=0$. We denote by $X$ the set of variables determining the sampling mechanism -- that is, the variables on which the inclusion indicator $I$ depends -- and other variables known to be related to $Y$. In the case of PPS cluster sampling described above, the relevant design variables are the set of cluster sizes $M_j$ for the $J$ clusters in the population.\footnote{Even in the case of a self-weighting sample, these variables are still important because 1) outcomes for units in the same cluster are likely to be correlated and 2) outcomes are often correlated with the measures of size.} The complete-data likelihood is given by
+\[
+	p(Y, I | X, \theta, \phi) = p(Y|X,\theta)p(I|Y,X,\phi),
+\]
+where $\theta$ and $\phi$ are parameters for the distribution of the outcomes and inclusion indicators, respectively.
+
+The posterior distribution of $\theta$ in terms of the observed data $(Y_{obs}, X, I)$ is\footnote{Here we make the implicit assumption that the parameters $\phi$ and $\theta$ are distinct, meaning $p(\phi|X,\theta)=p(\phi|X)$ \citep{bda3}.}
+\begin{align*}
+	p(\theta | Y_{obs}, X, I) &\propto p(\theta|X) \int \int p(\phi |X) p(Y, I|X, \theta,\phi) dY_{mis} d\phi \nonumber \\
+	&= p(\theta|X) \int \int p(\phi |X) p(Y |X, \theta) p(I|Y, X, \phi) dY_{mis} d\phi.
+\end{align*}
+If the data collection process is ignorable, then $p(I|Y, X, \phi) = p(I|Y_{obs}, X, \phi)$, meaning that the distribution of the inclusion indicators depends only on observed data (and parameters). In this case, the posterior is
+\begin{align}
+	p(\theta | Y_{obs}, X) &\propto p(\theta|X) \int p(Y |X, \theta) dY_{mis} \int p(\phi |X)  p(I|Y_{obs}, X, \phi) d\phi  \\
+	&\propto p(\theta|X) \int p(Y |X, \theta) dY_{mis} \\
+	&= p(\theta|X) p(Y_{obs} |X, \theta)
+\end{align}
+since the integral over $\phi$ is constant with respect to $\theta$. As \cite{bda3} point out, ``the posterior distribution of $\theta$ and the posterior predictive distribution of $Y_{mis}$ $\ldots$ are entirely determined by the specification of a data model -- that is, $p(Y|X, \theta)p(\theta|X)$ -- and the observed values $Y_{obs}$." While we can never conclusively prove that we have achieved ignorability, its plausibility is strengthened when we include in $X$ all covariates that are 
+
+Our interest here is in the finite population mean, given by $Q(Y) = \overline{Y}$, where $N$ is the total number of units in the population. We can write the posterior predictive distribution of $Q(Y)$ given the observed data $Y_{obs}$ as
+\begin{align*}
+	p(Q(Y)|Y_{obs},X) &= \int p(Q(Y), Y_{mis}|Y_{obs},X) d Y_{mis} \\
+	&= \int p(Q(Y)|Y_{mis}, Y_{obs}) p(Y_{mis}|Y_{obs},X) d Y_{mis},
+\end{align*}
+where $p(Y_{mis}|Y_{obs},X)$ is the posterior predictive distribution of $Y$ for the nonsampled units, given by
+\begin{align*}
+	p(Y_{mis}|Y_{obs},X) = \int p(Y_{mis}|\theta,X) p(\theta|Y_{obs},X) d\theta,
+\end{align*}
+
+However, in many (arguably most) practical situations, the set of design variables $X$ is not known for the entire population and is often instead known only for sampled clusters or units. In this case, we need to model the nonsampled values of $X$ before we can make use of the posterior predictive distributions above for inference about $Q(Y)$. For the case of two-stage PPS cluster sampling, we need to model the measures of sizes $M_j$ for the nonsampled clusters.
+
+Existing Bayesian approaches to this problem \citep{zangeneh2011, zangeneh2015} separate estimation of the missing cluster sizes and inference for the finite population quantities into two steps and only consider the case of single-stage PPS samples. In contrast, we integrate these steps into one model for a two-stage cluster sample.
+
+\section*{Model}
+We consider a population consisting of $J=1000$ clusters with measure of size $M_j$ ranging from 100 to 1000 under a data generating model given by
+\begin{align*}
+	Y_i &\sim N(\beta_{0j[i]} + \beta_{1j[i]} w_i, \sigma_y^2) \\
+	\beta_{0j} &\sim N(\gamma_0 + \gamma_1 \log(M_j), \sigma_{\beta_0}^2)\\
+	\beta_{1j} &\sim N(\alpha_0 + \alpha_1 \log(M_j), \sigma_{\beta_1}^2),
+\end{align*}
+where $Y_i$ is the outcome of interest for unit $i$, $j[i]$ denotes the cluster $j$ to which unit $i$ belongs, and $w_i$ is a unit-level covariate.\footnote{We can write the population mean $\overline{Y}$ in terms of the cluster-level means $\overline{Y}_j$. When $Y_i$ is normally distributed, we can make inferences for $\overline{Y}_j$ based on $\overline{w}_j$, so in this case it's not necessary to know $w_i$ for each unit in the population. In practice, if $w$ is a demographic covariate, it's often the case that we know demographic characteristics of clusters even if we don't know the overall size.} A sample of $K<J$ clusters is taken with probability proportional to $M_j$, and $n$ units are sampled via simple random sampling in each selected cluster. We assume that we know $M_j$ for the $K$ sampled clusters, $w_i$ for every sampled unit and $\overline{w}_j$ for every cluster, and the total measure of size $M = \sum_{j=1}^J M_j$. We assume we do not know $M_j$ for nonsampled clusters.
+
+\subsection*{Computational coherence check}
+To ensure our simulation code is working as expected, we follow the approach of \cite{cook2006} and conduct a computational coherence check. We repeatedly draw the hyperparameters $\gamma_0, \gamma_1, \alpha_0, \alpha_1, \sigma_y, \sigma_{\beta_0}$, and $\sigma_{\beta_1}$ from their priors, simulate population data with the model above, and then fit the model to the full population data (without sampling) using Stan \citep{stan}. If our computational procedure is correct, we should be able to recover the true values of the parameters and see approximately 50\% of the 50\% posterior intervals and 95\% of the 95\% posterior intervals contain the true parameter values.
+
+\begin{figure}
+	\centering
+	\includegraphics[scale=.6]{c3_param_covg_stan_only_2016_05_06.pdf}
+	\caption{Coverage rates from computational coherence check. Each dot represents the coverage rate of a parameter based on 500 populations generated from repeated draws of the hyperparameters from their prior distributions. The left panel shows coverage rates for 50\% posterior intervals and the right panel for 95\% posterior intervals.}
+	\label{fig:c3_param_covg}
+\end{figure}
+
+\begin{figure}
+	\centering
+	\includegraphics[scale=.6]{c3_param_ests_hist_2016_05_06.pdf}
+	\caption{Histograms of posterior means for the hyperparameters across 500 simulations. Because the true hyperparameter values vary across simulations, we plot the difference between the posterior mean and the true value.}
+	\label{fig:c3_param_hists}
+\end{figure}
+
+In figure \ref{fig:c3_param_covg}, we see that the coverage of the 50\% and 95\% posterior intervals is close to the nominal levels for all the parameters. The point estimates also recover the true values, as seen in figure \ref{fig:c3_param_hists}. Here we plot histograms of the posterior means of the hyperparameters across 500 simulations. Because the true values vary across simulations, we plot the differences between the posterior means and the truth; values closer to zero thus indicate more accurate estimates. The parameters in the top row are all drawn from $N(0,1)$ prior distributions, so the shape of the histograms makes sense. The variance parameters in the bottom row are drawn from $\text{Half-Cauchy}(0, 2.5)$ prior distributions, so the occasional extreme outliers we observe are to be expected. Recovering the true parameter values with expected confidence coverage rates indicates that our computational procedure is working as expected. 
+
+\subsection*{Bayesian bootstrap}
+One method for predicting unobserved cluster sizes is the modified Bayesian bootstrap of \cite{zangeneh2015}, based on earlier work by \cite{littlezheng2007}. Let $w_1, \ldots, w_B$ represent the $B$ unique values of the measures of size $M_j$ observed in a sample of $K$ clusters out of a population of $J$ clusters. Let $n_1, \ldots, n_B$ represent the corresponding counts of these unique sizes, so that $\sum_b n_b = K$. We can then model the counts $n = (n_1, \ldots, n_B)$ as multinomially distributed with parameters $\psi = (\psi_1, \ldots, \psi_B)$. The $\psi$'s are given a noninformative Haldane prior, so $p(\psi_1, \ldots, \psi_B) = Dir(0, \ldots, 0)$. The posterior distribution is then
+\[
+	p(\psi_1, \ldots, \psi_B | n_1, \ldots, n_B)	= Dir(n_1, \ldots, n_B),
+\]
+and the counts of the unique sizes for the $J-K$ nonsampled clusters, $n^* = (n_1^*, \ldots, n_B^*)$, can be drawn from the posterior predictive distribution
+\begin{align*}
+	p(n^*|n) &= \int p(n^*|\psi) p(\psi|n)d\psi \\
+		&= \int \text{Multin}(n^* | J-K, \psi) \text{Dir}(\psi|n) d\psi.
+\end{align*}
+Directly drawing from this distribution, however, would not account for the PPS sampling design. To adjust for this, \cite{littlezheng2007} draw values of $\psi$ from their posterior $\text{Dir}(\psi|n)$ and then replace $\psi_b$ with
+\[
+	\psi_b^* = \frac{c \psi_b (1-\pi_b)}{\pi_b},
+\]
+where
+\[
+	\pi_b = \frac{K M_b}{M}
+\]
+is the selection probability for units with measure of size $M_b$ and $c$ is a constant ensuring that $\sum_{b=1}^B \psi_b = 1$. This approach essentially adjusts the probability of resampling an observed size $M_b$ by the odds of a cluster of that size not being sampled, so smaller sizes are upweighted relative to larger ones. However, this approach restricts the draws for the nonsampled cluster sizes to come from the set of observed cluster sizes.
+
+Figure \ref{fig:bb_ybar_hist} shows density plots of the estimated finite population mean $\overline{Y}$ across 2,000 simulations. Because true value of $\overline{Y}$ varies across simulations, we again plot the difference between the estimated value and the truth, and the panels are for scenarios where we sample 20, 50, and 100 units per sampled cluster. As we would hope, the densities are sharply peaked around zero. The coverage rates for the 50\% and 95\% posterior intervals shown in Table \ref{tab:bbcovg} are close to nominal rates, with 50\% intervals slightly more conservative than the 95\% ones. 
+
+
+%\begin{figure}
+%	\centering
+%	\includegraphics[scale=.6]{bb_unadj_param_covg_2016_05_06.pdf}
+%	\caption{Coverage rates for parameters estimated from the Bayesian bootstrap model. The panels are for scenarios where we sample 20, 50, and 100 units per sampled cluster.}
+%	\label{fig:bb_params}
+%\end{figure}
+
+\begin{figure}
+	\centering
+	\includegraphics[scale=.6]{bb_unadj_ybar_ests_hist_2016_05_06.pdf}
+	\caption{Density plots of the estimated finite population mean across 2,000 simulations. Because true value of $\overline{Y}$ varies across simulations, we again plot the difference between the estimated value and the truth. The panels are for scenarios where we sample 20, 50, and 100 units per sampled cluster.}
+	\label{fig:bb_ybar_hist}
+\end{figure}
+
+\begin{table}[h!]\label{tab:bbcovg}
+	\centering
+	\begin{tabular}{c|c|c}
+		Units per cluster & 50\% interval & 95\% interval \\
+		\hline
+		20 & 0.61 & 0.93 \\
+		50 & 0.65 & 0.97 \\
+		100 & 0.66 & 0.98
+	\end{tabular}
+	\caption{Coverage rates of 50\% and 95\% posterior intervals for the finite population mean, calculated across 2,000 simulations.}
+\end{table}
+
+
+\subsection*{A future approach: the negative binomial}
+An alternative to the Bayesian bootstrap is to take a superpopulation approach to estimating the nonsampled cluster sizes. Because the clusters are sampled PPS, we know that the sizes we observe in the sample are biased toward the larger sizes in the population. \cite{pr1978} consider a random variable $X$ with pdf $f(x)$ and a probability $w(x)$ of recording the observation $X=x$ and give the density of $X^w$, the recorded observation, as
+\[
+	f^w(x) = \frac{w(x)f(x)}{\omega},
+\]
+where $\omega$ is the normalizing constant. They define the case where $w(x)=x$ as the size-biased distribution. We can see how this distribution is derived in the case of PPS sampling, where the probability of sampling a cluster of size $M_j$ is $cM_j$, where $c$ is a normalizing constant. The probability of a cluster of size $M_j$ occurring in the superpopulation is $f(M_j)$, so the overall probability of observing a cluster of size $M_j$ in the PPS sample is proportional to $M_j f(M_j)$ and equal to
+\[
+	\frac{M_j f(M_j)}{\sum_{M^{\prime}} M^{\prime} f(M^{\prime})},
+\]
+where in this case the denominator is just the expected value of $M^{\prime}$.
+
+One reasonable superpopulation distribution for cluster sizes is the negative binomial distribution, a count model that allows for overdispersion. If the superpopulation distribution is $NB(k, p)$ so that
+\[
+	Pr(X=x|k,p) = {k + x - 1 \choose x} (1-p)^x p^k,
+\]
+then the size-biased distribution of $X^w$ works out to $p(X^w) \sim 1 + NB(k+1, p)$ \citep{pr1978}.
+
+The advantage of this approach is that it allows for cluster sizes not observed in the sample to be estimated for the nonsampled units.
+
+
+
+{\footnotesize
+\bibliography{clusterrefs}
+\bibliographystyle{plainnat}}
+\end{document}
