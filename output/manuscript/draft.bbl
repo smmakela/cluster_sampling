@@ -1,0 +1,72 @@
+\begin{thebibliography}{8}
+\providecommand{\natexlab}[1]{#1}
+\providecommand{\url}[1]{\texttt{#1}}
+\expandafter\ifx\csname urlstyle\endcsname\relax
+  \providecommand{\doi}[1]{doi: #1}\else
+  \providecommand{\doi}{doi: \begingroup \urlstyle{rm}\Url}\fi
+
+\bibitem[Cook et~al.(2006)Cook, Gelman, and Rubin]{cook2006}
+Samantha~R Cook, Andrew Gelman, and Donald~B Rubin.
+\newblock Validation of software for bayesian models using posterior quantiles.
+\newblock \emph{Journal of Computational and Graphical Statistics}, 15\penalty0
+  (3):\penalty0 675--692, 2006.
+\newblock \doi{10.1198/106186006X136976}.
+\newblock URL \url{http://dx.doi.org/10.1198/106186006X136976}.
+
+\bibitem[G.~P.~Patil(1978)]{pr1978}
+C.~R.~Rao G.~P.~Patil.
+\newblock Weighted distributions and size-biased sampling with applications to
+  wildlife populations and human families.
+\newblock \emph{Biometrics}, 34\penalty0 (2):\penalty0 179--189, 1978.
+\newblock ISSN 0006341X, 15410420.
+\newblock URL \url{http://www.jstor.org/stable/2530008}.
+
+\bibitem[Gelman et~al.(2013)Gelman, Carlin, Stern, Dunson, Vehtari, and
+  Rubin]{bda3}
+Andrew Gelman, John Carlin, Hal Stern, David Dunson, Aki Vehtari, and Donald
+  Rubin.
+\newblock \emph{Bayesian Data Analysis, Third Edition (Chapman \& {Hall/CRC}
+  Texts in Statistical Science)}.
+\newblock Chapman and Hall/CRC, London, third edition, November 2013.
+\newblock ISBN 1439840954.
+
+\bibitem[Little(2004)]{little2004}
+Roderick~J. Little.
+\newblock {To Model or Not To Model? Competing Modes of Inference for Finite
+  Population Sampling}.
+\newblock \emph{Journal of the American Statistical Association}, 99:\penalty0
+  546--556, January 2004.
+\newblock URL \url{https://ideas.repec.org/a/bes/jnlasa/v99y2004p546-556.html}.
+
+\bibitem[Little and Zheng(2007)]{littlezheng2007}
+Roderick~J.A. Little and H~Zheng.
+\newblock The {B}ayesian approach to the analysis of finite population surveys.
+\newblock In J.~M. Bernardo, M.~J. Bayarri, J.~O. Berger, A.~P. Dawid,
+  D.~Heckerman, A.~F.~M. Smith, and M.~West, editors, \emph{Bayesian Statistics
+  8}, pages 283--302 (with discussion and rejoinder). Oxford University Press,
+  Oxford, 2007.
+
+\bibitem[{Stan Development Team}(2015)]{stan}
+{Stan Development Team}.
+\newblock Stan: A c++ library for probability and sampling, version 2.8.0,
+  2015.
+\newblock URL \url{http://mc-stan.org/}.
+
+\bibitem[Zangeneh and Little(2015)]{zangeneh2015}
+Sahar~Z. Zangeneh and Roderick J.~A. Little.
+\newblock Bayesian inference for the finite population total from a
+  heteroscedastic probability proportional to size sample.
+\newblock \emph{Journal of Survey Statistics and Methodology}, 3\penalty0
+  (2):\penalty0 162--192, 2015.
+\newblock \doi{10.1093/jssam/smv002}.
+\newblock URL \url{http://jssam.oxfordjournals.org/content/3/2/162.abstract}.
+
+\bibitem[Zangeneh et~al.(2011)Zangeneh, Keener, and Little]{zangeneh2011}
+Sahar~Z. Zangeneh, Robert~W. Keener, and Roderick J.~A. Little.
+\newblock Bayesian nonparametric estimation of finite population quantities in
+  absence of design information on nonsampled units.
+\newblock In \emph{JSM Proceedings. Section on Survey Research Methods. Miami
+  Beach, FL, USA. American Statistical Association-IMS}, pages 3429--3440,
+  2011.
+
+\end{thebibliography}
