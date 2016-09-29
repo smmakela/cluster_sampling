@@ -5,6 +5,7 @@
 \usepackage{amssymb}
 \usepackage{graphicx}
 \usepackage{setspace}
+\usepackage{titling}
 \usepackage[space]{grffile}
 \usepackage[round]{natbib}
 \usepackage[margin=1in]{geometry}
@@ -13,46 +14,48 @@
 \title{Bayesian Analysis of Cluster Sampling}
 \begin{document}
 \maketitle
-\onehalfspacing
+\doublespacing
 
 \section*{Introduction}
-One basic goal of survey analysis is making inferences about the finite population from which the sample was drawn, such as means and totals for particular outcomes of interest. We consider the analysis of a survey with a two-stage cluster sampling design, where the first stage involves probability proportional to size (PPS) sampling. Primary sampling units (PSUs) are sampled with probability proportional to size (PPS)
+One basic goal of survey analysis is making inferences about the finite population from which the sample was drawn, such as means and totals for particular outcomes of interest. We consider the analysis of a survey with a two-stage cluster sampling design, where the first stage involves probability proportional to size (PPS) sampling.
 %Two-stage survey designs are common when generating a sample frame of every unit in the population is infeasible or impractical. For example, in designing a nationally representative household survey, generating a complete listing of every household in the country requires essentially as much effort as a complete census of all households. Instead, the sampling proceeds in stages, first sampling primary sampling units (PSUs) such as counties, cities, or census tracts. The PSUs are sampled with probability proportional to a measure of size, which is commonly the number of secondary units in the PSU but can be a more general measure of size, such as annual revenue or agricultural yield. Secondary sampling units (SSUs) are then sampled within selected PSUs. This design requires a complete listing of PSUs and a complete listing of units only within selected PSUs. Often a fixed number of SSUs are sampled within each selected PSU, yielding what is known as a self-weighting survey design, where each SSU has the same probability of being selected.\footnote{To see this, let $M_j$ represent the measure of size for cluster $j$ and $M=\sum_{j=1}^J M_j$ represent the total size in the population. If we sample $K$ clusters and a fixed number of units $n$ in each selected cluster, the probability $\pi_{ij}$ of unit $i$ in cluster $j$ being included in the sample is $\pi_{ij} = (KM_j/M)(n/M_j) = Kn/M$, which is constant across units $i$ and clusters $j$.} Because the SSUs are naturally clustered within PSUs, we refer to the PSUs as clusters and the SSUs as simply units.
 
 Unlike other areas of statistics, inference in survey sampling is often design-based, meaning it is based on the randomization distribution of whether a unit is included in the sample instead of directly modeling the survey outcomes themselves \citep{little2004}. However, a Bayesian approach to survey inference has many advantages over the design-based approach, including the ability to handle complex design features like clustering, better inference for small-sample problems like small area estimation, incorporation of prior information, and large-sample efficiency \citep{little2004}.
 
-Bayesian inference of sample surveys considers both the survey inclusion indicators $I$ and the outcomes $Y$ to be random. Following \cite{bda3}, we can decompose the outcome $Y$ into $Y=(Y_{obs}, Y_{mis})$, where $Y_{obs}$ represents the values of $Y$ among the sampled units with $I=1$ and $Y_{mis}$ represents the values for the nonsampled units with $I=0$. We denote by $X$ the set of variables determining the sampling mechanism -- that is, the variables on which the inclusion indicator $I$ depends -- and other variables known to be related to $Y$. In the case of PPS cluster sampling described above, the relevant design variables are the set of cluster sizes $M_j$ for the $J$ clusters in the population.\footnote{Even in the case of a self-weighting sample, these variables are still important because 1) outcomes for units in the same cluster are likely to be correlated and 2) outcomes are often correlated with the measures of size.} The complete-data likelihood is given by
-\[
-	p(Y, I | X, \theta, \phi) = p(Y|X,\theta)p(I|Y,X,\phi),
-\]
-where $\theta$ and $\phi$ are parameters for the distribution of the outcomes and inclusion indicators, respectively.
+Bayesian inference of sample surveys considers both the survey inclusion indicators $I$ and the outcomes $Y$ to be random.
 
-The posterior distribution of $\theta$ in terms of the observed data $(Y_{obs}, X, I)$ is\footnote{Here we make the implicit assumption that the parameters $\phi$ and $\theta$ are distinct, meaning $p(\phi|X,\theta)=p(\phi|X)$ \citep{bda3}.}
-\begin{align*}
-	p(\theta | Y_{obs}, X, I) &\propto p(\theta|X) \int \int p(\phi |X) p(Y, I|X, \theta,\phi) dY_{mis} d\phi \nonumber \\
-	&= p(\theta|X) \int \int p(\phi |X) p(Y |X, \theta) p(I|Y, X, \phi) dY_{mis} d\phi.
-\end{align*}
-If the data collection process is ignorable, then $p(I|Y, X, \phi) = p(I|Y_{obs}, X, \phi)$, meaning that the distribution of the inclusion indicators depends only on observed data (and parameters). In this case, the posterior is
-\begin{align}
-	p(\theta | Y_{obs}, X) &\propto p(\theta|X) \int p(Y |X, \theta) dY_{mis} \int p(\phi |X)  p(I|Y_{obs}, X, \phi) d\phi  \\
-	&\propto p(\theta|X) \int p(Y |X, \theta) dY_{mis} \\
-	&= p(\theta|X) p(Y_{obs} |X, \theta)
-\end{align}
-since the integral over $\phi$ is constant with respect to $\theta$. As \cite{bda3} point out, ``the posterior distribution of $\theta$ and the posterior predictive distribution of $Y_{mis}$ $\ldots$ are entirely determined by the specification of a data model -- that is, $p(Y|X, \theta)p(\theta|X)$ -- and the observed values $Y_{obs}$." While we can never conclusively prove that we have achieved ignorability, its plausibility is strengthened when we include in $X$ all covariates that are 
+%Following \cite{bda3}, we can decompose the outcome $Y$ into $Y=(Y_{obs}, Y_{mis})$, where $Y_{obs}$ represents the values of $Y$ among the sampled units with $I=1$ and $Y_{mis}$ represents the values for the nonsampled units with $I=0$. We denote by $X$ the set of variables determining the sampling mechanism -- that is, the variables on which the inclusion indicator $I$ depends -- and other variables known to be related to $Y$. In the case of PPS cluster sampling described above, the relevant design variables are the set of cluster sizes $M_j$ for the $J$ clusters in the population.\footnote{Even in the case of a self-weighting sample, these variables are still important because 1) outcomes for units in the same cluster are likely to be correlated and 2) outcomes are often correlated with the measures of size.} The complete-data likelihood is given by
+%\[
+%	p(Y, I | X, \theta, \phi) = p(Y|X,\theta)p(I|Y,X,\phi),
+%\]
+%where $\theta$ and $\phi$ are parameters for the distribution of the outcomes and inclusion indicators, respectively.
 
-Our interest here is in the finite population mean, given by $Q(Y) = \overline{Y}$, where $N$ is the total number of units in the population. We can write the posterior predictive distribution of $Q(Y)$ given the observed data $Y_{obs}$ as
-\begin{align*}
-	p(Q(Y)|Y_{obs},X) &= \int p(Q(Y), Y_{mis}|Y_{obs},X) d Y_{mis} \\
-	&= \int p(Q(Y)|Y_{mis}, Y_{obs}) p(Y_{mis}|Y_{obs},X) d Y_{mis},
-\end{align*}
-where $p(Y_{mis}|Y_{obs},X)$ is the posterior predictive distribution of $Y$ for the nonsampled units, given by
-\begin{align*}
-	p(Y_{mis}|Y_{obs},X) = \int p(Y_{mis}|\theta,X) p(\theta|Y_{obs},X) d\theta,
-\end{align*}
+%The posterior distribution of $\theta$ in terms of the observed data $(Y_{obs}, X, I)$ is\footnote{Here we make the implicit assumption that the parameters $\phi$ and $\theta$ are distinct, meaning $p(\phi|X,\theta)=p(\phi|X)$ \citep{bda3}.}
+%\begin{align*}
+%	p(\theta | Y_{obs}, X, I) &\propto p(\theta|X) \int \int p(\phi |X) p(Y, I|X, \theta,\phi) dY_{mis} d\phi \nonumber \\
+%	&= p(\theta|X) \int \int p(\phi |X) p(Y |X, \theta) p(I|Y, X, \phi) dY_{mis} d\phi.
+%\end{align*}
+%If the data collection process is ignorable, then $p(I|Y, X, \phi) = p(I|Y_{obs}, X, \phi)$, meaning that the distribution of the inclusion indicators depends only on observed data (and parameters). In this case, the posterior is
+%\begin{align}
+%	p(\theta | Y_{obs}, X) &\propto p(\theta|X) \int p(Y |X, \theta) dY_{mis} \int p(\phi |X)  p(I|Y_{obs}, X, \phi) d\phi  \\
+%	&\propto p(\theta|X) \int p(Y |X, \theta) dY_{mis} \\
+%	&= p(\theta|X) p(Y_{obs} |X, \theta)
+%\end{align}
+%since the integral over $\phi$ is constant with respect to $\theta$. As \cite{bda3} point out, ``the posterior distribution of $\theta$ and the posterior predictive distribution of $Y_{mis}$ $\ldots$ are entirely determined by the specification of a data model -- that is, $p(Y|X, \theta)p(\theta|X)$ -- and the observed values $Y_{obs}$." While we can never conclusively prove that we have achieved ignorability, its plausibility is strengthened when we include in $X$ all covariates that are 
 
-However, in many (arguably most) practical situations, the set of design variables $X$ is not known for the entire population and is often instead known only for sampled clusters or units. In this case, we need to model the nonsampled values of $X$ before we can make use of the posterior predictive distributions above for inference about $Q(Y)$. For the case of two-stage PPS cluster sampling, we need to model the measures of sizes $M_j$ for the nonsampled clusters.
+%Our interest here is in the finite population mean, given by $Q(Y) = \overline{Y}$, where $N$ is the total number of units in the population. We can write the posterior predictive distribution of $Q(Y)$ given the observed data $Y_{obs}$ as
+%\begin{align*}
+%	p(Q(Y)|Y_{obs},X) &= \int p(Q(Y), Y_{mis}|Y_{obs},X) d Y_{mis} \\
+%	&= \int p(Q(Y)|Y_{mis}, Y_{obs}) p(Y_{mis}|Y_{obs},X) d Y_{mis},
+%\end{align*}
+%where $p(Y_{mis}|Y_{obs},X)$ is the posterior predictive distribution of $Y$ for the nonsampled units, given by
+%\begin{align*}
+%	p(Y_{mis}|Y_{obs},X) = \int p(Y_{mis}|\theta,X) p(\theta|Y_{obs},X) d\theta,
+%\end{align*}
 
-Existing Bayesian approaches to this problem \citep{zangeneh2011, zangeneh2015} separate estimation of the missing cluster sizes and inference for the finite population quantities into two steps and only consider the case of single-stage PPS samples. In contrast, we integrate these steps into one model for a two-stage cluster sample.
+However, in many (arguably most) practical situations, the set of design variables $X$ for the entire population are known only to the survey designer, while the analyst has design variables only for the sampled clusters or units. In this case, we as the analyst need to model the nonsampled values of $X$ before we can make use of the posterior predictive distributions above for inference about $Q(Y)$. For the case of two-stage PPS cluster sampling, we need to model the measures of sizes $M_j$ for the nonsampled clusters.
+
+Existing Bayesian approaches to this problem \citep{zangeneh2011, zangeneh2015} only consider the case of single-stage PPS samples. In addition, these approaches separate estimation of the missing cluster sizes and inference for the finite population quantities into two steps.  In contrast, we consider a two-stage PPS sample and integrate the estimation and inference steps into a single model.
 
 \section*{Model}
 We consider a population consisting of $J=1000$ clusters with measure of size $M_j$ ranging from 100 to 1000 under a data generating model given by
