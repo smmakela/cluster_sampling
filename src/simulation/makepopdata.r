@@ -3,7 +3,7 @@
 # Purpose: generate population data
 'Usage:' <- doc
 
-makedata <- function(seed = NA, numclusters, clustersize.range, unitcovar.range, rootdir, use.sizes) {
+makepopdata <- function(seed = NA, numclusters, clustersize.range, unitcovar.range, rootdir, use.sizes) {
   # seed -- integer for setting seed so we can reproduce the results (optional)
   # numclusters -- number of clusters in population
   # clustersize.range -- min and max of possible clustersizes
