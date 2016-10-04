@@ -11,7 +11,7 @@ sim_master <- function(sim, seed = NULL, numclusters, clustersize.range, unitcov
     if (which.comp == 1) {
       libdir <- "/vega/stats/users/smm2253/rpackages"
       .libPaths(libdir)
-      rootdir <- "/vega/stats/users/smm2253/Projects/Cluster_Sampling/"
+      rootdir <- "/vega/stats/users/smm2253/cluster_sampling/"
       Sys.setenv(HOME = rootdir)
     } else {
       rootdir <- "/Users/susanna/Google Drive/Survey Sampling/FF Modeling/"
@@ -20,10 +20,10 @@ sim_master <- function(sim, seed = NULL, numclusters, clustersize.range, unitcov
   ##########################################
   ### Source files
   ##########################################
-    source(paste(rootdir, "/Code/Simplify/vary_K/sampledata.r", sep = ""))
-    source(paste(rootdir, "/Code/Simplify/vary_K/runstan.r", sep = ""))
-    source(paste(rootdir, "/Code/Simplify/vary_K/lmer_compare.r", sep = ""))
-    source(paste(rootdir, "/Code/Simplify/vary_K/svy_ests.r", sep = ""))
+    source(paste(rootdir, "/src/simulation/sampledata.r", sep = ""))
+    source(paste(rootdir, "/src/simulation/runstan.r", sep = ""))
+    source(paste(rootdir, "/src/simulation/lmer_compare.r", sep = ""))
+    source(paste(rootdir, "/src/simulation/svy_ests.r", sep = ""))
 
   ##########################################
   ### Load libraries, set up parallel stuff
@@ -40,21 +40,6 @@ sim_master <- function(sim, seed = NULL, numclusters, clustersize.range, unitcov
     #clusterEvalQ(cl, library(foreach, lib.loc = "/vega/stats/users/smm2253/rpackages"))
     #clusterEvalQ(cl, library(doParallel, lib.loc = "/vega/stats/users/smm2253/rpackages"))
 
-  ##########################################
-  ### Compile stan models
-  ##########################################
-    #print("About to compile stan models")
-    #print(Sys.time())
-    #if (stanmod_name == "bb") {
-    #  stanmod <- stan_model(file = paste(rootdir, "/Code/Simplify/vary_K/bb.stan", sep = ""))
-    #} else if (stanmod_name == "knowsizes") {
-    #  stanmod <- stan_model(file = paste(rootdir, "/Code/Simplify/vary_K/knowsizes.stan", sep = ""))
-    #} else if (stanmod_name == "negbin") {
-    #  stanmod <- stan_model(file = paste(rootdir, "/Code/Simplify/vary_K/negbin.stan", sep = ""))
-    #} else {
-    #  stanmod <- stan_model(file = paste(rootdir, "/Code/Simplify/vary_K/cluster_inds_only.stan", sep = ""))
-    #}
-    
   ##########################################
   ### Loop through cluster/unit lists
   ##########################################
@@ -76,9 +61,9 @@ sim_master <- function(sim, seed = NULL, numclusters, clustersize.range, unitcov
         for (j in 1:length(num.units.list)) {
           num.units <- num.units.list[j]
           # skip the ones we already did
-          if (num.clusters == 15 & num.units == 0.1) {
-            next
-          }
+          #if (num.clusters == 15 & num.units == 0.1) {
+          #  next
+          #}
           # sample data
           print("Sampling data")
           print(Sys.time())
