@@ -1,6 +1,7 @@
 # Author: Susanna Makela
 # Date: 21 Apr 2014
 # Purpose: generate population data
+'Usage:' <- doc
 
 makedata <- function(seed = NA, numclusters, clustersize.range, unitcovar.range, rootdir, use.sizes) {
   # seed -- integer for setting seed so we can reproduce the results (optional)
