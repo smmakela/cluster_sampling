@@ -1,0 +1,94 @@
+running
+  '/usr/lib64/R/bin/R --slave --no-restore --no-save --no-restore --file=makepopdata.r'
+
+[1] "before"
+[1] "Usage: makepopdata.r [options]\n\n  -s --seed <seedval>                      Integer for setting seed so we can reproduce the results [default: NULL]\n  -n --numclusters <J>                     Number of clusters in population [default: 100]\n  -c --clustersize_range <Nj_range>        Min, max values for cluster sizes [default: 100,1000]\n  -u --unitcovar_range <x_range>           Min, max values for unit covariate [default: 20,45]\n  -o --outcome_type <y_type>               Whether outcomes are continuous or binary [default: continuous]\n  -z --use_sizes <usz>                     Whether outcomes are related to cluster sizes [default: 0]\n  -r --rootdir <dirname>                   Root project directory [default: /vega/stats/users/smm2253/projects/cluster_sampling]\n"
+[1] "after"
+
+Attaching package: ‘dplyr’
+
+The following objects are masked from ‘package:stats’:
+
+    filter, lag
+
+The following objects are masked from ‘package:base’:
+
+    intersect, setdiff, setequal, union
+
+Loading required package: docopt
+Loading required package: methods
+List of 14
+ $ --seed             : chr "NULL"
+ $ --numclusters      : chr "100"
+ $ --clustersize_range: chr "100,1000"
+ $ --unitcovar_range  : chr "20,45"
+ $ --outcome_type     : chr "continuous"
+ $ --use_sizes        : chr "0"
+ $ --rootdir          : chr "/vega/stats/users/smm2253/projects/cluster_sampling"
+ $ seed               : chr "NULL"
+ $ numclusters        : chr "100"
+ $ clustersize_range  : chr "100,1000"
+ $ unitcovar_range    : chr "20,45"
+ $ outcome_type       : chr "continuous"
+ $ use_sizes          : chr "0"
+ $ rootdir            : chr "/vega/stats/users/smm2253/projects/cluster_sampling"
+ - attr(*, "class")= chr [1:2] "docopt" "list"
+NULL
+ [1] "--seed"              "--numclusters"       "--clustersize_range"
+ [4] "--unitcovar_range"   "--outcome_type"      "--use_sizes"        
+ [7] "--rootdir"           "seed"                "numclusters"        
+[10] "clustersize_range"   "unitcovar_range"     "outcome_type"       
+[13] "use_sizes"           "rootdir"            
+[1] "--seed"
+ chr "NULL"
+NULL
+[1] "--numclusters"
+ num 100
+NULL
+[1] "--clustersize.range"
+ num [1:2] 100 1000
+NULL
+[1] "--unitcovar.range"
+ num [1:2] 20 45
+NULL
+[1] "--outcome.type"
+ chr "continuous"
+NULL
+[1] "--use.sizes"
+ num 0
+NULL
+[1] "--rootdir"
+ chr "/vega/stats/users/smm2253/projects/cluster_sampling"
+NULL
+[1] "seed"
+ NULL
+NULL
+[1] "numclusters"
+ num 100
+NULL
+[1] "clustersize.range"
+ num [1:2] 100 1000
+NULL
+[1] "unitcovar.range"
+ num [1:2] 20 45
+NULL
+[1] "outcome.type"
+ chr "continuous"
+NULL
+[1] "use.sizes"
+ num 0
+NULL
+[1] "rootdir"
+ chr "/vega/stats/users/smm2253/projects/cluster_sampling"
+NULL
+Warning messages:
+1: NAs introduced by coercion 
+2: NAs introduced by coercion 
+3: NAs introduced by coercion 
+4: NAs introduced by coercion 
+5: NAs introduced by coercion 
+6: NAs introduced by coercion 
+Error in sample.int(length(x), size, replace, prob) : 
+  object 'J' not found
+Calls: sample -> sample.int
+Execution halted

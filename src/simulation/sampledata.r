@@ -2,35 +2,36 @@
 # Date: 21 Apr 2014
 # Purpose: sample data from population
 
-sampledata <- function(num.clusters, num.units, rootdir, sim, popseed, use.sizes) {
+sampledata <- function(num.clusters, num.units, use.sizes,
+                       outcome.type, rootdir, sim) {
   # num.clusters -- number of clusters to sample
   # num.units -- number of units to sample
+  # use.sizes -- 0/1 for whether cluster sizes were used to generate pop data
+  # outcome.type -- whether outcome is normal or binary
   # rootdir -- root directory where Code, Data folders are
   # sim -- current simulation; used so that multiple instances aren't trying to write to the same file
-  # popseed -- which population to use
-  # use.sizes -- 0/1 for whether cluster sizes were used to generate pop data
 
-  ##########################################
+  #############################################################################
   ### Load libraries and functions
-  ##########################################
-    library(plyr)
+  #############################################################################
     library(dplyr)
-    source(paste(rootdir, "/Code/Simplify/vary_K/rspps.r", sep = ""))
+    source(paste(rootdir, "/src/simulation/rspps.r", sep = ""))
 
-  ##########################################
+  #############################################################################
   ### Load the data we made
-  ##########################################
-    load(file = paste(rootdir, "/Data/Simplify/vary_K/popdata_usesizes_", use.sizes, "_seed_", popseed, ".RData", sep = ""))
+  #############################################################################
+    load(file = paste0(rootdir, "//popdata_usesizes_", use.sizes, "_",
+                       outcome.type, ".RData"))
     nms <- names(popdata)
     for (j in nms) {
       assign(j, popdata[[j]])
     }
-    tmp <- distinct(pop.data, cluster.id, Mj)
+    tmp <- dplyr::distinct(pop.data, cluster.id, Mj)
     Mj <- tmp$Mj
 
-  ##########################################
+  #############################################################################
   ### Do the sampling
-  ##########################################
+  #############################################################################
     # sample clusters
       sampled.cluster.list <- sort(rspps(Mj, c(1:J), num.clusters)) # randomized systematic PPS sampling
       #print("-----------`---------------------------------------")

@@ -1,9 +1,9 @@
-lmer_compare <- function(num.clusters, num.units, rootdir, sim, popseed, use.sizes) {
+lmer_compare <- function(num.clusters, num.units, use.size, srootdir, sim) {
   # num.clusters -- number of clusters to sample
   # num.units -- number of units to sample
+  # use.sizes -- whether y depends on cluster sizes or not
   # rootdir -- root directory where Code, Data folders are
   # sim -- current iteration; used so that multiple instances aren't trying to write to the same file
-  # popseed -- which seed was used to make the pop data
 
   ##########################################
   ### Setup of libraries, load data
