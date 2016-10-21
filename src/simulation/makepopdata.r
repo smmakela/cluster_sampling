@@ -9,8 +9,8 @@
   -n --numclusters <J>                     Number of clusters in population [default: 100]
   -c --clustersize_range <Nj_range>        Min, max values for cluster sizes [default: 100,1000]
   -u --unitcovar_range <x_range>           Min, max values for unit covariate [default: 20,45]
-  -o --outcome_type <y_type>               Whether outcomes are continuous or binary [default: continuous]
   -z --use_sizes <usz>                     Whether outcomes are related to cluster sizes [default: 0]
+  -o --outcome_type <y_type>               Whether outcomes are continuous or binary [default: continuous]
   -r --rootdir <dirname>                   Root project directory [default: /vega/stats/users/smm2253/cluster_sampling]
 ' -> doc
 
@@ -134,5 +134,5 @@
     print(str(popdata))
     saveRDS(popdata,
             file = paste0(rootdir, "/output/simulation/popdata_usesizes_",
-                          use.sizes, "_", outcome.type, ".RData"))
+                          use.sizes, "_", outcome.type, ".rds"))
 
