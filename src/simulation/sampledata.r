@@ -97,7 +97,7 @@ sampledata <- function(num.clusters, num.units, use.sizes,
       nunits <- num.units
     }
     saveRDS(sample.data,
-            file = paste(rootdir, "/outfiles/simulation/sampledata_usesizes_",
+            file = paste(rootdir, "output/simulation/sampledata_usesizes_",
                          use.sizes, "_nclusters_", num.clusters,
                          "_nunits_", nunits, "_sim_", sim, ".RData", sep = ""))
 

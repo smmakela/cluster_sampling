@@ -38,13 +38,17 @@ Options:
     # Store the docopt options as variables we can use in the code
     opts <- docopt(doc) 
     opts.names <- names(opts)
+
+    # The options are listed twice, once with "--" in front of the option name
+    # and once without, so remove the "--" ones
     opts.names <- opts.names[-grep("--", opts.names)]
+    opts <- opts[opts.names]
     print(str(opts))
     print(opts.names)
 
     # The options are read in as strings, so make them numeric here
     for (j in 1:length(opts.names)) {
-      opts[[j]] <- as.numeric(opts[[j]])
+      assign(opts.names[j], as.numeric(opts[[j]]))
     }
 
     # Set up parallel parameters
@@ -54,7 +58,7 @@ Options:
                                       sep = ""))
     registerDoParallel(cl)
     clusterEvalQ(cl, .libPaths( "/vega/stats/users/smm2253/rpackages"))
-    print(getDoParWorkers()) # make sure foreach will actually run in parallel
+    #print(getDoParWorkers()) # make sure foreach will actually run in parallel
     #clusterEvalQ(cl, library(iterators, lib.loc = "/vega/stats/users/smm2253/rpackages"))
     #clusterEvalQ(cl, library(foreach, lib.loc = "/vega/stats/users/smm2253/rpackages"))
     #clusterEvalQ(cl, library(doParallel, lib.loc = "/vega/stats/users/smm2253/rpackages"))
@@ -62,7 +66,7 @@ Options:
   #############################################################################
   ### Create list of parameters to loop through for sim
   #############################################################################
-    num.clusters.list <- c(15, 30, 60, 100)
+    num.clusters.list <- c(5, 10, 20, 50)
     num.units.list <- c(0.05, 0.1, 0.25, 0.5, 1, 10, 50, 100)
     use.sizes.list <- c(0, 1)
     outcome.type.list <- c("continuous", "binary")
@@ -94,9 +98,8 @@ for (k in 1:nrow(sim.params)) {
           "units, use_sizes =", use.sizes, ", and", outcome.type, "outcomes.\n")
   
       # Sample data using above parameters
-      print("Sampling data")
+      cat("Sampling data\n")
       print(Sys.time())
-cat("current sim number is", simno)
       sampledata(num.clusters, num.units, use.sizes, outcome.type, rootdir, simno)
   
       # Run stan models
