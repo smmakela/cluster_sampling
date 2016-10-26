@@ -38,6 +38,7 @@ sim_master <- function(sim, numclusters, outcome.type) {
                                       sep = ""))
     registerDoParallel(cl)
     clusterEvalQ(cl, .libPaths( "/vega/stats/users/smm2253/rpackages"))
+    print(getDoParWorkers()) # make sure foreach will actually run in parallel
     #clusterEvalQ(cl, library(iterators, lib.loc = "/vega/stats/users/smm2253/rpackages"))
     #clusterEvalQ(cl, library(foreach, lib.loc = "/vega/stats/users/smm2253/rpackages"))
     #clusterEvalQ(cl, library(doParallel, lib.loc = "/vega/stats/users/smm2253/rpackages"))
@@ -70,6 +71,10 @@ sim_master <- function(sim, numclusters, outcome.type) {
       num.units <- sim.params[k, "num.units.list"]
       use.sizes <- sim.params[k, "use.sizes.list"]
       outcome.type <- sim.params[k, "outcome.type.list"]
+
+      # Print a message about which parameters we're running now
+      cat("Running in parallel for", num.clusters, "clusters,", num.units,
+          "units, use_sizes =", use.sizes, ", and", outcome.type, "outcomes.\n")
 
       # Sample data using above parameters
       print("Sampling data")
@@ -112,16 +117,14 @@ sim_master <- function(sim, numclusters, outcome.type) {
         } else {
           nunits <- num.units
         }
-          fil1 <- paste(rootdir, "/Data/Simplify/vary_K/sampledata_usesizes_", use.sizes, "_nclusters_", num.clusters,
-                        "_nunits_", nunits, "_sim_", sim, ".RData", sep = "")
-          if (file.exists(fil1)) {
-            file.remove(fil1)
-          }
-        } # end unit loop
-      } # end cluster loop
-    } # end use sizes loop
+        fil1 <- paste(rootdir, "/Data/Simplify/vary_K/sampledata_usesizes_", use.sizes, "_nclusters_", num.clusters,
+                      "_nunits_", nunits, "_sim_", sim, ".RData", sep = "")
+        if (file.exists(fil1)) {
+          file.remove(fil1)
+        }
+    } # end parallel loop
 
-    #stopCluster(cl) # close workers
+    stopCluster(cl) # close workers
 
     # remove the pop data file with the indices
       file.remove(paste(rootdir, "/Data/Simplify/vary_K/popdata_usesizes_", use.sizes,
