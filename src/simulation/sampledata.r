@@ -75,7 +75,7 @@ sampledata <- function(num.clusters, num.units, use.sizes,
     # from the updated pop.data with the renumbered clusters, we can just
     # pull out the first num.clusters obs in both Mj and num.units.vec
     tt <- cbind(Mj[1:num.clusters], num.units.vec[1:num.clusters])
-    sampled.unit.list <- mlply(tt, unit.sampler)
+    sampled.unit.list <- plyr::mlply(tt, unit.sampler)
 
     # pull out sampled data
     for (j in 1:num.clusters) {
@@ -97,8 +97,9 @@ sampledata <- function(num.clusters, num.units, use.sizes,
       nunits <- num.units
     }
     saveRDS(sample.data,
-            file = paste(rootdir, "output/simulation/sampledata_usesizes_",
-                         use.sizes, "_nclusters_", num.clusters,
-                         "_nunits_", nunits, "_sim_", sim, ".RData", sep = ""))
+            file = paste0(rootdir, "output/simulation/sampledata_usesizes_",
+                          use.sizes, "_", outcome.type,
+                          "_nclusters_", num.clusters, "_nunits_", nunits,
+                          "_sim_", sim, ".rds"))
 
 }

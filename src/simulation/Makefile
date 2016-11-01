@@ -52,7 +52,9 @@ MODEL_SRC_FILES := $(STAN_SRC_FILES) $(MODEL_SRC_DIR)/lmer_compare.R \
 FIG_SRC_FILES   := $(wildcard $(FIG_CODE_DIR)/figure_*.R)
 
 # Compiled simulation results
-SIM_RESULTS := $(OUT_DIR)/compiled_simulation_results.csv
+SIM_RESULTS_STEMS := $(addprefix $(SIM_OUT_DIR)/sim_res_check_usesizes_, $(USE_SIZE_VALS))
+SIM_RESULTS_FILES := $(addsuffix _continuous.txt, $(SIM_RESULTS_STEMS)) \
+                     $(addsuffix _binary.txt, $(SIM_RESULTS_STEMS))
 
 # Prerequisites for $(SIM_OUT_DIR)/sim_res_check.txt
 # - population files
@@ -78,7 +80,8 @@ PAPER_PDF_FILE := $(PAPER_OUT_DIR)/paper.pdf
 
 .PHONY: all clean 
 #all: $(POP_ROUT_FILES)
-all: $(SIM_OUT_DIR)/sim_res_check.txt
+#all: $(SIM_OUT_DIR)/sim_res_check.txt
+all: $(SIM_RESULTS_FILES)
 
 # Define substring extracting functions
 get_firstword  = $(firstword $(subst _, ,$1))
@@ -101,15 +104,21 @@ $(SIM_OUT_DIR)/popdata_usesizes_%.Rout: $(SIM_SRC_DIR)/makepopdata.R
 	 > $@ 2>&1 
 
 # RUN SIMULATION
-# If the check file for the simulation is older than its prereqs (pop data,
-# model code), then rerun entire simulation
-$(SIM_OUT_DIR)/sim_res_check.txt: $(SIM_RES_CHECK_PREREQS)
-	qsub -v J=$(NUM_POP_CLUSTERS) -t 1-$(NUM_SIMS)\
-	 $(SIM_SRC_DIR)/do_sim_master.sh 
+# If a check file for the simulation is older than its prereqs (pop data,
+# model code), then rerun entire simulation for that value of ($US_VAL, $OT_VAL)
+# the % will be of the from x_y, where x is either 0 or 1 (one of the possible
+# values of $US_VAL) and y is either "continuous" or "discrete", the two
+# possible values of $OT_VAL
+$(SIM_OUT_DIR)/sim_res_check_usesizes_%.txt: $(SIM_RES_CHECK_PREREQS)
+	USV=$(call get_firstword, $*);\
+	OTV=$(call get_secondword, $*);\
+	JN=sim_usesizes_$${USV}_$${OTV};\
+	qsub -v J=$(NUM_POP_CLUSTERS),JOB_NAME=$${JN},US_VAL=$${USV},OT_VAL=$${OTV}\
+	 -t 1-$(NUM_SIMS) $(SIM_SRC_DIR)/do_sim_master.sh 
 
 # COMPILE RESULTS
-$(SIM_RESULTS): $(SIM_RES_PREREQS)
-	Rscript $(R_OPTS) $<
+#$(SIM_RESULTS_FILES): $(SIM_RES_PREREQS)
+#	Rscript $(R_OPTS) $<
 
 # CREATE FIGURES
 $(FIG_OUT_DIR)/figure_%.pdf: $(FIG_SRC_DIR)/figure_%.R
