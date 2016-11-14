@@ -61,12 +61,13 @@ Options:
 
     # Set up parallel parameters
     cl <- makeCluster(min(detectCores(), 10),
+                      type = "FORK",
                       outfile = paste0(rootdir,
                                        "/output/simulation/parallel_output_",
                                        "usesizes_", use_sizes, "_",
                                        outcome_type, ".txt"))
 print("makeCluster")
-    cl <- makeCluster(min(detectCores(), 10))
+#    cl <- makeCluster(min(detectCores(), 10))
 print("registerDoParallel")
     registerDoParallel(cl)
 print("clusterEvalQ")
@@ -143,6 +144,7 @@ print(paste0("use sizes, outcome type: ", use.sizes, " ", outcome.type))
                            rootdir, simno, stanmod, stanmod_name)
         results.list[[2*p - 1]] <- stanout[["par.ests"]]
         results.list[[2*p]] <- stanout[["ybar.ests"]]
+        rm(stanout)
         cat("##################################################################################\n")
       } # end stanmod loop
 #  
@@ -175,7 +177,7 @@ print(str(results.list))
               paste0(rootdir, "output/simulation/results_usesizes_",
                      use.sizes, "_", outcome.type, "_nclusters_", num.clusters,
                      "_nunits_", nunits, "_sim_", simno, ".rds"))
-
+rm(results.list)
 print("deleting sampled data")
       # Delete the sampled data to save space
       fil1 <- paste0(rootdir, "output/simulation/sampledata_usesizes_",

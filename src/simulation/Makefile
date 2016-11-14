@@ -62,15 +62,16 @@ SIM_RESULTS_FILES := $(addsuffix _continuous.txt, $(SIM_RESULTS_STEMS)) \
 # - model code (stan files plus lmer/svy code)
 # If any of the above are newer than $(SIM_OUT_DIR)/sim_res_check.txt, rerun
 # the simulation
-SIM_RES_CHECK_PREREQS := $(POP_ROUT_FILES) $(MODEL_SRC_FILES)
+SIM_RES_CHECK_PREREQS := $(POP_ROUT_FILES) \
+                         $(MODEL_SRC_FILES) \
+                         $(SIM_SRC_DIR)/sampledata.R \
+                         $(SIM_SRC_DIR)/sim_master.R
 
 # Prerequisites for $(SIM_OUT_DIR)/compiled_simulation_results.csv:
 # - check file to make sure that all simulations finished successfully
 # - code to compile simulation results
-SIM_RES_PREREQS := $(sim_out_dir)/sim_res_check.txt \
-                   $(SIM_SRC_DIR)/compile_simulation_results.R \
-                   $(SIM_SRC_DIR)/sim_master.R \
-                   $(SIM_SRC_DIR)/sampledata.R
+SIM_RES_PREREQS := $(SIM_SRC_DIR)/compile_simulation_results.R \
+                   $(SIM_SRC_DIR)/sim_master.R 
 
 # Figure pdf files
 FIG_PDF_FILES := $(wildcard $(FIG_OUT_DIR)/figures_*.pdf)

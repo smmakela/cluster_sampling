@@ -15,11 +15,11 @@ runstan <- function(num.clusters, num.units, use.sizes, rootdir, sim,
   ##########################################
   ### Setup of libraries and directories
   ##########################################
-    library(Rcpp)
-    library(inline)
-    library(rstan)
-    library(plyr)    
-    library(dplyr)
+    #library(Rcpp)
+    #library(inline)
+    #library(rstan)
+    #library(plyr)    
+    #library(dplyr)
     if (num.units <= 1) {
       nunits <- paste(100*num.units, "pct", sep = "")
     } else {
@@ -29,13 +29,13 @@ runstan <- function(num.clusters, num.units, use.sizes, rootdir, sim,
                               use.sizes, "_", outcome.type, "_nclusters_",
                               num.clusters, "_nunits_", nunits, "_sim_", sim,
                               ".rds"))
-print(str(simdata))
-print(names(simdata))
+#print(str(simdata))
+#print(names(simdata))
     for (j in names(simdata)) {
       assign(j, simdata[[j]])
     }
     rm(simdata)
-
+ybar.true <- mean(pop.data$yi)
   ##########################################
   ### Renumber cluster ids in pop data so that 1:J_sam are the sampled clusters and J_sam+1:J_pop are the unsampled ones
   ##########################################
@@ -85,10 +85,10 @@ print(names(simdata))
 #print("ONE")
 #    # sample data at cluster level
     sam.dat <- dplyr::filter(pop.data, insample == 1)
-print(table(sam.dat$cluster.id))
+#print(table(sam.dat$cluster.id))
     sample.data.clev <- dplyr::distinct(sam.dat, cluster.id, Mj, logMj_c)
-print("TWO")
-print(str(sample.data.clev))
+#print("TWO")
+#print(str(sample.data.clev))
     Mj_sam <- sample.data.clev$Mj
     N_sam <- sum(pop.data$insample)
     logMj_sam <- sample.data.clev$logMj_c
@@ -100,11 +100,11 @@ print(str(sample.data.clev))
     #  number of unique values of Mj in sample data
     n.dat <- summarise(group_by(sample.data.clev, Mj),
                        n = n_distinct(cluster.id))
-print("THREE")
-print(names(sample.data))
+#print("THREE")
+#print(names(sample.data))
     n <- n.dat$n
     M <- n_distinct(sample.data$Mj)
-print("FOUR")
+#print("FOUR")
 
     # sample data
     xi_sam <- sample.data$xi
@@ -118,7 +118,7 @@ print("FOUR")
     nonsamp.dat <- arrange(nonsamp.dat, cluster.id)
     mis.dat <- distinct(nonsamp.dat, cluster.id, Mj)
     Mj_mis <- mis.dat$Mj
-
+rm(pop.data)
     # xbar_pop: in unsampled clusters, mean(xi) for all units
     #   in the cluster; for sampled clusters, mean(xi) for UNSAMPLED
     #   units in the cluster
@@ -127,10 +127,10 @@ print("FOUR")
     xbar_pop <- xbar.dat$xbar_pop
 
     # cluster ids, of length N_sam
-print(dim(sample.data))
-print(N_sam)
+#print(dim(sample.data))
+#print(N_sam)
     cluster_id_long <- sample.data$cluster.id
-
+rm(sample.data)
     #new.cluster.id.rep <- sample.data$new.cluster.id # length = sample size
     #new.cluster.id <- sort(unique(sample.data$new.cluster.id)) # length = number of sampled clusters
     #N_pop <- sum(Mj)
@@ -234,7 +234,6 @@ print(N_sam)
                        ybar_sam = ybar_sam,
                        xbar_pop = xbar_pop)
     }
-
 #    if (stanmod_name == "bb") {
 #      standata <- list(J_pop = J_pop, J_sam = J_sam,
 #                       N_sam = N_sam, M = M,
@@ -271,8 +270,8 @@ print(N_sam)
 #                       xi_sam = xi_sam, yi_sam = yi_sam,
 #                       ybar_sam = ybar_sam, xbar_pop = xbar_pop)
 #    }
-print(str(standata))
-print(summary(Mj_sam))
+#print(str(standata))
+#print(summary(Mj_sam))
   ##########################################
   ### Run stan
   ##########################################
@@ -360,7 +359,6 @@ print(summary(Mj_sam))
     
     print("printing results")
     print(Sys.time())      
-    ybar.true <- mean(pop.data$yi)
     ybar.hat <- par.ests["ybar_hat",1]
     ybar.hat.lci50 <- par.ests["ybar_hat", 5] # 25% quantile
     ybar.hat.uci50 <- par.ests["ybar_hat", 7] # 75% quantile
