@@ -25,20 +25,17 @@ runstan <- function(num.clusters, num.units, use.sizes, rootdir, sim,
     } else {
       nunits <- num.units
     }
-    load(paste(rootdir, "/Data/Simplify/vary_K/popdata_usesizes_", use.sizes, "_inds_nclusters_", num.clusters,
-               "_nunits_", nunits, "_sim_", sim, ".RData", sep = ""))
-    load(paste(rootdir, "/Data/Simplify/vary_K/popdata_usesizes_", use.sizes, "_seed_", popseed, ".RData", sep = ""))
-    load(paste(rootdir, "/Data/Simplify/vary_K/sampledata_usesizes_", use.sizes, "_nclusters_", num.clusters,
-               "_nunits_", nunits, "_sim_", sim, ".RData", sep = ""))
-    #nms <- c("pop.data", "Mj", "J")
-    #for (j in nms) {
-    #  assign(j, popdata[[j]])
-    #}
-    J <- popdata[["J"]]
-    rm(popdata)
-    #rm(pop.data)
-    pop.data <- pop.data.inds
- 
+    simdata <- readRDS(paste0(rootdir, "output/simulation/simdata_usesizes_",
+                              use.sizes, "_", outcome.type, "_nclusters_",
+                              num.clusters, "_nunits_", nunits, "_sim_", sim,
+                              ".rds"))
+print(str(simdata))
+print(names(simdata))
+    for (j in names(simdata)) {
+      assign(j, simdata[[j]])
+    }
+    rm(simdata)
+
   ##########################################
   ### Renumber cluster ids in pop data so that 1:J_sam are the sampled clusters and J_sam+1:J_pop are the unsampled ones
   ##########################################
@@ -75,18 +72,23 @@ runstan <- function(num.clusters, num.units, use.sizes, rootdir, sim,
 
     J_pop <- J
     J_sam <- num.clusters
-
-    # pop data at cluster level
-print(names(pop.data))
-    pop.data.clev <- distinct(pop.data, cluster.id, Mj, logMj_c)
-    Mj_pop <- pop.data.clev$Mj
+    Mj_pop <- Mj
     N_pop <- sum(Mj_pop)
     Tx <- N_pop
-print("ONE")
-    # sample data at cluster level
-    sam.dat <- filter(pop.data, insample == 1)
-    sample.data.clev <- distinct(sam.dat, cluster.id, Mj, logMj_c)
+
+    # pop data at cluster level
+#print(names(pop.data))
+#    pop.data.clev <- distinct(pop.data, cluster.id, Mj, logMj_c)
+#    Mj_pop <- pop.data.clev$Mj
+#    N_pop <- sum(Mj_pop)
+#    Tx <- N_pop
+#print("ONE")
+#    # sample data at cluster level
+    sam.dat <- dplyr::filter(pop.data, insample == 1)
+print(table(sam.dat$cluster.id))
+    sample.data.clev <- dplyr::distinct(sam.dat, cluster.id, Mj, logMj_c)
 print("TWO")
+print(str(sample.data.clev))
     Mj_sam <- sample.data.clev$Mj
     N_sam <- sum(pop.data$insample)
     logMj_sam <- sample.data.clev$logMj_c
@@ -278,10 +280,12 @@ print(summary(Mj_sam))
     print(paste("********** about to run stan for num.clusters = ", num.clusters, 
                 ", num.units = ", nunits, ", model ", stanmod_name, sep = ""))
     print(Sys.time())
-    fit <- sampling(stanmod, data = standata, iter = 5000, chains = 4)
+    fit <- sampling(stanmod, data = standata, iter = 100, chains = 4)
     if (sim %in% c(1, 100, 200, 300, 400, 500)) {
-      save(fit, file = paste(rootdir, "/Results/Simplify/vary_K/stanfit_usesizes_", use.sizes, "_nclusters_", num.clusters,
-                               "_nunits_", nunits, "_sim_", sim, "_", stanmod_name, ".RData", sep = ""))
+      save(fit, file = paste0(rootdir, "/output/simulation/stanfit_usesizes_",
+                              use.sizes, "_nclusters_", num.clusters,
+                              "_nunits_", nunits, "_sim_", sim, "_",
+                              stanmod_name, ".RData"))
       print("done saving stanfit object")
       print(Sys.time())
     }
@@ -329,12 +333,12 @@ print(summary(Mj_sam))
     print("done making par.ests")
     print(Sys.time())
 
-    if (sim %in% c(100)) {
-      save(samps, file = paste(rootdir, "/Results/Simplify/vary_K/samples_usesizes_", use.sizes, "_nclusters_", num.clusters,
-                               "_nunits_", nunits, "_sim_", sim, "_", stanmod_name, ".RData", sep = ""))
-      print("done saving samps")
-      print(Sys.time())
-    }
+    #if (sim %in% c(100)) {
+    #  save(samps, file = paste(rootdir, "/Results/Simplify/vary_K/samples_usesizes_", use.sizes, "_nclusters_", num.clusters,
+    #                           "_nunits_", nunits, "_sim_", sim, "_", stanmod_name, ".RData", sep = ""))
+    #  print("done saving samps")
+    #  print(Sys.time())
+    #}
 
     print("making par.ests")
     print(Sys.time())
@@ -346,9 +350,13 @@ print(summary(Mj_sam))
     colnames(par.ests) <- par.ests.colnames
 
     # save par.ests
-    write.table(par.ests,
-                file = paste(rootdir, "/Results/Simplify/vary_K/parests_stan_usesizes_", use.sizes, "_nclusters_", num.clusters,
-                             "_nunits_", nunits, "_sim_", sim, "_", stanmod_name, ".txt", sep = ""), sep = ",")
+    #write.table(par.ests,
+    #            file = paste0(rootdir,
+    #                          "/output/simulation/parests_stan_usesizes_",
+    #                          use.sizes, "_nclusters_", num.clusters,
+    #                          "_nunits_", nunits, "_sim_", sim, "_",
+    #                          stanmod_name, ".txt"),
+    #            sep = ",")
     
     print("printing results")
     print(Sys.time())      
@@ -358,11 +366,13 @@ print(summary(Mj_sam))
     ybar.hat.uci50 <- par.ests["ybar_hat", 7] # 75% quantile
     ybar.hat.lci95 <- par.ests["ybar_hat", 4] # 2.5% quantile
     ybar.hat.uci95 <- par.ests["ybar_hat", 8] # 97.5% quantile
-    rnames <- c("gamma0", "gamma1", "alpha0", "alpha1", "sigma_beta0", "sigma_beta1", "sigma_y")
+    rnames <- c("gamma0", "gamma1", "alpha0", "alpha1", "sigma_beta0",
+                "sigma_beta1", "sigma_y")
     cnames <- c("mean", "2.5%", "97.5%", "Rhat", "n_eff")
     cat("########################################################\n")
-    cat("-----------------  use.sizes = ", use.sizes, ", stanmod = ", stanmod_name,
-        ", num.clusters = ", num.clusters, ", num.units = ", num.units, "---------------------\n")
+    cat("-----------------  use.sizes = ", use.sizes, ", stanmod = ",
+        stanmod_name, ", num.clusters = ", num.clusters, ", num.units = ",
+        num.units, "---------------------\n")
     cat("true: ", ybar.true, "\n")
     cat("est: ", ybar.hat, "\n")
     cat("est 95% CI: ", ybar.hat.lci95, ", ", ybar.hat.uci95, "\n")
@@ -374,15 +384,17 @@ print(summary(Mj_sam))
     print(summary(par.ests[grep("Mj_unsamp", rownames(par.ests)), "mean"]))
     cat("########################################################\n")
 
-
-   
     print("saving results")
     print(Sys.time())
-    res <- c(ybar.true, ybar.hat, ybar.hat.lci50, ybar.hat.uci50, ybar.hat.lci95, ybar.hat.uci95) 
-    write.table(res,
-                file = paste(rootdir, "/Results/Simplify/vary_K/ybar_stan_usesizes_", use.sizes, "_nclusters_", num.clusters,
-                             "_nunits_", nunits, "_sim_", sim, "_", stanmod_name, ".txt", sep = ""), sep = ",")
+    ybar.ests <- c(ybar.true, ybar.hat, ybar.hat.lci50, ybar.hat.uci50,
+                   ybar.hat.lci95, ybar.hat.uci95) 
+    #write.table(res,
+    #            file = paste0(rootdir, "/output/simulation/ybar_stan_usesizes_",
+    #                          use.sizes, "_nclusters_", num.clusters,
+    #                          "_nunits_", nunits, "_sim_", sim, "_",
+    #                          stanmod_name, ".txt"),
+    #            sep = ",")
 
-
-  return(res)
+  toreturn <- list(par.ests = par.ests, ybar.ests = ybar.ests)
+  return(toreturn)
 }

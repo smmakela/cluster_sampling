@@ -47,6 +47,7 @@ POP_FILES_ALL  := $(POP_DATA_FILES) $(POP_ROUT_FILES)
 # e.g. sampling code, stan code, other model code files, figure code
 SAMPLE_SRC_FILE := $(SIM_SRC_DIR)/sampledata.R
 STAN_SRC_FILES  := $(wildcard $(MODEL_SRC_DIR)/*.stan)
+STAN_MOD_FILES  := $(wildcard $(MODEL_SRC_DIR)/*.RData)
 MODEL_SRC_FILES := $(STAN_SRC_FILES) $(MODEL_SRC_DIR)/lmer_compare.R \
                    $(MODEL_SRC_DIR)/svy_ests.R
 FIG_SRC_FILES   := $(wildcard $(FIG_CODE_DIR)/figure_*.R)
@@ -67,7 +68,9 @@ SIM_RES_CHECK_PREREQS := $(POP_ROUT_FILES) $(MODEL_SRC_FILES)
 # - check file to make sure that all simulations finished successfully
 # - code to compile simulation results
 SIM_RES_PREREQS := $(sim_out_dir)/sim_res_check.txt \
-                   $(SIM_SRC_DIR)/compile_simulation_results.R
+                   $(SIM_SRC_DIR)/compile_simulation_results.R \
+                   $(SIM_SRC_DIR)/sim_master.R \
+                   $(SIM_SRC_DIR)/sampledata.R
 
 # Figure pdf files
 FIG_PDF_FILES := $(wildcard $(FIG_OUT_DIR)/figures_*.pdf)
@@ -78,10 +81,11 @@ PAPER_BIB_FILE := $(PAPER_OUT_DIR)/clusterrefs.bib
 PAPER_PDF_FILE := $(PAPER_OUT_DIR)/paper.pdf
 # *****************************************************************************
 
-.PHONY: all clean 
+.PHONY: all clean stanmodfiles
 #all: $(POP_ROUT_FILES)
 #all: $(SIM_OUT_DIR)/sim_res_check.txt
 all: $(SIM_RESULTS_FILES)
+stanmodfiles: $(STAN_MOD_FILES)
 
 # Define substring extracting functions
 get_firstword  = $(firstword $(subst _, ,$1))
@@ -97,11 +101,15 @@ get_secondword = $(word 2, $(subst _, ,$1))
 # would be 0_continuous, and the arg1 and arg2 functions split 0_continuous
 # into "0" and "continous"
 $(SIM_OUT_DIR)/popdata_usesizes_%.Rout: $(SIM_SRC_DIR)/makepopdata.R
-	Rscript $(R_OPTS) makepopdata.R\
+	Rscript $(R_OPTS) $<\
 	 --numclusters $(NUM_POP_CLUSTERS)\
 	 --use_sizes $(call get_firstword, $*)\
 	 --outcome_type $(call get_secondword, $*)\
 	 > $@ 2>&1 
+
+# COMPILE STAN MODELS
+$(STAN_MOD_FILES): $(STAN_SRC_FILES)
+	Rscript $(R_OPTS) compile_stan_models.R 
 
 # RUN SIMULATION
 # If a check file for the simulation is older than its prereqs (pop data,
@@ -112,9 +120,12 @@ $(SIM_OUT_DIR)/popdata_usesizes_%.Rout: $(SIM_SRC_DIR)/makepopdata.R
 $(SIM_OUT_DIR)/sim_res_check_usesizes_%.txt: $(SIM_RES_CHECK_PREREQS)
 	USV=$(call get_firstword, $*);\
 	OTV=$(call get_secondword, $*);\
-	JN=sim_usesizes_$${USV}_$${OTV};\
-	qsub -v J=$(NUM_POP_CLUSTERS),JOB_NAME=$${JN},US_VAL=$${USV},OT_VAL=$${OTV}\
-	 -t 1-$(NUM_SIMS) $(SIM_SRC_DIR)/do_sim_master.sh 
+	JN="usz_"; JN+=$${USV}; JN+="_"; JN+=$${OTV};\
+	echo $${JN};\
+	echo $${USV};\
+	echo $${OTV};\
+	qsub -v J=$(NUM_POP_CLUSTERS),US_VAL=$${USV},OT_VAL=$${OTV}\
+	 -t 1-$(NUM_SIMS) -N "$${JN}" $(SIM_SRC_DIR)/do_sim_master.sh 
 
 # COMPILE RESULTS
 #$(SIM_RESULTS_FILES): $(SIM_RES_PREREQS)

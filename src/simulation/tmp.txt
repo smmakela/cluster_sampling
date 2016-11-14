@@ -1,0 +1,240 @@
+Loading required package: docopt
+Loading required package: methods
+Loading required package: plyr
+Loading required package: dplyr
+
+Attaching package: ‘dplyr’
+
+The following objects are masked from ‘package:plyr’:
+
+    arrange, count, desc, failwith, id, mutate, rename, summarise,
+    summarize
+
+The following objects are masked from ‘package:stats’:
+
+    filter, lag
+
+The following objects are masked from ‘package:base’:
+
+    intersect, setdiff, setequal, union
+
+Loading required package: lme4
+Loading required package: Matrix
+Creating a generic function for ‘image’ from package ‘graphics’ in package ‘Matrix’
+Creating a generic function for ‘solve’ from package ‘base’ in package ‘Matrix’
+Creating a generic function for ‘chol2inv’ from ‘base’ in package ‘Matrix’
+    (from the saved implicit definition)
+Creating a generic function for ‘chol2inv’ from package ‘base’ in package ‘Matrix’
+Creating a generic function for ‘determinant’ from package ‘base’ in package ‘Matrix’
+Creating a generic function for ‘update’ from package ‘stats’ in package ‘Matrix’
+Error in match.call(definition, call, expand.dots, envir) : 
+  unused argument (mode = c("missing", "methods"))
+Error : unable to load R code in package ‘Matrix’
+Failed with error:  ‘package ‘Matrix’ could not be loaded’
+Loading required package: rstan
+Loading required package: ggplot2
+rstan (Version 2.9.0-3, packaged: 2016-02-11 15:54:41 UTC, GitRev: 05c3d0058b6a)
+For execution on a local, multicore CPU with excess RAM we recommend calling
+rstan_options(auto_write = TRUE)
+options(mc.cores = parallel::detectCores())
+Loading required package: foreach
+Loading required package: doParallel
+Loading required package: iterators
+Loading required package: parallel
+List of 4
+ $ simno       : chr "1"
+ $ use_sizes   : chr "0"
+ $ outcome_type: chr "continuous"
+ $ numclusters : chr "100"
+NULL
+[1] "simno"        "use_sizes"    "outcome_type" "numclusters" 
+[1] "Assigning 1 to simno"
+[1] "Assigning 0 to use_sizes"
+[1] "Assigning continuous to outcome_type"
+[1] "Assigning 100 to numclusters"
+[1] "makeCluster"
+[1] "registerDoParallel"
+[1] "clusterEvalQ"
+[[1]]
+[1] "/vega/stats/users/smm2253/rpackages" "/usr/lib64/R/library"               
+[3] "/usr/share/R/library"               
+
+[[2]]
+[1] "/vega/stats/users/smm2253/rpackages" "/usr/lib64/R/library"               
+[3] "/usr/share/R/library"               
+
+[[3]]
+[1] "/vega/stats/users/smm2253/rpackages" "/usr/lib64/R/library"               
+[3] "/usr/share/R/library"               
+
+[[4]]
+[1] "/vega/stats/users/smm2253/rpackages" "/usr/lib64/R/library"               
+[3] "/usr/share/R/library"               
+
+[[5]]
+[1] "/vega/stats/users/smm2253/rpackages" "/usr/lib64/R/library"               
+[3] "/usr/share/R/library"               
+
+[[6]]
+[1] "/vega/stats/users/smm2253/rpackages" "/usr/lib64/R/library"               
+[3] "/usr/share/R/library"               
+
+[[7]]
+[1] "/vega/stats/users/smm2253/rpackages" "/usr/lib64/R/library"               
+[3] "/usr/share/R/library"               
+
+[[8]]
+[1] "/vega/stats/users/smm2253/rpackages" "/usr/lib64/R/library"               
+[3] "/usr/share/R/library"               
+
+[[9]]
+[1] "/vega/stats/users/smm2253/rpackages" "/usr/lib64/R/library"               
+[3] "/usr/share/R/library"               
+
+[[10]]
+[1] "/vega/stats/users/smm2253/rpackages" "/usr/lib64/R/library"               
+[3] "/usr/share/R/library"               
+
+[1] "getDoParWorkers"
+[1] 10
+[1] "clusterEvalQ specific libraries"
+[[1]]
+[1] "iterators" "stats"     "graphics"  "grDevices" "utils"     "datasets" 
+[7] "methods"   "base"     
+
+[[2]]
+[1] "iterators" "stats"     "graphics"  "grDevices" "utils"     "datasets" 
+[7] "methods"   "base"     
+
+[[3]]
+[1] "iterators" "stats"     "graphics"  "grDevices" "utils"     "datasets" 
+[7] "methods"   "base"     
+
+[[4]]
+[1] "iterators" "stats"     "graphics"  "grDevices" "utils"     "datasets" 
+[7] "methods"   "base"     
+
+[[5]]
+[1] "iterators" "stats"     "graphics"  "grDevices" "utils"     "datasets" 
+[7] "methods"   "base"     
+
+[[6]]
+[1] "iterators" "stats"     "graphics"  "grDevices" "utils"     "datasets" 
+[7] "methods"   "base"     
+
+[[7]]
+[1] "iterators" "stats"     "graphics"  "grDevices" "utils"     "datasets" 
+[7] "methods"   "base"     
+
+[[8]]
+[1] "iterators" "stats"     "graphics"  "grDevices" "utils"     "datasets" 
+[7] "methods"   "base"     
+
+[[9]]
+[1] "iterators" "stats"     "graphics"  "grDevices" "utils"     "datasets" 
+[7] "methods"   "base"     
+
+[[10]]
+[1] "iterators" "stats"     "graphics"  "grDevices" "utils"     "datasets" 
+[7] "methods"   "base"     
+
+[[1]]
+[1] "foreach"   "iterators" "stats"     "graphics"  "grDevices" "utils"    
+[7] "datasets"  "methods"   "base"     
+
+[[2]]
+[1] "foreach"   "iterators" "stats"     "graphics"  "grDevices" "utils"    
+[7] "datasets"  "methods"   "base"     
+
+[[3]]
+[1] "foreach"   "iterators" "stats"     "graphics"  "grDevices" "utils"    
+[7] "datasets"  "methods"   "base"     
+
+[[4]]
+[1] "foreach"   "iterators" "stats"     "graphics"  "grDevices" "utils"    
+[7] "datasets"  "methods"   "base"     
+
+[[5]]
+[1] "foreach"   "iterators" "stats"     "graphics"  "grDevices" "utils"    
+[7] "datasets"  "methods"   "base"     
+
+[[6]]
+[1] "foreach"   "iterators" "stats"     "graphics"  "grDevices" "utils"    
+[7] "datasets"  "methods"   "base"     
+
+[[7]]
+[1] "foreach"   "iterators" "stats"     "graphics"  "grDevices" "utils"    
+[7] "datasets"  "methods"   "base"     
+
+[[8]]
+[1] "foreach"   "iterators" "stats"     "graphics"  "grDevices" "utils"    
+[7] "datasets"  "methods"   "base"     
+
+[[9]]
+[1] "foreach"   "iterators" "stats"     "graphics"  "grDevices" "utils"    
+[7] "datasets"  "methods"   "base"     
+
+[[10]]
+[1] "foreach"   "iterators" "stats"     "graphics"  "grDevices" "utils"    
+[7] "datasets"  "methods"   "base"     
+
+[[1]]
+ [1] "doParallel" "parallel"   "foreach"    "iterators"  "stats"     
+ [6] "graphics"   "grDevices"  "utils"      "datasets"   "methods"   
+[11] "base"      
+
+[[2]]
+ [1] "doParallel" "parallel"   "foreach"    "iterators"  "stats"     
+ [6] "graphics"   "grDevices"  "utils"      "datasets"   "methods"   
+[11] "base"      
+
+[[3]]
+ [1] "doParallel" "parallel"   "foreach"    "iterators"  "stats"     
+ [6] "graphics"   "grDevices"  "utils"      "datasets"   "methods"   
+[11] "base"      
+
+[[4]]
+ [1] "doParallel" "parallel"   "foreach"    "iterators"  "stats"     
+ [6] "graphics"   "grDevices"  "utils"      "datasets"   "methods"   
+[11] "base"      
+
+[[5]]
+ [1] "doParallel" "parallel"   "foreach"    "iterators"  "stats"     
+ [6] "graphics"   "grDevices"  "utils"      "datasets"   "methods"   
+[11] "base"      
+
+[[6]]
+ [1] "doParallel" "parallel"   "foreach"    "iterators"  "stats"     
+ [6] "graphics"   "grDevices"  "utils"      "datasets"   "methods"   
+[11] "base"      
+
+[[7]]
+ [1] "doParallel" "parallel"   "foreach"    "iterators"  "stats"     
+ [6] "graphics"   "grDevices"  "utils"      "datasets"   "methods"   
+[11] "base"      
+
+[[8]]
+ [1] "doParallel" "parallel"   "foreach"    "iterators"  "stats"     
+ [6] "graphics"   "grDevices"  "utils"      "datasets"   "methods"   
+[11] "base"      
+
+[[9]]
+ [1] "doParallel" "parallel"   "foreach"    "iterators"  "stats"     
+ [6] "graphics"   "grDevices"  "utils"      "datasets"   "methods"   
+[11] "base"      
+
+[[10]]
+ [1] "doParallel" "parallel"   "foreach"    "iterators"  "stats"     
+ [6] "graphics"   "grDevices"  "utils"      "datasets"   "methods"   
+[11] "base"      
+
+[1] "sim params:"
+  num.clusters.list num.units.list
+1                 5           0.05
+2                10           0.05
+3                 5           0.10
+4                10           0.10
+automatically exporting the following variables from the local environment:
+  outcome.type, rootdir, runstan, sampledata, sim.params, simno, stanmod_list, use.sizes 
+explicitly exporting variables(s): cl, doc, j, libdir, lmer_compare, num.clusters.list, num.units.list, numclusters, opts, opts.names, outcome_type, svy_ests, tmplist, use_sizes
+numValues: 4, numResults: 0, stopped: TRUE
