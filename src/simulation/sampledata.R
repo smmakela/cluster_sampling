@@ -35,8 +35,8 @@ sampledata <- function(num.clusters, num.units, use.sizes,
     # sample clusters
     sampled.cluster.list <- sort(rspps(Mj, c(1:J), num.clusters)) # randomized systematic PPS sampling
     rm(Mj) # remove Mj b/c will overwrite it after clusters are renumbered
-print("sampled cluster ids, orig:")
-print(sampled.cluster.list)
+#print("sampled cluster ids, orig:")
+#print(sampled.cluster.list)
     # RENUMBER cluster ids so that sampled clusters run from 1:num.clusters
     #   and the rest from (num.clusters + 1):J
     all.cluster.ids <- sort(unique(pop.data$cluster.id))
@@ -45,8 +45,6 @@ print(sampled.cluster.list)
     idmap <- data.frame(cluster.id = c(sampled.cluster.list,
                                        nonsampled.cluster.ids),
                         new.cluster.id = c(1:J))
-print("id map:")
-print(idmap)
     pop.data <- merge(pop.data, idmap, by = "cluster.id")
     pop.data$orig.cluster.id <- pop.data$cluster.id
     pop.data$cluster.id <- pop.data$new.cluster.id
@@ -54,7 +52,6 @@ print(idmap)
 
     # define Mj, logMj_c again, but this time the cluster ids are such that
     # 1:num.clusters are the sampled ones and (num.clusters + 1):J are not
-    pop.data <- tbl_df(pop.data)
     pop.cluster.sizes <- dplyr::distinct(pop.data, cluster.id, Mj)
     pop.cluster.sizes <- dplyr::arrange(pop.cluster.sizes, cluster.id)
     Mj <- pop.cluster.sizes$Mj
@@ -88,17 +85,12 @@ print(idmap)
     # pull out sampled data
     pop.data$insample <- 0
     for (j in 1:num.clusters) {
-print("curr sampled unit list:")
-print(sampled.unit.list[[j]])
       curr.units <- sampled.unit.list[[j]]
       pop.data <- dplyr::mutate(pop.data,
                                 insample = ifelse(cluster.id == j &
                                                   unit.id %in% curr.units,
                                                   1, insample))
     }
-print("table of all/sampled cluster ids in pop data:")
-print(table(pop.data$cluster.id))
-print(table(pop.data$cluster.id[pop.data$insample == 1]))
     sample.data <- dplyr::filter(pop.data, insample == 1)
     sample.data$insample <- NULL
 

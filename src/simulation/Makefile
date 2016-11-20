@@ -21,7 +21,7 @@ R_OPTS         = --no-save --no-restore --no-init-file --no-site-file
 
 # Hard-code highest-level simulation parameters
 NUM_POP_CLUSTERS = 100
-NUM_SIMS         = 1
+NUM_SIMS         = 2
 
 # Variables that store filenames of population data
 # e.g. <file path>/popdata_usesizes_<0,1>_<continuous, binary>.<rds, Rout>
@@ -52,20 +52,25 @@ MODEL_SRC_FILES := $(STAN_SRC_FILES) $(MODEL_SRC_DIR)/lmer_compare.R \
                    $(MODEL_SRC_DIR)/svy_ests.R
 FIG_SRC_FILES   := $(wildcard $(FIG_CODE_DIR)/figure_*.R)
 
-# Compiled simulation results
-SIM_RESULTS_STEMS := $(addprefix $(SIM_OUT_DIR)/sim_res_check_usesizes_, $(USE_SIZE_VALS))
-SIM_RESULTS_FILES := $(addsuffix _continuous.txt, $(SIM_RESULTS_STEMS)) \
-                     $(addsuffix _binary.txt, $(SIM_RESULTS_STEMS))
+# txt files that ensure the simulations ran correctly
+SIM_RES_CHECK_STEMS := $(addprefix $(SIM_OUT_DIR)/sim_res_check_usesizes_, $(USE_SIZE_VALS))
+SIM_RES_CHECK_FILES := $(addsuffix _continuous.txt, $(SIM_RES_CHECK_STEMS))
+#SIM_RESULTS_FILES := $(addsuffix _continuous.txt, $(SIM_RESULTS_STEMS)) \
+#                     $(addsuffix _binary.txt, $(SIM_RESULTS_STEMS))
 
 # Prerequisites for $(SIM_OUT_DIR)/sim_res_check.txt
 # - population files
 # - model code (stan files plus lmer/svy code)
 # If any of the above are newer than $(SIM_OUT_DIR)/sim_res_check.txt, rerun
 # the simulation
-SIM_RES_CHECK_PREREQS := $(POP_ROUT_FILES) \
-                         $(MODEL_SRC_FILES) \
+#SIM_RES_CHECK_PREREQS := $(POP_ROUT_FILES) \
+#                         $(MODEL_SRC_FILES) \
+#                         $(SIM_SRC_DIR)/sampledata.R \
+#                         $(SIM_SRC_DIR)/sim_master.R
+SIM_RES_CHECK_PREREQS := $(MODEL_SRC_FILES) \
                          $(SIM_SRC_DIR)/sampledata.R \
-                         $(SIM_SRC_DIR)/sim_master.R
+                         $(SIM_SRC_DIR)/sim_master.R \
+                         $(SIM_SRC_DIR)/runstan.R
 
 # Prerequisites for $(SIM_OUT_DIR)/compiled_simulation_results.csv:
 # - check file to make sure that all simulations finished successfully
@@ -85,7 +90,7 @@ PAPER_PDF_FILE := $(PAPER_OUT_DIR)/paper.pdf
 .PHONY: all clean stanmodfiles
 #all: $(POP_ROUT_FILES)
 #all: $(SIM_OUT_DIR)/sim_res_check.txt
-all: $(SIM_RESULTS_FILES)
+all: $(SIM_RES_CHECK_FILES)
 stanmodfiles: $(STAN_MOD_FILES)
 
 # Define substring extracting functions
@@ -118,7 +123,7 @@ $(STAN_MOD_FILES): $(STAN_SRC_FILES)
 # the % will be of the from x_y, where x is either 0 or 1 (one of the possible
 # values of $US_VAL) and y is either "continuous" or "discrete", the two
 # possible values of $OT_VAL
-$(SIM_OUT_DIR)/sim_res_check_usesizes_%.txt: $(SIM_RES_CHECK_PREREQS)
+$(SIM_OUT_DIR)/sim_res_check_usesizes_%.txt: $(SIM_OUT_DIR)/popdata_usesizes_%.Rout $(SIM_RES_CHECK_PREREQS)
 	USV=$(call get_firstword, $*);\
 	OTV=$(call get_secondword, $*);\
 	JN="usz_"; JN+=$${USV}; JN+="_"; JN+=$${OTV};\
@@ -129,8 +134,8 @@ $(SIM_OUT_DIR)/sim_res_check_usesizes_%.txt: $(SIM_RES_CHECK_PREREQS)
 	 -t 1-$(NUM_SIMS) -N "$${JN}" $(SIM_SRC_DIR)/do_sim_master.sh 
 
 # COMPILE RESULTS
-#$(SIM_RESULTS_FILES): $(SIM_RES_PREREQS)
-#	Rscript $(R_OPTS) $<
+$(SIM_RES_CHEC_FILES): $(SIM_RES_PREREQS)
+	Rscript $(R_OPTS) $<
 
 # CREATE FIGURES
 $(FIG_OUT_DIR)/figure_%.pdf: $(FIG_SRC_DIR)/figure_%.R
