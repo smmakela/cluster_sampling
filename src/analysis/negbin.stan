@@ -67,6 +67,41 @@ model {
   yi_sam ~ normal(yhat, sigma_y);
   Mj_sam ~ neg_binomial_2(mu_star, phi_star);
 }
+
+/*
+generated quantities {
+  int Mj_unsamp[JminusK];
+  vector[J_pop] Mj_all;
+  vector[J_pop] logMj_all;
+  vector[J_pop] y_j_hat;
+  real epsilon;
+  real beta0j_draw;
+  real beta1j_draw;
+
+  for (j in 1:JminusK) {
+    Mj_unsamp[j] <- neg_binomial_2_rng(mu, phi);
+  }
+  Mj_all <- append_row(to_vector(Mj_sam), to_vector(Mj_unsamp));
+  logMj_all <- log(Mj_all) - mean(log(Mj_all));
+
+  for (j in 1:J_pop) {
+    if (j <= J_sam) {
+      y_j_hat[j] <- beta0j[j] + beta1j[j]*xbar_pop[j];
+    }
+    else {
+      epsilon <- normal_rng(0, 1);
+      beta0j_draw <- gamma0 + gamma1*logMj[j] + sigma_beta0*epsilon;
+      epsilon <- normal_rng(0, 1);
+      beta1j_draw <- alpha0 + alpha1*logMj[j] + sigma_beta1*epsilon;
+      y_j_hat[j] <- beta0j_draw + beta1j_draw*xbar_pop[j];
+    }
+  }
+}
+*/
+
+
+
+/*
 generated quantities {
   real beta0j_draw;
   real beta1j_draw;
@@ -125,3 +160,4 @@ generated quantities {
   ybar_hat <- ybar_hat / Mj_tot_est;
 
 }
+*/
