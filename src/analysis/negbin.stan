@@ -4,13 +4,10 @@ data {
   int<lower=0> N_sam;                       // population size
   int cluster_id_long[N_sam];            // renumbered cluster ids, length = N_sam
   vector[N_sam] xi_sam;                     // individual-level covar ("age")
-  vector[J_sam] logMj_sam;                  // log of cluster sizes
   vector[N_sam] yi_sam;                     // outcomes
-  vector[J_sam] ybar_sam;                   // sample means by cluster
-  vector[J_pop] xbar_pop;                   // cluster avgs of xij
-  vector[J_pop] Mj_mis;                     // number of nonsampled units
-  vector[J_sam] nj;                         // number of sampled units per sampled cluster
   int Mj_sam[J_sam];                        // vector of cluster sizes for sampled clusters
+  vector[J_sam] logMj_sam;                  // log of cluster sizes
+  vector[J_pop] xbar_pop;                   // cluster avgs of xij
 }
 transformed data {
   int JminusK;
@@ -25,14 +22,14 @@ parameters {
   real gamma1;
   real alpha0;
   real alpha1;
-  vector[J_sam] beta0j;
-  vector[J_sam] beta1j;
   vector[J_sam] eta0;
   vector[J_sam] eta1;
   real<lower=0> phi;
   real<lower=0> mu;
 }
 transformed parameters {
+  vector[J_sam] beta0jhat;
+  vector[J_sam] beta1jhat;
   vector[N_sam] yhat;
   real<lower=0> mu_star;
   real<lower=0> phi_star;
@@ -46,8 +43,10 @@ transformed parameters {
   phi_star <- k + 1;
   mu_star <- (k + 1) * (1 - p) / p;
 
+  beta0jhat <- gamma0 + gamma1*logMj_sam + eta0*sigma_beta0;
+  beta1jhat <- alpha0 + alpha1*logMj_sam + eta1*sigma_beta1;
   for (i in 1:N_sam) {
-    yhat[i] <- beta0j[cluster_id_long[i]] + xi_sam[i] * beta1j[cluster_id_long[i]];
+    yhat[i] <- beta0jhat[cluster_id_long[i]] + xi_sam[i] * beta1jhat[cluster_id_long[i]];
   }
 }
 model {
@@ -62,102 +61,42 @@ model {
   alpha1 ~ normal(0, 1);
   eta0 ~ normal(0, 1);
   eta1 ~ normal(0, 1);
-  beta0j ~ normal(gamma0 + gamma1*logMj_sam, sigma_beta0);
-  beta1j ~ normal(alpha0 + alpha1*logMj_sam, sigma_beta1);
   yi_sam ~ normal(yhat, sigma_y);
   Mj_sam ~ neg_binomial_2(mu_star, phi_star);
 }
-
-/*
 generated quantities {
-  int Mj_unsamp[JminusK];
-  vector[J_pop] Mj_all;
-  vector[J_pop] logMj_all;
+  int<lower=0> Mj_mis[JminusK];
+  vector[J_pop] Mj_pop_est;
+  vector[J_pop] logMj_pop_est;
+  int ll;
+  real beta0jhat_draw;
+  real beta1jhat_draw;
   vector[J_pop] y_j_hat;
   real epsilon;
-  real beta0j_draw;
-  real beta1j_draw;
-
-  for (j in 1:JminusK) {
-    Mj_unsamp[j] <- neg_binomial_2_rng(mu, phi);
-  }
-  Mj_all <- append_row(to_vector(Mj_sam), to_vector(Mj_unsamp));
-  logMj_all <- log(Mj_all) - mean(log(Mj_all));
-
-  for (j in 1:J_pop) {
-    if (j <= J_sam) {
-      y_j_hat[j] <- beta0j[j] + beta1j[j]*xbar_pop[j];
-    }
-    else {
-      epsilon <- normal_rng(0, 1);
-      beta0j_draw <- gamma0 + gamma1*logMj[j] + sigma_beta0*epsilon;
-      epsilon <- normal_rng(0, 1);
-      beta1j_draw <- alpha0 + alpha1*logMj[j] + sigma_beta1*epsilon;
-      y_j_hat[j] <- beta0j_draw + beta1j_draw*xbar_pop[j];
-    }
-  }
-}
-*/
-
-
-
-/*
-generated quantities {
-  real beta0j_draw;
-  real beta1j_draw;
-  vector[J_pop] y_j_hat;
   real ybar_hat;
-  real ybar_samp_mis;
-  //real epsilon0;
-  real epsilon1;
-  real epsilon2;
-  //real epsilon3;
-  int Mj_unsamp[JminusK];
-  int kk;
-  int Mj_tot_est;
-  vector[J_pop] Mj_all;
-  vector[J_pop] logMj_all;
 
   for (j in 1:JminusK) {
-    Mj_unsamp[j] <- neg_binomial_2_rng(mu, phi);
-  }
-  Mj_tot_est <- sum(Mj_sam) + sum(Mj_unsamp);
-  Mj_all <- append_row(to_vector(Mj_sam), to_vector(Mj_unsamp));
-  // if we drew a cluster size of zero, set it to 1 here so we can take logs
-  for (j in 1:JminusK) {
-    if (Mj_unsamp[j] == 0) {
-      Mj_all[j + J_sam] <- 1.0;
+    ll <- J_sam + j;
+    Mj_mis[ll] <- neg_binomial_2_rng(mu, phi);
+    while (Mj_mis[ll] == 0) {
+      Mj_mis[ll] <- neg_binomial_2_rng(mu, phi);
     }
   }
-  logMj_all <- log(Mj_all) - mean(log(Mj_all));
+  Mj_pop_est <- append_row(to_vector(Mj_sam), to_vector(Mj_mis));
+  logMj_pop_est <- log(Mj_pop_est) - mean(log(Mj_pop_est));
 
-  kk <- 1;
-  ybar_hat <- 0.0;
   for (j in 1:J_pop) {
-    // if the jth cluster was sampled, then we can use beta0j, beta1j
     if (j <= J_sam) {
-      //epsilon0 <- normal_rng(0,1);
-      ybar_samp_mis <- beta0j[j] + beta1j[j]*xbar_pop[j];
-      y_j_hat[j] <- nj[j]*ybar_sam[j] + Mj_mis[j]*ybar_samp_mis ;
+      y_j_hat[j] <- beta0jhat[j] + beta1jhat[j] * xbar_pop[j];
     }
     else {
-      epsilon1 <- normal_rng(0,1);
-      epsilon2 <- normal_rng(0,1);
-      //epsilon3 <- normal_rng(0,1);
-      //beta0j_draw <- gamma0 + (gamma1 * log(Mj_unsamp[kk])) + (epsilon1 * sigma_beta0);
-      //beta1j_draw <- alpha0 + (alpha1 * log(Mj_unsamp[kk])) + (epsilon2 * sigma_beta1);
-      beta0j_draw <- gamma0 + (gamma1 * logMj_all[j]) + (epsilon1 * sigma_beta0);
-      beta1j_draw <- alpha0 + (alpha1 * logMj_all[j]) + (epsilon2 * sigma_beta1);
-      if (Mj_unsamp[kk] == 0) {
-        y_j_hat[j] <- 0;
-      } else {
-        y_j_hat[j] <- Mj_unsamp[kk]*(beta0j_draw + (beta1j_draw .* xbar_pop[j]));
-      }
-      kk <- kk + 1;
+      epsilon <- normal_rng(0, 1);
+      beta0jhat_draw <- gamma0 + gamma1 * logMj_pop_est[j] + sigma_beta0 * epsilon;
+      epsilon <- normal_rng(0, 1);
+      beta1jhat_draw <- alpha0 + alpha1 * logMj_pop_est[j] + sigma_beta1 * epsilon;
+      y_j_hat[j] <- beta0jhat_draw + beta1jhat_draw * xbar_pop[j];
     }
-    ybar_hat <- ybar_hat + y_j_hat[j];
   }
-  ybar_hat <- ybar_hat / Mj_tot_est;
-
+  ybar_hat <- sum(y_j_hat .* Mj_pop_est) / sum(Mj_pop_est);
 }
-*/
+
