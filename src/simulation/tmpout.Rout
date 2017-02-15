@@ -1,0 +1,7 @@
+running
+  '/usr/lib64/R/bin/R --slave --no-restore --no-save --no-restore --file=tmp.R --args -r hello -a world -l again'
+
+Loading required package: methods
+Error: 
+ usage: my_prog.R --really_long_option_name_one --another_really_long_option_name --last_long_name
+Execution halted

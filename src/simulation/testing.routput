@@ -1,0 +1,60 @@
+Loading required package: docopt
+Loading required package: methods
+Loading required package: plyr
+Loading required package: dplyr
+
+Attaching package: ‘dplyr’
+
+The following objects are masked from ‘package:plyr’:
+
+    arrange, count, desc, failwith, id, mutate, rename, summarise,
+    summarize
+
+The following objects are masked from ‘package:stats’:
+
+    filter, lag
+
+The following objects are masked from ‘package:base’:
+
+    intersect, setdiff, setequal, union
+
+Loading required package: lme4
+Loading required package: Matrix
+Creating a generic function for ‘image’ from package ‘graphics’ in package ‘Matrix’
+Creating a generic function for ‘solve’ from package ‘base’ in package ‘Matrix’
+Creating a generic function for ‘chol2inv’ from ‘base’ in package ‘Matrix’
+    (from the saved implicit definition)
+Creating a generic function for ‘chol2inv’ from package ‘base’ in package ‘Matrix’
+Creating a generic function for ‘determinant’ from package ‘base’ in package ‘Matrix’
+Creating a generic function for ‘update’ from package ‘stats’ in package ‘Matrix’
+Error in match.call(definition, call, expand.dots, envir) : 
+  unused argument (mode = c("missing", "methods"))
+Error : unable to load R code in package ‘Matrix’
+Failed with error:  ‘package ‘Matrix’ could not be loaded’
+Loading required package: rstan
+Loading required package: ggplot2
+rstan (Version 2.9.0-3, packaged: 2016-02-11 15:54:41 UTC, GitRev: 05c3d0058b6a)
+For execution on a local, multicore CPU with excess RAM we recommend calling
+rstan_options(auto_write = TRUE)
+options(mc.cores = parallel::detectCores())
+Loading required package: foreach
+Loading required package: doParallel
+Loading required package: iterators
+Loading required package: parallel
+List of 4
+ $ simno       : chr "1"
+ $ use_sizes   : chr "1"
+ $ outcome_type: chr "continuous"
+ $ numclusters : chr "100"
+NULL
+[1] "simno"        "use_sizes"    "outcome_type" "numclusters" 
+[1] "Assigning 1 to simno"
+[1] "Assigning 1 to use_sizes"
+[1] "Assigning continuous to outcome_type"
+[1] "Assigning 100 to numclusters"
+  num.clusters.list num.units.list
+1                 5           0.05
+[1] "use sizes, outcome type:1continuous"
+Running in parallel for 5 clusters, 0.05 units, use_sizes = 1 , and continuous outcomes.
+Sampling data
+[1] "2016-10-31 21:13:47 EDT"

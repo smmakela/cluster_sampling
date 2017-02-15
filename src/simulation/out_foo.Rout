@@ -1,0 +1,12 @@
+running
+  '/usr/lib64/R/bin/R --slave --no-restore --no-save --no-restore --file=foo.R'
+
+Loading required package: methods
+List of 6
+ $ -a: logi FALSE
+ $ -r: logi FALSE
+ $ -m: NULL
+ $ a : logi FALSE
+ $ r : logi FALSE
+ $ m : NULL
+ - attr(*, "class")= chr [1:2] "docopt" "list"

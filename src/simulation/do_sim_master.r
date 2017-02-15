@@ -8,6 +8,6 @@ seed <- NULL
 numclusters <- 300
 clustersize.range <- c(100, 1000)
 unitcovar.range <- c(20, 45)
-source("/vega/stats/users/smm2253/Projects/Cluster_Sampling/Code/Simplify/vary_K/sim_master.r")
+source("/vega/stats/users/smm2253/cluster_sampling/sim_master.r")
 sim_master(sim, seed, numclusters, clustersize.range, unitcovar.range)
 

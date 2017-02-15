@@ -1,9 +1,9 @@
-#/usr/bin/R Rscript
+#!/usr/bin/R Rscript
 # Author: Susanna Makela
 # Date: 21 Apr 2014
 # Purpose: generate population data
 
-'Usage: makepopdata.r [options]
+'Usage: makepopdata.R [options]
 
   -s --seed <seedval>                      Integer for setting seed so we can reproduce the results [default: NULL]
   -n --numclusters <J>                     Number of clusters in population [default: 100]
@@ -113,7 +113,25 @@
       ymean <- b0j + b1j*xi 
       yi <- rnorm(ymean, mean = ymean, sd = sigma_y)
     } else {
-      print("nothing here yet!")
+      gamma0 <- rnorm(1)
+      alpha0 <- rnorm(1)
+      if (use.sizes == 1) {
+        gamma1 <- rnorm(1)
+        alpha1 <- rnorm(1)
+      }  else {
+        gamma1 <- 0
+        alpha1 <- 0
+      }
+      sigma_beta0 <- abs(rnorm(1, 0, 0.5))
+      sigma_beta1 <- abs(rnorm(1, 0, 0.5))
+      sigma_y <- abs(rnorm(1, 0, 0.75))
+        
+      beta0j <- rnorm(n = J, mean = gamma0 + gamma1*logMj_c, sd = sigma_beta0)
+      b0j <- rep(beta0j, Mj)
+      beta1j <- rnorm(n = J, mean = alpha0 + alpha1*logMj_c, sd = sigma_beta1)
+      b1j <- rep(beta1j, Mj)
+      ymean <- b0j + b1j*xi 
+      yi <- rnorm(ymean, mean = ymean, sd = sigma_y)
     }
 
     # Make data frame of pop data
