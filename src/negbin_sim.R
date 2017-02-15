@@ -1,6 +1,7 @@
-negbin_sim <- function(Nj.pop, J, K, stan.model, n.iter, n.chains, n.sims) {
-  # Purpose: Simulate cluster sizes from negative binomial, do PPS sampling, and
-  #   fit stan model to see how well it fits
+negbin_sim <- function(Nj.pop, J, K, model.name, stan.model,
+                       n.iter, n.chains, n.sims) {
+  # Purpose: Given vector of population cluster sizes, do PPS sampling, and
+  #   fit stan model to see how well we can recover the missing cluster szies
   #
   # Author: Susanna Makela
   #
@@ -8,7 +9,8 @@ negbin_sim <- function(Nj.pop, J, K, stan.model, n.iter, n.chains, n.sims) {
   #   Nj.pop -- cluster sizes in simulated population
   #   J -- number of clusters in population
   #   K -- number of clusters sampled
-  #   stan.mod -- compiled stan model
+  #   model.name -- whether we're doing the negbin or lognormal
+  #   stan.model -- compiled stan model
   #   n.iter -- number of iterations to run stan for
   #   n.chains -- number of chains to use in stan model
   #   n.sims -- number of posterior predictive simulations to do
@@ -31,16 +33,22 @@ negbin_sim <- function(Nj.pop, J, K, stan.model, n.iter, n.chains, n.sims) {
   sample.data <- data.frame(sample.ids = c(1:K),
                             orig.ids = sample.inds, Nj.sample)
   
-  # Calculate mean, var to get empirical priors for mu, phi
-  mean_Nj_sample <- mean(Nj.sample)
-  var_Nj_sample <- var(Nj.sample)
-  mu_empirical <- mean_Nj_sample
-  phi_empirical <- (mu_empirical^2 / (var_Nj_sample - mu_empirical)) - 1
+  if (model.name == "negbin") {
+    # Calculate mean, var to get empirical priors for mu, phi
+    mean_Nj_sample <- mean(Nj.sample)
+    var_Nj_sample <- var(Nj.sample)
+    mu_empirical <- mean_Nj_sample
+    phi_empirical <- (mu_empirical^2 / (var_Nj_sample - mu_empirical)) - 1
+  }
   
   # Run stan model
-  stan.data <- list(JminusK = J - K, K = K, Nj_sample = Nj.sample,
-                    mu_empirical = mu_empirical,
-                    phi_empirical = phi_empirical)
+  if (model.name == "negbin") {
+    stan.data <- list(JminusK = J - K, K = K, Nj_sample = Nj.sample,
+                      mu_empirical = mu_empirical,
+                      phi_empirical = phi_empirical)
+  } else {
+    stan.data <- list(K = K, Nj_sample = Nj.sample)
+  }
   stan.fit <- sampling(stan.model, data = stan.data,
                        iter = n.iter, chains = n.chains)
   samps <- extract(stan.fit, permute = FALSE)

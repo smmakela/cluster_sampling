@@ -1,0 +1,135 @@
+---
+title: "Testing Size Models"
+author: "Susanna Makela"
+date: "2/14/2017"
+output:
+  html_document: default
+  pdf_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(cache = FALSE)
+```
+
+## Intro
+We consider two possible superpopulation distributions for cluster sizes: the negative binomial and the lognormal. We'll generate a superpopulation, take a PPS sample of cluster sizes, fit the size-biased distributions (which we can derive analytically) to the sample, and see how well we recover the superpopulation parameters.
+
+```{r, echo = FALSE, warning = FALSE}
+# Set up libraries, directories, options, etc
+library(rstan)
+library(dplyr)
+library(tidyr)
+library(ggplot2)
+
+rstan_options(auto_write = TRUE)
+options(mc.cores = parallel::detectCores())
+
+codedir <- "/Users/susanna/projects/cluster_sampling/src/"
+
+source(paste0(codedir, "rspps.r"))
+
+negbin_file <- paste0(codedir, "cluster_size_model_testing/negbin.stan")
+negbin_stan <- stan_model(file = negbin_file)
+lognormal_file <- paste0(codedir, "cluster_size_model_testing/lognormal.stan")
+lognormal_stan <- stan_model(file = lognormal_file)
+```
+
+We'll use the following parameters to generate the superpopulations.
+```{r}
+J <- 1000    # number of clusters in pop
+K <- 50      # number of clusters to sample
+
+# params for negative binomial (mu_nb, phi are for the Stan parameterization)
+k <- 200
+p <- 0.2
+mu_nb <- k * (1-p) / p
+phi <- k
+
+# params for lognormal (select so that get roughly same mean, var as above)
+alpha <- mu_nb # mean of negative binomial
+beta <- mu_nb + mu_nb^2 / phi # var of negative binomial
+# eqns to back-solve for mu and sigma based on alpha and beta
+sigma <- sqrt(log(exp(log(beta) - 2*log(alpha)) + 1))
+mu <- 0.5*(2*log(alpha) - sigma^2)
+
+# Create superpopulations
+Nj.pop.nb <- rnbinom(n = J, size = k, prob = p)
+Nj.pop.ln <- exp(rnorm(n = J, mean = mu, sd = sigma))
+```
+
+Make density plots of the two superpopulations. Note that, though they have the same mean and variance, the lognormal is right-skewed and its mode is to the left of its mean, so the modes of the two distributions won't always line up exactly.
+```{r, echo = FALSE}
+Nj.pop.df <- data.frame(Nj = c(Nj.pop.nb, Nj.pop.ln),
+                        type = rep(c("negbin", "lognorm"), each = J))
+ggplot(Nj.pop.df, aes(x = Nj)) +
+  geom_line(aes(colour = type), stat = "density") +
+  theme_bw()
+```
+
+Now sample PPS from the two superpopulations and fit the size-biased models in Stan.
+```{r, echo = FALSE}
+
+# Generate population data frame
+pop.data.nb <- data.frame(ids = c(1:J), Nj.pop.nb)
+pop.data.ln <- data.frame(ids = c(1:J), Nj.pop.ln)
+
+# Sample
+sample.inds.nb <- rspps(Nj.pop.nb, c(1:J), K)
+sample.inds.ln <- rspps(Nj.pop.ln, c(1:J), K)
+Nj.sample.nb <- Nj.pop.nb[sample.inds.nb]
+Nj.sample.ln <- Nj.pop.ln[sample.inds.ln]
+sample.data.nb <- data.frame(sample.ids = c(1:K),
+                             orig.ids = sample.inds.nb, Nj.sample.nb)
+sample.data.ln <- data.frame(sample.ids = c(1:K),
+                             orig.ids = sample.inds.ln, Nj.sample.ln)
+
+# Make stan data
+stan.data.nb <- list(J = J, K = K, Nj_sample_minus1 = Nj.sample.nb - 1)
+stan.data.ln <- list(J = J, K = K, Nj_sample = Nj.sample.ln)
+
+# Run stan
+stan.fit.nb <- sampling(negbin_stan, data = stan.data.nb, iter = 2000,
+                        chains = 4, control = list(adapt_delta = 0.99),
+                        refresh = 0)
+stan.fit.ln <- sampling(lognormal_stan, data = stan.data.ln, iter = 2000,
+                        chains = 4, control = list(adapt_delta = 0.99),
+                        refresh = 0)
+
+# Get output
+fit.summary.nb <- data.frame(summary(stan.fit.nb)$summary)
+print(stan.fit.nb, pars = c("mu", "mu_star", "phi", "phi_star"))
+fit.summary.ln <- data.frame(summary(stan.fit.ln)$summary)
+print(stan.fit.ln, pars = c("mu", "mu_star", "sigma"))
+
+# Extract generated quantities
+Nj.pop.new.nb <- rstan::extract(stan.fit.nb, "Nj_pop_new")
+Nj.pop.new.nb <- unlist(Nj.pop.new.nb, use.names = FALSE)
+Nj.sample.new.nb <- rstan::extract(stan.fit.nb, "Nj_sample_new")
+Nj.sample.new.nb <- unlist(Nj.sample.new.nb, use.names = FALSE)
+Nj.pop.new.ln <- rstan::extract(stan.fit.ln, "Nj_pop_new")
+Nj.pop.new.ln <- unlist(Nj.pop.new.ln, use.names = FALSE)
+Nj.sample.new.ln <- rstan::extract(stan.fit.ln, "Nj_sample_new")
+Nj.sample.new.ln <- unlist(Nj.sample.new.ln, use.names = FALSE)
+
+Nj <- c(Nj.pop.nb, Nj.sample.nb, Nj.pop.new.nb, Nj.sample.new.nb,
+        Nj.pop.ln, Nj.sample.ln, Nj.pop.new.ln, Nj.sample.new.ln)
+pop.samp <- rep(rep(c("pop", "sample", "pop", "sample"),
+                    times = c(J, K, length(Nj.pop.new.nb),
+                              length(Nj.sample.new.nb))),
+                times = 2)
+model <- rep(c("negbin", "lognormal"), each = length(Nj)/2)
+old.new <- rep(rep(c("data", "PPD"),
+                   times = c(J + K, length(Nj.pop.new.nb) +
+                               length(Nj.sample.new.nb))), times = 2)
+
+df <- data.frame(Nj, pop.samp, model, old.new)
+
+# Plot posterior predictive draws to see how well they match the data
+ggplot(df, aes(x = Nj)) +
+  geom_line(aes(colour = old.new), stat = "density") +
+  #scale_colour_discrete(breaks = c("pop", "sample"),
+  #                      values = c("black", "grey50")) +
+  facet_grid(pop.samp ~ model, scales= "free") +
+  theme_bw()
+
+```

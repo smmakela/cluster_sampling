@@ -18,15 +18,16 @@ source("src/rspps.r")
 source("src/negbin_sim.R")
 J <- 100 # number of clusters in pop
 K <- 10 # number of clusters to sample
-k <- 200
-p <- 0.2
+k <- 200 # param for negative binomial
+p <- 0.2 # param for negative binomial
 Nj.pop <- rnbinom(n = J, size = k, prob = p)
-m <- (1 - p) * k / p
+m <- (1 - p) * k / p # convert to 
 v <- (1 - p) * k / p^2
 stan.model <- stan_model(file = "src/negbin.stan")
 n.iter <- 1000
 n.chains <- 4
 n.sims <- 500
+model.name <- "negbin"
 sim.res <- negbin_sim(Nj.pop, J, K, stan.model, n.iter, n.chains, n.sims)
 ```
 
@@ -81,16 +82,38 @@ print(p.vals)
 Hmm... this was just one simulation. How do we know that the results we're seeing aren't a result of the cluster sizes we happened to draw? Let's repeat the above simulation many times and see what the *distribution* of posterior p-values looks like.
 
 ```{r, include = FALSE}
-n.reps <- 1000
-p.vals.df <- data.frame()
-for (j in 1:n.reps) {
-  res <- negbin_sim(Nj.pop, J, K, stan.model, n.iter, n.chains, n.sims)
-  p.vals <- res[["p.vals"]]
-  p.vals$rep <- j
-  p.vals.df <- rbind(p.vals.df, p.vals)
-}
+# n.reps <- 100
+# p.vals.df <- data.frame()
+# for (j in 1:n.reps) {
+#   res <- negbin_sim(Nj.pop, J, K, stan.model, n.iter, n.chains, n.sims)
+#   p.vals <- res[["p.vals"]]
+#   p.vals$rep <- j
+#   p.vals.df <- rbind(p.vals.df, p.vals)
+# }
 ```
+
+Here's the distribution of posterior p-values:
 ```{r, echo = FALSE}
-dplyr::summarise(group_by(p.vals.df, stat),
-                 mean_pval = mean(p_value))
+# dplyr::summarise(group_by(p.vals.df, stat),
+#                  mean_pval = mean(p_value))
+# ggplot(p.vals.df, aes(x = p_value)) +
+#   geom_line(stat = "density") +
+#   facet_wrap(~ stat) +
+#   theme_bw()
 ```
+
+What if the cluster sizes had instead come from a lognormal distribution? What would things look like then?
+
+```{r}
+Nj.pop <- exp(rnorm(n = J)) # exp(N(0, 1))
+stan.model <- stan_model(file = "src/lognormal.stan")
+model.name <- "lognormal"
+n.iter <- 1000
+n.chains <- 4
+n.sims <- 1
+sim.res <- negbin_sim(Nj.pop, J, K, model.name, stan.model, n.iter, n.chains, n.sims)
+```
+better prior for sigma? esp in real application
+flaw in continuous model -- in discrete data, you have another piece of info: no clusters are 0, lower bound on cluster size
+still lower bound in continuous : truncated lognormal?
+cauchy prior on sigma is too weak?
