@@ -65,10 +65,10 @@ ybar.true <- mean(pop.data$yi)
     print(Sys.time())
 
     # SORT pop and sample data by cluster.id
-#    pop.data <- tbl_df(pop.data)
-    pop.data <- dplyr::arrange(pop.data, cluster.id)
-#    sample.data <- tbl_df(sample.data)
-    sample.data <- dplyr::arrange(sample.data, cluster.id)
+    pop.data <- tbl_df(pop.data)
+    pop.data <- arrange(pop.data, cluster.id)
+    sample.data <- tbl_df(sample.data)
+    sample.data <- arrange(sample.data, cluster.id)
 
     J_pop <- J
     J_sam <- num.clusters
@@ -345,8 +345,8 @@ rm(sample.data)
     par.ests.rownames <- gsub("\\[", "", par.ests.rownames) 
     par.ests.rownames <- gsub("\\]", "", par.ests.rownames) 
     par.ests.colnames <- attr(par.ests, "dimnames")[[2]]
-    par.ests <- data.frame(param.name = par.ests.rownames, par.ests)
-    colnames(par.ests) <- c("param.name", par.ests.colnames)
+    par.ests <- data.frame(par.ests, row.names = par.ests.rownames)
+    colnames(par.ests) <- par.ests.colnames
 
     # save par.ests
     #write.table(par.ests,
@@ -359,20 +359,11 @@ rm(sample.data)
     
     print("printing results")
     print(Sys.time())      
-print(str(par.ests))
-print(table(par.ests$param.name))
-print(str(par.ests["ybar_hat", ]))
-print(paste0("ybar.true: ", ybar.true))
-    ybar.hat <- par.ests["ybar_hat", "mean"]
-print(paste0("ybar.hat: ", ybar.hat))
-    ybar.hat.lci50 <- par.ests["ybar_hat", "25%"] # 25% quantile
-print(paste0("ybar.hat.lci50: ", ybar.hat.lci50))
-    ybar.hat.uci50 <- par.ests["ybar_hat", "75%"] # 75% quantile
-print(paste0("ybar.hat.uci50: ", ybar.hat.uci50))
-    ybar.hat.lci95 <- par.ests["ybar_hat", "2.5%"] # 2.5% quantile
-print(paste0("ybar.hat.lci95: ", ybar.hat.lci95))
-    ybar.hat.uci95 <- par.ests["ybar_hat", "97.5%"] # 97.5% quantile
-print(paste0("ybar.hat.uci95: ", ybar.hat.uci95))
+    ybar.hat <- par.ests["ybar_hat",1]
+    ybar.hat.lci50 <- par.ests["ybar_hat", 5] # 25% quantile
+    ybar.hat.uci50 <- par.ests["ybar_hat", 7] # 75% quantile
+    ybar.hat.lci95 <- par.ests["ybar_hat", 4] # 2.5% quantile
+    ybar.hat.uci95 <- par.ests["ybar_hat", 8] # 97.5% quantile
     rnames <- c("gamma0", "gamma1", "alpha0", "alpha1", "sigma_beta0",
                 "sigma_beta1", "sigma_y")
     cnames <- c("mean", "2.5%", "97.5%", "Rhat", "n_eff")
@@ -393,9 +384,8 @@ print(paste0("ybar.hat.uci95: ", ybar.hat.uci95))
 
     print("saving results")
     print(Sys.time())
-    ybar.ests <- data.frame(ybar.true, ybar.hat, ybar.hat.lci50, ybar.hat.uci50,
-                            ybar.hat.lci95, ybar.hat.uci95) 
-print(str(ybar.ests))
+    ybar.ests <- c(ybar.true, ybar.hat, ybar.hat.lci50, ybar.hat.uci50,
+                   ybar.hat.lci95, ybar.hat.uci95) 
     #write.table(res,
     #            file = paste0(rootdir, "/output/simulation/ybar_stan_usesizes_",
     #                          use.sizes, "_nclusters_", num.clusters,

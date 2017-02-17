@@ -1,139 +1,90 @@
-#!/usr/bin/R Rscript
+# Author: Susanna Makela
+# Date: 13 Nov 2014
+# Purpose: master file for binomial model
 
-'
-Usage: sim_master.R  --simno=<simnumber> --use_sizes=<us_val> --outcome_type=<ot_val> [options]
-
-Options:
-  -s --simno <simnumber>      Current simulation number
-  -u --use_sizes <us_val>     Whether outcomes depend on cluster sizes
-  -o --outcome_type <ot_val>  Whether outcomes are continuous or binary
-  -n --numclusters <J>        Number of clusters in population [default: 100]
-
-' -> doc
+sim_master <- function(sim, numclusters, outcome.type) {
+# Arguments:
+#  sim -- simulation number; used to save and later reload sample data
+#  numclusters -- number of clusters in population (needed in svy_ests.r)
+#  outcome.type -- whether outcome being considered is continuous or binary
 
   #############################################################################
-  ### Set lib paths, source files 
+  ### Setup of directories
   #############################################################################
     libdir <- "/vega/stats/users/smm2253/rpackages"
     .libPaths(libdir)
     rootdir <- "/vega/stats/users/smm2253/cluster_sampling/"
     Sys.setenv(HOME = rootdir)
-    
-    source(paste0(rootdir, "src/simulation/sampledata.R"))
-    source(paste0(rootdir, "src/simulation/runstan.R"))
-    source(paste0(rootdir, "src/simulation/lmer_compare.R"))
-    source(paste0(rootdir, "src/simulation/svy_ests.R"))
 
   #############################################################################
-  ### Load libraries, get options, set up parallel stuff
+  ### Source files
   #############################################################################
-    require(docopt)
-    require(methods)
-    require(plyr)
-    require(dplyr)
-    require(tidyr)
-    require(lme4)
-    require(rstan)
-    require(foreach)
-    require(doParallel) 
-    require(iterators)
-    require(survey)
+    source(paste(rootdir, "/src/simulation/sampledata.r", sep = ""))
+    source(paste(rootdir, "/src/simulation/runstan.r", sep = ""))
+    source(paste(rootdir, "/src/simulation/lmer_compare.r", sep = ""))
+    source(paste(rootdir, "/src/simulation/svy_ests.r", sep = ""))
 
-    # Store the docopt options as variables we can use in the code
-    opts <- docopt(doc) 
-    opts.names <- names(opts)
+  #############################################################################
+  ### Load libraries, set up parallel stuff
+  #############################################################################
+    library(lme4)
+    library(rstan)
+    library(foreach)
+    library(doParallel) 
+    library(iterators)
+    cl <- makeCluster(min(detectCores(), 10),
+                      outfile = paste(rootdir,
+                                      "/src/simulation/parallel_output.txt",
+                                      sep = ""))
+    registerDoParallel(cl)
+    clusterEvalQ(cl, .libPaths( "/vega/stats/users/smm2253/rpackages"))
+    print(getDoParWorkers()) # make sure foreach will actually run in parallel
+    #clusterEvalQ(cl, library(iterators, lib.loc = "/vega/stats/users/smm2253/rpackages"))
+    #clusterEvalQ(cl, library(foreach, lib.loc = "/vega/stats/users/smm2253/rpackages"))
+    #clusterEvalQ(cl, library(doParallel, lib.loc = "/vega/stats/users/smm2253/rpackages"))
 
-    # The options are listed twice, once with "--" in front of the option name
-    # and once without, so remove the "--" ones
-    opts.names <- opts.names[-grep("--", opts.names)]
-    opts <- opts[opts.names]
-    print(str(opts))
-    print(opts.names)
-
-    # The options are read in as strings, so make them numeric here
-    for (j in 1:length(opts.names)) {
-      if (is.character(opts[[j]])) {
-        print(paste0("Assigning ", opts[[j]], " to ", opts.names[j]))
-        assign(opts.names[j], opts[[j]])
-      } else {
-        print(paste0("Assigning ", as.numeric(opts[[j]]), " to ", opts.names[j]))
-        assign(opts.names[j], as.numeric(opts[[j]]))
-      }
-    }
-
-    # Set up parallel parameters
-#    cl <- makeCluster(min(detectCores(), 10),
-#                      type = "FORK",
-#                      outfile = paste0(rootdir,
-#                                       "/output/simulation/parallel_output_",
-#                                       "usesizes_", use_sizes, "_",
-#                                       outcome_type, ".txt"))
-#print("makeCluster")
-#print("registerDoParallel")
-#    registerDoParallel(cl)
-#print("clusterEvalQ")
-#    clusterEvalQ(cl, .libPaths( "/vega/stats/users/smm2253/rpackages"))
-#print("getDoParWorkers")
-#    print(getDoParWorkers()) # make sure foreach will actually run in parallel
-#print("clusterEvalQ specific libraries")
-#    clusterEvalQ(cl, library(iterators, lib.loc = "/vega/stats/users/smm2253/rpackages"))
-#    clusterEvalQ(cl, library(foreach, lib.loc = "/vega/stats/users/smm2253/rpackages"))
-#    clusterEvalQ(cl, library(doParallel, lib.loc = "/vega/stats/users/smm2253/rpackages"))
 
   #############################################################################
   ### Create list of parameters to loop through for sim
   #############################################################################
-    num.clusters.list <- c(5, 10)
-    #num.clusters.list <- c(5, 10, 20, 50)
-    num.units.list <- c(0.05, 0.1)
-    #num.units.list <- c(0.05, 0.1, 0.25, 0.5, 1, 10, 50, 100)
-    #use.sizes.list <- c(0, 1)
-    #outcome.type.list <- c("continuous", "binary")
+    num.clusters.list <- c(15, 30, 60, 100)
+    num.units.list <- c(0.05, 0.1, 0.25, 0.5, 1, 10, 50, 100)
+    use.sizes.list <- c(0, 1)
+    outcome.type.list <- c("continuous", "binary")
     tmplist <- list(num.clusters.list = num.clusters.list,
-                    num.units.list    = num.units.list)
-                    #use.sizes.list    = use.sizes.list,
-                    #outcome.type.list = outcome.type.list)
-    sim.params <- expand.grid(tmplist)
-    #sim.params$outcome.type.list <- as.character(sim.params$outcome.type.list) 
-#print("sim params:")
-#print(sim.params)
+                    num.units.list = num.units.list,
+                    use.sizes.list = use.sizes.list,
+                    outcome.type.list = outcome.type.list)
+    sim.params <- expand.grid(tmplist) 
+
   #############################################################################
   ### Loop through cluster/unit lists
   #############################################################################
     stanmod_list <- c("cluster_inds_only", "knowsizes", "bb", "negbin")
-    #stanmod_list <- c("cluster_inds_only")
-    use.sizes <- use_sizes
-    outcome.type <- outcome_type
-#    loopres <- foreach (k = 1:nrow(sim.params),
-#                        .packages = c("rstan", "plyr", "tidyr", "lme4"),
-#                        .export = ls(envir = globalenv()),
-#                        .verbose=TRUE) %dopar% {
+    loopres <- foreach (k = 1:nrow(sim.params),
+                        .packages = c("rstan", "dplyr"),
+                        .export = ls(envir = globalenv()),
+                        .verbose=TRUE) %dopar% {
 
-print(paste0("use sizes, outcome type: ", use.sizes, " ", outcome.type))
-
-for (k in 1:nrow(sim.params)) {
       # Set parameters for this simulation
-      num.clusters <- sim.params[k, "num.clusters.list"]
-      num.units    <- sim.params[k, "num.units.list"]
-      #use.sizes    <- sim.params[k, "use.sizes.list"]
-      #outcome.type <- sim.params[k, "outcome.type.list"]
+      num.clusters <- sim.params[k, "num.cluster.list"]
+      num.units <- sim.params[k, "num.units.list"]
+      use.sizes <- sim.params[k, "use.sizes.list"]
+      outcome.type <- sim.params[k, "outcome.type.list"]
 
       # Print a message about which parameters we're running now
       cat("Running in parallel for", num.clusters, "clusters,", num.units,
           "units, use_sizes =", use.sizes, ", and", outcome.type, "outcomes.\n")
-  
+
       # Sample data using above parameters
-      cat("Sampling data\n")
+      print("Sampling data")
       print(Sys.time())
-      sampledata(num.clusters, num.units, use.sizes, outcome.type, rootdir, simno)
-  
+      sampledata(num.clusters, num.units, use.sizes, outcome.type, rootdir, sim)
+
       # Run stan models
-      results.list <- vector(mode = "list",
-                             length = length(stanmod_list)*2 + 2)
       for (p in 1:length(stanmod_list)) {
         stanmod_name <- stanmod_list[p]
-        load(paste0(rootdir, "/src/analysis/", stanmod_name, ".RData"))
-#print(str(stanmod))
+        stanmod <- load(paste0(rootdir, "/src/", stanmod_name, ".RData"))
         cat("##################################################################################\n")
         cat("##################################################################################\n")
         print(paste0("Starting to run use.sizes = ", use.sizes,
@@ -141,74 +92,42 @@ for (k in 1:nrow(sim.params)) {
                      ", num.clusters = ", num.clusters,
                      ", num.units = ", num.units))
         print(Sys.time())
-        stan_res <- runstan(num.clusters, num.units, use.sizes,
-                            rootdir, simno, stanmod, stanmod_name)
-        results.list[[2*p - 1]] <- stan_res[["par.ests"]]
-        names(results.list)[2*p - 1] <- paste0("param_ests_", stanmod_name)
-        results.list[[2*p]] <- stan_res[["ybar.ests"]]
-        names(results.list)[2*p] <- paste0("ybar_ests_", stanmod_name)
-        rm(stan_res)
+        stanout <- runstan(num.clusters, num.units, use.sizes,
+                           rootdir, sim, stanmod, stanmod_name)
         cat("##################################################################################\n")
       } # end stanmod loop
-  
+
       # Compare using lmer
       print("Running lmer_compare")
       print(Sys.time())
-      lmer_res <- lmer_compare(num.clusters, num.units, use.sizes, outcome.type, rootdir, simno)
-      results.list[[2*length(stanmod_list) + 1]] <- lmer_res
-      names(results.list)[2*length(stanmod_list) + 1] <- "param_ests_lmer"
-      rm(lmer_res)
-  
+      lmer_compare(num.clusters, num.units, use.sizes, outcome.type,
+                   rootdir, sim)
+
       # Estimate ybar using survey package
       print("Running svy_ests")
       print(Sys.time())
       J <- numclusters # number of clusters in the population
-      svy_res <- svy_ests(J, num.clusters, num.units, use.sizes, outcome.type, rootdir, simno)
-      results.list[[2*length(stanmod_list) + 2]] <- svy_res
-      names(results.list)[2*length(stanmod_list) + 2] <- "ybar_ests_svy"
-      rm(svy_res)
+      svy_ests(J, num.clusters, num.units, use.size, outcome.type, rootdir, sim)
+      print("##################################################################################")
+      print("##################################################################################")
 
-      print("##################################################################################")
-      print("##################################################################################")
-  
-      # Save results
-      if (num.units <= 1) {
-        nunits <- paste(100*num.units, "pct", sep = "")
-      } else {
-        nunits <- num.units
-      }
-print("saving results")
-      saveRDS(results.list,
-              paste0(rootdir, "output/simulation/results_usesizes_",
-                     use.sizes, "_", outcome.type, "_nclusters_", num.clusters,
-                     "_nunits_", nunits, "_sim_", simno, ".rds"))
-rm(results.list)
-print("deleting sampled data")
       # Delete the sampled data to save space
-      fil1 <- paste0(rootdir, "output/simulation/sampledata_usesizes_",
-                     use.sizes, "_", outcome.type, "_nclusters_", num.clusters,
-                     "_nunits_", nunits, "_sim_", simno, ".rds")
-      if (file.exists(fil1)) {
-        file.remove(fil1)
-      }
-#   return(NULL)
- } # end parallel loop
+        if (num.units <= 1) {
+          nunits <- paste(100*num.units, "pct", sep = "")
+        } else {
+          nunits <- num.units
+        }
+        fil1 <- paste(rootdir, "/Data/Simplify/vary_K/sampledata_usesizes_", use.sizes, "_nclusters_", num.clusters,
+                      "_nunits_", nunits, "_sim_", sim, ".RData", sep = "")
+        if (file.exists(fil1)) {
+          file.remove(fil1)
+        }
+    } # end parallel loop
 
-#  stopCluster(cl) # close workers
+    stopCluster(cl) # close workers
 
-# Count the number of results files created by this file
-  res.path <- paste0(rootdir, "output/simulation/")
-  res.pattern <- paste0("results_usesizes_", use.sizes, "_", outcome.type,
-                        ".*_sim_", simno, ".rds")
-print(res.path)
-print(res.pattern)
-  sim.files <- list.files(path = res.path, pattern = res.pattern)
-print(sim.files)
-  if (length(sim.files) == nrow(sim.params)) {
-    sink(paste0(rootdir, "output/simulation/sim_res_check_usesizes_",
-                use.sizes, "_", outcome.type, "_sim_", simno, ".txt"))
-    cat("Success! All", length(sim.files), "files cleared successfully!\n")
-    print(sim.files)
-    sink()
-  }
-
+    # remove the pop data file with the indices
+      file.remove(paste(rootdir, "/Data/Simplify/vary_K/popdata_usesizes_", use.sizes,
+				 "_inds_nclusters_", num.clusters, "_nunits_", nunits,
+				 "_sim_", sim, ".RData", sep = ""))
+} # end function
