@@ -61,21 +61,20 @@ Options:
       }
     }
 
+    # Parameters for stan
+    num.iter <- 1000
+    num.chains <- 4
+
     # Set up parallel parameters
 #    cl <- makeCluster(min(detectCores(), 10),
 #                      type = "FORK",
 #                      outfile = paste0(rootdir,
 #                                       "/output/simulation/parallel_output_",
 #                                       "usesizes_", use_sizes, "_",
-#                                       outcome_type, ".txt"))
-#print("makeCluster")
-#print("registerDoParallel")
+#                                       outcome_type, "_simno_", simno, ".txt"))
 #    registerDoParallel(cl)
-#print("clusterEvalQ")
 #    clusterEvalQ(cl, .libPaths( "/vega/stats/users/smm2253/rpackages"))
-#print("getDoParWorkers")
 #    print(getDoParWorkers()) # make sure foreach will actually run in parallel
-#print("clusterEvalQ specific libraries")
 #    clusterEvalQ(cl, library(iterators, lib.loc = "/vega/stats/users/smm2253/rpackages"))
 #    clusterEvalQ(cl, library(foreach, lib.loc = "/vega/stats/users/smm2253/rpackages"))
 #    clusterEvalQ(cl, library(doParallel, lib.loc = "/vega/stats/users/smm2253/rpackages"))
@@ -83,9 +82,9 @@ Options:
   #############################################################################
   ### Create list of parameters to loop through for sim
   #############################################################################
-    num.clusters.list <- c(5, 10)
+    num.clusters.list <- c(5)
     #num.clusters.list <- c(5, 10, 20, 50)
-    num.units.list <- c(0.05, 0.1)
+    num.units.list <- c(0.05)
     #num.units.list <- c(0.05, 0.1, 0.25, 0.5, 1, 10, 50, 100)
     #use.sizes.list <- c(0, 1)
     #outcome.type.list <- c("continuous", "binary")
@@ -100,8 +99,9 @@ Options:
   #############################################################################
   ### Loop through cluster/unit lists
   #############################################################################
-    stanmod_list <- c("cluster_inds_only", "knowsizes", "bb", "negbin")
-    #stanmod_list <- c("cluster_inds_only")
+    #stanmod_list <- c("cluster_inds_only", "knowsizes", "bb", "negbin", "lognormal")
+    stanmod_list <- c("knowsizes_centered", "knowsizes_noncentered")
+    #stanmod_list <- c("bb", "negbin", "lognormal")
     use.sizes <- use_sizes
     outcome.type <- outcome_type
 #    loopres <- foreach (k = 1:nrow(sim.params),
@@ -130,6 +130,7 @@ for (k in 1:nrow(sim.params)) {
       # Run stan models
       results.list <- vector(mode = "list",
                              length = length(stanmod_list)*2 + 2)
+                             #length = length(stanmod_list)*2 + 2)
       for (p in 1:length(stanmod_list)) {
         stanmod_name <- stanmod_list[p]
         load(paste0(rootdir, "/src/analysis/", stanmod_name, ".RData"))
@@ -141,8 +142,8 @@ for (k in 1:nrow(sim.params)) {
                      ", num.clusters = ", num.clusters,
                      ", num.units = ", num.units))
         print(Sys.time())
-        stan_res <- runstan(num.clusters, num.units, use.sizes,
-                            rootdir, simno, stanmod, stanmod_name)
+        stan_res <- runstan(num.clusters, num.units, use.sizes, rootdir, simno,
+                            stanmod, stanmod_name, num.iter, num.chains)
         results.list[[2*p - 1]] <- stan_res[["par.ests"]]
         names(results.list)[2*p - 1] <- paste0("param_ests_", stanmod_name)
         results.list[[2*p]] <- stan_res[["ybar.ests"]]
@@ -164,6 +165,8 @@ for (k in 1:nrow(sim.params)) {
       print(Sys.time())
       J <- numclusters # number of clusters in the population
       svy_res <- svy_ests(J, num.clusters, num.units, use.sizes, outcome.type, rootdir, simno)
+      #results.list[[2*length(stanmod_list) + 1]] <- svy_res
+      #names(results.list)[2*length(stanmod_list) + 1] <- "ybar_ests_svy"
       results.list[[2*length(stanmod_list) + 2]] <- svy_res
       names(results.list)[2*length(stanmod_list) + 2] <- "ybar_ests_svy"
       rm(svy_res)
@@ -177,17 +180,15 @@ for (k in 1:nrow(sim.params)) {
       } else {
         nunits <- num.units
       }
-print("saving results")
       saveRDS(results.list,
               paste0(rootdir, "output/simulation/results_usesizes_",
                      use.sizes, "_", outcome.type, "_nclusters_", num.clusters,
-                     "_nunits_", nunits, "_sim_", simno, ".rds"))
-rm(results.list)
-print("deleting sampled data")
+                     "_nunits_", nunits, "_simno_", simno, ".rds"))
+      rm(results.list)
       # Delete the sampled data to save space
-      fil1 <- paste0(rootdir, "output/simulation/sampledata_usesizes_",
+      fil1 <- paste0(rootdir, "output/simulation/simdata_usesizes_",
                      use.sizes, "_", outcome.type, "_nclusters_", num.clusters,
-                     "_nunits_", nunits, "_sim_", simno, ".rds")
+                     "_nunits_", nunits, "_simno_", simno, ".rds")
       if (file.exists(fil1)) {
         file.remove(fil1)
       }
@@ -199,15 +200,12 @@ print("deleting sampled data")
 # Count the number of results files created by this file
   res.path <- paste0(rootdir, "output/simulation/")
   res.pattern <- paste0("results_usesizes_", use.sizes, "_", outcome.type,
-                        ".*_sim_", simno, ".rds")
-print(res.path)
-print(res.pattern)
+                        ".*_simno_", simno, ".rds")
   sim.files <- list.files(path = res.path, pattern = res.pattern)
-print(sim.files)
   if (length(sim.files) == nrow(sim.params)) {
     sink(paste0(rootdir, "output/simulation/sim_res_check_usesizes_",
-                use.sizes, "_", outcome.type, "_sim_", simno, ".txt"))
-    cat("Success! All", length(sim.files), "files cleared successfully!\n")
+                use.sizes, "_", outcome.type, "_simno_", simno, ".txt"))
+    cat("Success! All", length(sim.files), "files for this simulation cleared successfully!\n")
     print(sim.files)
     sink()
   }

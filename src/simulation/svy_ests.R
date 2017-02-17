@@ -25,11 +25,11 @@ svy_ests <- function(J, num.clusters, num.units, use.sizes, outcome.type, rootdi
     rm(popdata)
 
     sizetot <- sum(pop.data$Mj)
-    ybar.true <- mean(pop.data$yi)
+    ybar.true <- mean(pop.data$y)
 
     simdata <- readRDS(paste0(rootdir, "output/simulation/simdata_usesizes_",
                               use.sizes, "_", outcome.type, "_nclusters_",
-                              num.clusters, "_nunits_", nunits, "_sim_", sim,
+                              num.clusters, "_nunits_", nunits, "_simno_", sim,
                               ".rds"))
 print(str(simdata))
 print(names(simdata))
@@ -54,7 +54,7 @@ print(names(simdata))
                      data = sample.data, pps = "brewer")
 
   # estimate pop mean, pull out std err
-    tt <- svymean(~yi, des)
+    tt <- svymean(~y, des)
     ybar.hat.hajek <- as.numeric(tt[1])
     ybar.se.hajek <- as.numeric(sqrt(attr(tt,"var")))
 
@@ -67,14 +67,14 @@ print(names(simdata))
     #}
 
   # GREG ESTIMATE
-    ptot <- sum(pop.data$xi)
-    pop.totals <- c(`(Intercept)`=nrow(sample.data), xi = ptot)
+    ptot <- sum(pop.data$x)
+    pop.totals <- c(`(Intercept)`=nrow(sample.data), x = ptot)
     if (num.units > 1) { # self-weighting
-      des2 <- calibrate(des, formula = ~xi, pop.totals)
+      des2 <- calibrate(des, formula = ~x, pop.totals)
     } else { # make weights be the same by cluster
-      des2 <- calibrate(des, formula = ~xi, pop.totals, aggregate = 1) 
+      des2 <- calibrate(des, formula = ~x, pop.totals, aggregate = 1) 
     }
-    tt2 <- svymean(~yi, des2)
+    tt2 <- svymean(~y, des2)
     ybar.hat.greg <- as.numeric(tt2[1])
     ybar.se.greg <- as.numeric(sqrt(attr(tt2,"var")))
 
@@ -90,7 +90,7 @@ print(names(simdata))
     print("**************************************************")
     print(paste0("ybar true: ", round(ybar.true, digits = 2)))
     print(paste0("HT estimate (se): ", round(ybar.hat.hajek, digits = 2),
-                 " (", round(ybar.se.hajek, digits=2), ")"))
+                 " (", round(ybar.se.hajek, digits = 2), ")"))
     print(paste0("GREG estimate (se): ", round(ybar.hat.greg, digits = 2),
                  " (", round(ybar.se.greg, digits = 2), ")"))
     print("**************************************************")

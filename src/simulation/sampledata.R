@@ -28,7 +28,10 @@ sampledata <- function(num.clusters, num.units, use.sizes,
     for (j in nms) {
       assign(j, popdata[[j]])
     }
-
+if (num.units == 999) {
+  sample.data <- pop.data
+  pop.data$insample <- 1
+} else {
   #############################################################################
   ### Do the sampling
   #############################################################################
@@ -93,12 +96,7 @@ sampledata <- function(num.clusters, num.units, use.sizes,
     }
     sample.data <- dplyr::filter(pop.data, insample == 1)
     sample.data$insample <- NULL
-
-    # calculate mean of x among all units in nonsampled clusters, and mean of x
-    # among nonsampled units in sampled clusters
-    nonsampled.data <- dplyr::filter(pop.data, insample == 0)
-    xbar_pop <- dplyr::summarise(nonsampled.data, xbar = mean(xi))
-
+}
   ##########################################
   ### Save
   ##########################################
@@ -108,11 +106,10 @@ sampledata <- function(num.clusters, num.units, use.sizes,
       nunits <- num.units
     }
     simdata <- list(pop.data = pop.data, sample.data = sample.data, J = J,
-                    Mj = Mj, logMj_c = logMj_c, Mj_mis = Mj_mis,
-                    xbar_pop = xbar_pop)
+                    Mj = Mj, logMj_c = logMj_c)
     saveRDS(simdata,
             file = paste0(rootdir, "output/simulation/simdata_usesizes_",
                           use.sizes, "_", outcome.type,
                           "_nclusters_", num.clusters, "_nunits_", nunits,
-                          "_sim_", sim, ".rds"))
+                          "_simno_", sim, ".rds"))
 }

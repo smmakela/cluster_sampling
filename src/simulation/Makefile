@@ -21,7 +21,7 @@ R_OPTS         = --no-save --no-restore --no-init-file --no-site-file
 
 # Hard-code highest-level simulation parameters
 NUM_POP_CLUSTERS = 100
-NUM_SIMS         = 2
+NUM_SIMS         = 1
 
 # Variables that store filenames of population data
 # e.g. <file path>/popdata_usesizes_<0,1>_<continuous, binary>.<rds, Rout>
@@ -33,8 +33,8 @@ USE_SIZE_VALS  = 0 1
 # but I couldn't figure out how to do it because addprefix/addsuffix will not
 # take vectors for the prefix/suffix parameter
 POP_FILE_STEMS := $(addprefix popdata_usesizes_, $(USE_SIZE_VALS))
-POP_FILE_STEMS := $(addsuffix _continuous, $(POP_FILE_STEMS)) \
-                  $(addsuffix _binary, $(POP_FILE_STEMS))
+POP_FILE_STEMS := $(addsuffix _continuous, $(POP_FILE_STEMS))
+#                  $(addsuffix _binary, $(POP_FILE_STEMS))
 # Now add the file path in $(SIM_OUT_DIR) to the filename stems
 POP_FILE_PATHS := $(addprefix $(SIM_OUT_DIR)/, $(POP_FILE_STEMS))
 # Then add the .rds and .Rout file endings to the file paths
@@ -50,33 +50,42 @@ STAN_SRC_FILES  := $(wildcard $(MODEL_SRC_DIR)/*.stan)
 STAN_MOD_FILES  := $(wildcard $(MODEL_SRC_DIR)/*.RData)
 MODEL_SRC_FILES := $(STAN_SRC_FILES) $(MODEL_SRC_DIR)/lmer_compare.R \
                    $(MODEL_SRC_DIR)/svy_ests.R
-FIG_SRC_FILES   := $(wildcard $(FIG_CODE_DIR)/figure_*.R)
+FIG_SRC_FILES   := $(wildcard $(FIG_SRC_DIR)/figure_*.R)
 
-# txt files that ensure the simulations ran correctly
-SIM_RES_CHECK_STEMS := $(addprefix $(SIM_OUT_DIR)/sim_res_check_usesizes_, $(USE_SIZE_VALS))
+# Computational coherence check files
+#CCC_MODELS := knowsizes cluster_inds_only lmer
+#CCC_FILES := $(addprefix $(SIM_OUT_DIR)/ccc_usesizes_, $(USE_SIZE_VALS))
+#for mname in $(CCC_MODELS)
+#do
+#  CCC_FILES := $(addsuffix $mname, $(CCC_FILES))
+#done
+
+# Files used to check whether all simulations completed 
+SIM_RES_CHECK_STEMS := $(addprefix $(SIM_OUT_DIR)/total_sim_res_check_usesizes_, $(USE_SIZE_VALS))
 SIM_RES_CHECK_FILES := $(addsuffix _continuous.txt, $(SIM_RES_CHECK_STEMS))
-#SIM_RESULTS_FILES := $(addsuffix _continuous.txt, $(SIM_RESULTS_STEMS)) \
-#                     $(addsuffix _binary.txt, $(SIM_RESULTS_STEMS))
+#SIM_RES_CHECK_FILES := $(wildcard $(SIM_RES_CHECK_FILES)_*.txt)
 
-# Prerequisites for $(SIM_OUT_DIR)/sim_res_check.txt
+# Prerequisites for $(SIM_RES_CHECK_FILES), also know as
+# $(SIM_OUT_DIR)/sim_res_check_usesizes_*_sim_*.txt
 # - population files
 # - model code (stan files plus lmer/svy code)
-# If any of the above are newer than $(SIM_OUT_DIR)/sim_res_check.txt, rerun
+# If any of the above are newer than $(SIM_OUT_DIR)/sim_res_check_*.txt, rerun
 # the simulation
 #SIM_RES_CHECK_PREREQS := $(POP_ROUT_FILES) \
 #                         $(MODEL_SRC_FILES) \
 #                         $(SIM_SRC_DIR)/sampledata.R \
 #                         $(SIM_SRC_DIR)/sim_master.R
-SIM_RES_CHECK_PREREQS := $(MODEL_SRC_FILES) \
+SIM_RES_CHECK_PREREQS := $(POP_ROUT_FILES) \
+                         $(MODEL_SRC_FILES) \
                          $(SIM_SRC_DIR)/sampledata.R \
                          $(SIM_SRC_DIR)/sim_master.R \
                          $(SIM_SRC_DIR)/runstan.R
 
-# Prerequisites for $(SIM_OUT_DIR)/compiled_simulation_results.csv:
+# Prerequisites for $(SIM_OUT_DIR)/compiled_simulation_results.rds:
 # - check file to make sure that all simulations finished successfully
 # - code to compile simulation results
-SIM_RES_PREREQS := $(SIM_SRC_DIR)/compile_simulation_results.R \
-                   $(SIM_SRC_DIR)/sim_master.R 
+SIM_RES_COMPILED_PREREQS := $(SIM_RES_CHECK_FILES) \
+                            $(SIM_SRC_DIR)/compile_simulation_results.R 
 
 # Figure pdf files
 FIG_PDF_FILES := $(wildcard $(FIG_OUT_DIR)/figures_*.pdf)
@@ -87,15 +96,20 @@ PAPER_BIB_FILE := $(PAPER_OUT_DIR)/clusterrefs.bib
 PAPER_PDF_FILE := $(PAPER_OUT_DIR)/paper.pdf
 # *****************************************************************************
 
-.PHONY: all clean stanmodfiles
+.PHONY: all stanmodels ccc
+.SECONDARY:
 #all: $(POP_ROUT_FILES)
 #all: $(SIM_OUT_DIR)/sim_res_check.txt
 all: $(SIM_RES_CHECK_FILES)
-stanmodfiles: $(STAN_MOD_FILES)
+stanmodels: $(STAN_MOD_FILES)
+ccc: $(CCC_FILES)
+#all: $(SIM_RES_CHECK_FILES) $(SIM_OUT_DIR)/compiled_simulation_results.rds
 
-# Define substring extracting functions
-get_firstword  = $(firstword $(subst _, ,$1))
-get_secondword = $(word 2, $(subst _, ,$1))
+# Define substring extracting functions -- these are used to pull out various
+# parts of strings like 0_continuous_lmer
+get_firstword  = $(firstword $(subst _, ,$1)) # pulls out 0
+get_secondword = $(word 2, $(subst _, ,$1))   # pulls out continuous
+get_thirdword = $(word 3, $(subst _, ,$1))    # pulls out lmer
 
 # GENERATE POPULATION DATA
 # We only need to check whether the output files (the ones
@@ -107,6 +121,7 @@ get_secondword = $(word 2, $(subst _, ,$1))
 # would be 0_continuous, and the arg1 and arg2 functions split 0_continuous
 # into "0" and "continous"
 $(SIM_OUT_DIR)/popdata_usesizes_%.Rout: $(SIM_SRC_DIR)/makepopdata.R
+	@echo ----------------------- making pop data --------------------------
 	Rscript $(R_OPTS) $<\
 	 --numclusters $(NUM_POP_CLUSTERS)\
 	 --use_sizes $(call get_firstword, $*)\
@@ -114,8 +129,18 @@ $(SIM_OUT_DIR)/popdata_usesizes_%.Rout: $(SIM_SRC_DIR)/makepopdata.R
 	 > $@ 2>&1 
 
 # COMPILE STAN MODELS
-$(STAN_MOD_FILES): $(STAN_SRC_FILES)
-	Rscript $(R_OPTS) compile_stan_models.R 
+$(MODEL_SRC_DIR)/%.RData: $(MODEL_SRC_DIR)/%.stan
+	@echo -------------------- compiling stan models -----------------------
+	Rscript $(R_OPTS) compile_stan_models.R --model_name $* > $*.Rout 2>&1
+
+# COMPUTATIONAL COHERENCE CHECK
+$(SIM_OUT_DIR)/ccc_usesizes_%.rds: ccc.R $(STAN_MOD_FILES) $(SIM_SRC_DIR)/runstan.R
+	@echo ------------------------- doing CCC ------------------------------
+	USV=$(call get_firstword, $*);\
+	OTV=$(call get_secondword, $*);\
+	MOD=$(call get_thirdword, $*);\
+	qsub -v US_VAL=$${USV},OT_VAL=$${OTV},MOD_NAME=$(MOD)\
+	 $(SIM_SRC_DIR)/do_ccc.sh
 
 # RUN SIMULATION
 # If a check file for the simulation is older than its prereqs (pop data,
@@ -123,34 +148,45 @@ $(STAN_MOD_FILES): $(STAN_SRC_FILES)
 # the % will be of the from x_y, where x is either 0 or 1 (one of the possible
 # values of $US_VAL) and y is either "continuous" or "discrete", the two
 # possible values of $OT_VAL
-$(SIM_OUT_DIR)/sim_res_check_usesizes_%.txt: $(SIM_OUT_DIR)/popdata_usesizes_%.Rout $(SIM_RES_CHECK_PREREQS)
+$(SIM_OUT_DIR)/total_sim_res_check_usesizes_%.txt: $(SIM_OUT_DIR)/popdata_usesizes_%.Rout $(SIM_RES_CHECK_PREREQS)
+	@echo ---------------------- doing run_sim.sh -------------------------
 	USV=$(call get_firstword, $*);\
 	OTV=$(call get_secondword, $*);\
 	JN="usz_"; JN+=$${USV}; JN+="_"; JN+=$${OTV};\
-	echo $${JN};\
-	echo $${USV};\
-	echo $${OTV};\
-	qsub -v J=$(NUM_POP_CLUSTERS),US_VAL=$${USV},OT_VAL=$${OTV}\
-	 -t 1-$(NUM_SIMS) -N "$${JN}" $(SIM_SRC_DIR)/do_sim_master.sh 
+	JN2="count_"; JN2+=$${USV}; JN2+="_"; JN2+=$${OTV};\
+	$(SIM_SRC_DIR)/run_sim.sh $(NUM_POP_CLUSTERS) $${JN} $${JN2} $${USV} $${OTV} $(NUM_SIMS)
+#	FIRST=$(qsub -v J=$(NUM_POP_CLUSTERS),US_VAL=$${USV},OT_VAL=$${OTV}\
+#	 -t 1-$(NUM_SIMS) -N "$${JN}" $(SIM_SRC_DIR)/do_sim_master.sh);
+#	SECOND=$(qsub -v US_VAL=$${USV},OT_VAL=$${OTV},NUM_SIMS=$(NUM_SIMS)\
+#	 -W depend=afterokarray:$FIRST -N "$${JN2}" $(SIM_SRC_DIR)/do_count_results_files.sh)
+#	echo $${JN};\
+#	echo $${JN2};\
+#	echo $${USV};\
+#	echo $${OTV};\
+#	Rscript $(R_OPTS) count_sim_res_check_files.R --use_sizes=$${USV} --outcome_type=$${OT} --num_sims=$(NUM_SIMS)
+
 
 # COMPILE RESULTS
-$(SIM_RES_CHEC_FILES): $(SIM_RES_PREREQS)
-	Rscript $(R_OPTS) $<
+$(SIM_OUT_DIR)/compiled_simulation_results.rds: $(SIM_RES_COMPILED_PREREQS)
+	@echo ---------------------- compiling results -------------------------
+	@echo $^
+	Rscript $(R_OPTS) $(SIM_SRC_DIR)/compile_simulation_results.R > \
+	$(SIM_OUT_DIR)/compiled_simulation_results.routput 2>&1
 
 # CREATE FIGURES
-$(FIG_OUT_DIR)/figure_%.pdf: $(FIG_SRC_DIR)/figure_%.R
-	Rscript $(R_OPTS) $<
+#$(FIG_OUT_DIR)/figure_%.pdf: $(FIG_SRC_DIR)/figure_%.R
+#	Rscript $(R_OPTS) $<
 
 # GENERATE PAPER
-$(PAPER_PDF_FILE): $(FIG_PDF_FILES) $(PAPER_TEX_FILE) $(PAPER_BIB_FILE)
-	pdflatex paper
-	bibtex paper
-	pdflatex paper
-	pdflatex paper
+#$(PAPER_PDF_FILE): $(FIG_PDF_FILES) $(PAPER_TEX_FILE) $(PAPER_BIB_FILE)
+#	pdflatex paper
+#	bibtex paper
+#	pdflatex paper
+#	pdflatex paper
 
 # only remove simulation results (not pop data)
-simclean:
-	rm -f $(SIM_RESULTS) $(FIG_PDF_FILES)
+#simclean:
+#	rm -f $(SIM_RESULTS) $(FIG_PDF_FILES)
 
-clean:
-	rm -f $(POP_FILES_ALL) $(SIM_RESULTS) $(FIG_PDF_FILES) $(PAPER_PDF_FILE)
+#clean:
+#	rm -f $(POP_FILES_ALL) $(SIM_RESULTS) $(FIG_PDF_FILES) $(PAPER_PDF_FILE)

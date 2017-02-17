@@ -9,7 +9,6 @@ lmer_compare <- function(num.clusters, num.units, use.sizes, outcome.type, rootd
   ##########################################
   ### Setup of libraries, load data
   ##########################################
-print("IN LMER_COMPARE")
     if (num.units <= 1) {
       nunits <- paste(num.units*100, "pct", sep = "")
     } else {
@@ -17,7 +16,7 @@ print("IN LMER_COMPARE")
     }
     simdata <- readRDS(paste0(rootdir, "output/simulation/simdata_usesizes_",
                               use.sizes, "_", outcome.type, "_nclusters_",
-                              num.clusters, "_nunits_", nunits, "_sim_", sim,
+                              num.clusters, "_nunits_", nunits, "_simno_", sim,
                               ".rds"))
 print(str(simdata))
 print(names(simdata))
@@ -39,12 +38,12 @@ print(names(simdata))
     #sample.data$xi_c <- sample.data$xi - mean(sample.data$xi)
     #sample.data$logMj_c <- log(sample.data$Mj) - mean(log(sample.data$Mj))
     # model 1: uses cluster sizes
-    with_cluster_sizes <- lmer(yi ~ xi + logMj_c + xi:logMj_c + (1 + xi | cluster.id), data = sample.data)
-    print(summary(with_cluster_sizes))
+    lmer_with_cluster_sizes <- lmer(y ~ x + logMj_c + x:logMj_c + (1 + x | cluster.id), data = sample.data)
+    print(summary(lmer_with_cluster_sizes))
     # model 2: only uses cluster indicators
-    cluster_indicators_only <- lmer(yi ~ xi + (1 + xi | cluster.id), data = sample.data)
-    print(summary(cluster_indicators_only))
-    modlist <- c("with_cluster_sizes", "cluster_indicators_only")
+    lmer_cluster_indicators_only <- lmer(y ~ x + (1 + x | cluster.id), data = sample.data)
+    print(summary(lmer_cluster_indicators_only))
+    modlist <- c("lmer_with_cluster_sizes", "lmer_cluster_indicators_only")
 
   ##########################################
   ### Compare results

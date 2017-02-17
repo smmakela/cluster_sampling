@@ -1,7 +1,7 @@
 #!/bin/sh
 #Torque directives
 #PBS -W group_list=yetistats
-#PBS -l nodes=1,walltime=12:00:00,mem=4gb
+#PBS -l nodes=1,walltime=12:00:00,mem=12gb
 #PBS -V
 #PBS -M smm2253@columbia.edu
 #PBS -m a

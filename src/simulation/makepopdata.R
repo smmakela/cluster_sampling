@@ -87,31 +87,31 @@
     Mj <- sample(c(clustersize.range[1]:clustersize.range[2]), J,
                  replace = TRUE)
     logMj_c <- log(Mj) - mean(log(Mj))
-    xi <- sample(c(unitcovar.range[1]:unitcovar.range[2]), sum(Mj),
+    x <- sample(c(unitcovar.range[1]:unitcovar.range[2]), sum(Mj),
                  replace = TRUE)
-    xi <- xi - mean(xi)
+    x <- x - mean(x)
    
     # Draw hyperparameters, varying slopes and coefficients, and outcomes
     if (outcome.type == "continuous") {
-      gamma0 <- rnorm(1)
       alpha0 <- rnorm(1)
+      alpha1 <- rnorm(1)
       if (use.sizes == 1) {
+        gamma0 <- rnorm(1)
         gamma1 <- rnorm(1)
-        alpha1 <- rnorm(1)
       }  else {
+        gamma0 <- 0
         gamma1 <- 0
-        alpha1 <- 0
       }
       sigma_beta0 <- abs(rnorm(1, 0, 0.5))
       sigma_beta1 <- abs(rnorm(1, 0, 0.5))
       sigma_y <- abs(rnorm(1, 0, 0.75))
         
-      beta0j <- rnorm(n = J, mean = gamma0 + gamma1*logMj_c, sd = sigma_beta0)
-      b0j <- rep(beta0j, Mj)
-      beta1j <- rnorm(n = J, mean = alpha0 + alpha1*logMj_c, sd = sigma_beta1)
-      b1j <- rep(beta1j, Mj)
-      ymean <- b0j + b1j*xi 
-      yi <- rnorm(ymean, mean = ymean, sd = sigma_y)
+      beta0 <- rnorm(n = J, mean = alpha0 + gamma0 * logMj_c, sd = sigma_beta0)
+      beta0_rep <- rep(beta0, Mj)
+      beta1 <- rnorm(n = J, mean = alpha1 + gamma1 * logMj_c, sd = sigma_beta1)
+      beta1_rep <- rep(beta1, Mj)
+      ymean <- beta0_rep + beta1_rep * x 
+      y <- rnorm(ymean, mean = ymean, sd = sigma_y)
     } else {
       gamma0 <- rnorm(1)
       alpha0 <- rnorm(1)
@@ -126,29 +126,30 @@
       sigma_beta1 <- abs(rnorm(1, 0, 0.5))
       sigma_y <- abs(rnorm(1, 0, 0.75))
         
-      beta0j <- rnorm(n = J, mean = gamma0 + gamma1*logMj_c, sd = sigma_beta0)
-      b0j <- rep(beta0j, Mj)
-      beta1j <- rnorm(n = J, mean = alpha0 + alpha1*logMj_c, sd = sigma_beta1)
-      b1j <- rep(beta1j, Mj)
-      ymean <- b0j + b1j*xi 
-      yi <- rnorm(ymean, mean = ymean, sd = sigma_y)
+      beta0 <- rnorm(n = J, mean = gamma0 + gamma1*logMj_c, sd = sigma_beta0)
+      beta0_rep <- rep(beta0j, Mj)
+      beta1 <- rnorm(n = J, mean = alpha0 + alpha1*logMj_c, sd = sigma_beta1)
+      beta1_rep <- rep(beta1j, Mj)
+      ymean <- beta0_rep + beta1_rep * x 
+      y <- rnorm(ymean, mean = ymean, sd = sigma_y)
     }
 
     # Make data frame of pop data
-    pop.data <- data.frame(yi, xi, Mj = rep(Mj, Mj), logMj_c = rep(logMj_c, Mj))
+    pop.data <- data.frame(y, x, Mj = rep(Mj, Mj), logMj_c = rep(logMj_c, Mj))
     pop.data$cluster.id <- rep(c(1:J), times = Mj)
     pop.data$unit.id <- unlist(lapply(Mj, seq_len))
 
     # Make list of things to save
+    ybar_true <- mean(pop.data$y)
     if (outcome.type == "continuous") {
-      truepars <- data.frame(gamma0, gamma1, alpha0, alpha1, sigma_beta0,
-                             sigma_beta1, sigma_y)
+      truepars <- data.frame(alpha0, gamma0, alpha1, gamma1, sigma_beta0,
+                             sigma_beta1, sigma_y, ybar_true)
     } else {
-      truepars <- data.frame(gamma0, gamma1, alpha0, alpha1, sigma_beta0,
-                             sigma_beta1)
+      truepars <- data.frame(alpha0, gamma0, alpha1, gamma1, sigma_beta0,
+                             sigma_beta1, ybar_true)
     }
     popdata <- list(pop.data = pop.data, J = J, Mj = Mj, logMj_c = logMj_c,
-                    beta0j = beta0j, beta1j = beta1j, truepars = truepars)
+                    beta0 = beta0, beta1 = beta1, truepars = truepars)
     print(str(popdata))
     saveRDS(popdata,
             file = paste0(rootdir, "/output/simulation/popdata_usesizes_",
