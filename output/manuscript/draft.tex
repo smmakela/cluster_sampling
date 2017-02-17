@@ -53,11 +53,31 @@ Bayesian inference of sample surveys considers both the survey inclusion indicat
 %	p(Y_{mis}|Y_{obs},X) = \int p(Y_{mis}|\theta,X) p(\theta|Y_{obs},X) d\theta,
 %\end{align*}
 
-However, in many (arguably most) practical situations, the set of design variables $X$ for the entire population are known only to the survey designer, while the analyst has design variables only for the sampled clusters or units. In this case, we as the analyst need to model the nonsampled values of $X$ before we can make use of the posterior predictive distributions above for inference about $Q(Y)$. For the case of two-stage PPS cluster sampling, we need to model the measures of sizes $M_j$ for the nonsampled clusters.
+However, in many (arguably most) practical situations, the set of design variables $X$ for the entire population are known only to the survey designer, while the analyst has design variables only for the sampled clusters or units. The analyst must therefore model the nonsampled values of $X$ before she can make use of the posterior predictive distributions above for inference about $Q(Y)$. In the case of two-stage PPS cluster sampling, this translates to modeling the measures of sizes $M_j$ for the nonsampled clusters.
 
-Existing Bayesian approaches to this problem \citep{zangeneh2011, zangeneh2015} only consider the case of single-stage PPS samples. In addition, these approaches separate estimation of the missing cluster sizes and inference for the finite population quantities into two steps.  In contrast, we consider a two-stage PPS sample and integrate the estimation and inference steps into a single model.
+Existing Bayesian approaches to this problem \citep{zangeneh2011, zangeneh2015} only consider the case of single-stage PPS samples. They also separate estimation of the missing cluster sizes and inference for the finite population quantities into two steps. In contrast, we consider a two-stage PPS sample and integrate the estimation and inference steps into a single model.
 
 \section*{Model}
+Consider a survey outcome $y$, a known covariate $x$, and an inclusion indicator $I$. Let $M$ denote design variables that are known only for sampled units and unknown for nonsampled units. Let $\theta$, $\psi$, and $\phi$ denote the parameters for the distributions of $y$, $M$, and $I$, respectively. The complete-data likelihood is then
+\[
+	p(y, M, I | x, \theta, \phi) = p(y | x, M, I, \theta) p(M | I, \psi) p(I | \phi).
+\]
+Here we follow the formulation of \cite{zangeneh2015} in modeling the distribution of the design variables $M$ given the inclusion indicator $I$ instead of the more conventional factorization
+\[
+	p(M, I | \xi, \eta) = p(I | M, \xi) p(M | \eta).
+\]
+The difficulty with this formulation is that, in the absence of information on $M$ for nonsampled cases, [something bad happens].
+
+In this paper, we consider the case where the design information $M$ corresponds to cluster sizes in a two-stage PPS design. Specifically, we have a population of $J$ clusters, each of size $N_j$ and a total population of size $N = \sum_j N_j$.
+
+The observed data likelihood then becomes
+\[
+	p(y^{obs}, M^{obs}, I | x, \theta, \phi) = \int p(y^{obs}, y^{mis} | x, M, I, \theta) p(M^{obs}, M^{mis} | I, \psi) p(I, \phi) d M^{mis} d y^{mis}
+\]
+
+We consider two models for the cluster sizes. First, we treat the cluster sizes as discrete random variables coming from a negative binomial distribution: $N_j \sim NegBin(k, p)$. We also consider a continuous model for the cluster sizes: $N_j \sim LogNormal(\mu, \sigma^2)$.
+
+
 We consider a population consisting of $J=1000$ clusters with measure of size $M_j$ ranging from 100 to 1000 under a data generating model given by
 \begin{align*}
 	Y_i &\sim N(\beta_{0j[i]} + \beta_{1j[i]} w_i, \sigma_y^2) \\
@@ -135,7 +155,7 @@ Figure \ref{fig:bb_ybar_hist} shows density plots of the estimated finite popula
 \end{table}
 
 
-\subsection*{A future approach: the negative binomial}
+\subsection*{Negative binomial}
 An alternative to the Bayesian bootstrap is to take a superpopulation approach to estimating the nonsampled cluster sizes. Because the clusters are sampled PPS, we know that the sizes we observe in the sample are biased toward the larger sizes in the population. \cite{pr1978} consider a random variable $X$ with pdf $f(x)$ and a probability $w(x)$ of recording the observation $X=x$ and give the density of $X^w$, the recorded observation, as
 \[
 	f^w(x) = \frac{w(x)f(x)}{\omega},

@@ -1,9 +1,8 @@
-lmer_compare <- function(num.clusters, num.units, use.sizes, outcome.type, rootdir, sim) {
+lmer_compare <- function(num.clusters, num.units, use.size, srootdir, sim) {
   # num.clusters -- number of clusters to sample
   # num.units -- number of units to sample
-  # use.sizes -- 0/1 for whether cluster sizes used in pop data
-  # outcome.type -- whether outcomes are continuous or binary
-  # rootdir -- root directory for cluster_sampling
+  # use.sizes -- whether y depends on cluster sizes or not
+  # rootdir -- root directory where Code, Data folders are
   # sim -- current iteration; used so that multiple instances aren't trying to write to the same file
 
   ##########################################
@@ -27,8 +26,6 @@ print(names(simdata))
     popdata <- readRDS(paste0(rootdir, "/output/simulation/popdata_usesizes_",
                        use.sizes, "_", outcome.type, ".rds"))
     truepars <- popdata[["truepars"]]
-    truepars.long <- gather(popdata[["truepars"]],
-                            key = param.name, value = truth)
     print(truepars)
     rm(popdata)
 
@@ -52,33 +49,26 @@ print(names(simdata))
     for (j in 1:2) {
       assign("currmod", get(modlist[j]))
       lmer_summ <- summary(currmod)
-
-      # pull out coefficient estimates from current model
       coefmat <- data.frame(lmer_summ$coefficients)
       if (j == 1) {
-        coefmat$param.name <- c("gamma0", "alpha0", "gamma1", "alpha1")
+        rownames(coefmat) <- c("gamma0", "alpha0", "gamma1", "alpha1")
       } else {
-        coefmat$param.name <- c("gamma0", "alpha0")
+        rownames(coefmat) <- c("gamma0", "alpha0")
       }
-      coefmat <- left_join(coefmat, truepars.long, by = "param.name")
-print(str(coefmat))
-      coefmat <- coefmat[, c("param.name", "truth", "Estimate", "Std..Error")]
-      # make names correspond to what's in the stan parameter estimate results
-      names(coefmat) <- c("param.name", "truth", "mean", "sd")
-
-      # pull out variance estimates from current model
-      sdmat <- as.data.frame(VarCorr(currmod))[c(1,2,4), ]
-      sdmat$param.name <- c("sigma_beta0", "sigma_beta1", "sigma_y")
-      sdmat <- left_join(sdmat, truepars.long, by = "param.name")
-      sdmat <- sdmat[, c("param.name", "sdcor", "truth")]
-      names(sdmat) <- c("param.name", "mean", "truth")
-      sdmat$sd <- NA
+      truth <- truepars[,rownames(coefmat)]
+      coefmat <- cbind(coefmat, truth = t(truth))
+      sdmat <- as.data.frame(VarCorr(currmod))[c(1,2,4),]
+      rownames(sdmat) <- c("sigma_beta0", "sigma_beta1", "sigma_y")
+      truth <- truepars[,rownames(sdmat)]
+      sdmat <- cbind(sdmat, truth = t(truth))
+      sdmat <- sdmat[, c("sdcor", "truth")]
+      names(sdmat) <- c("est", "truth")
+      coefmat <- coefmat[, c("Estimate", "Std..Error", "truth")]
+      names(coefmat) <- c("est", "stderr", "truth")
+      sdmat$stderr <- NA
+      sdmat <- sdmat[, c("est", "stderr", "truth")]
       both <- rbind(coefmat, sdmat)
-      both$model.name <- modlist[j]
-      both[["25%"]] <- both[["mean"]] - both[["sd"]]
-      both[["75%"]] <- both[["mean"]] + both[["sd"]]
-      both[["2.5%"]] <- both[["mean"]] - 1.96*both[["sd"]]
-      both[["97.5%"]] <- both[["mean"]] + 1.96*both[["sd"]]
+      both$whichmodel <- j
       allres <- rbind(allres, both)
     }
 
@@ -90,10 +80,9 @@ print(str(coefmat))
     print(allres)
     print("######################################################################")
     
-    #write.table(allres, file = paste(rootdir, "/Results/Simplify/vary_K/parests_lmer_usesizes_", use.sizes,
-    #                                 "_nclusters_", num.clusters, "_nunits_", nunits,
-    #                                 "_sim_", sim, ".txt", sep = ""), sep = ",")
-    
-    return(allres)                               
+    write.table(allres, file = paste(rootdir, "/Results/Simplify/vary_K/parests_lmer_usesizes_", use.sizes,
+                                     "_nclusters_", num.clusters, "_nunits_", nunits,
+                                     "_sim_", sim, ".txt", sep = ""), sep = ",")
+                                   
 
 }

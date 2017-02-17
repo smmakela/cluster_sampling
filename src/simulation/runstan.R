@@ -200,8 +200,8 @@ runstan <- function(num.clusters, num.units, use.sizes, rootdir, sim,
     par.ests.rownames <- gsub("\\[", "", par.ests.rownames) 
     par.ests.rownames <- gsub("\\]", "", par.ests.rownames) 
     par.ests.colnames <- attr(par.ests, "dimnames")[[2]]
-    par.ests <- data.frame(param.name = par.ests.rownames, par.ests)
-    colnames(par.ests) <- c("param.name", par.ests.colnames)
+    par.ests <- data.frame(par.ests, row.names = par.ests.rownames)
+    colnames(par.ests) <- par.ests.colnames
 
     # save par.ests
     #write.table(par.ests,

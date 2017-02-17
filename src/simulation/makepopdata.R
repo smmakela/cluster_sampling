@@ -1,9 +1,9 @@
-#!/usr/bin/R Rscript
+#/usr/bin/R Rscript
 # Author: Susanna Makela
 # Date: 21 Apr 2014
 # Purpose: generate population data
 
-'Usage: makepopdata.R [options]
+'Usage: makepopdata.r [options]
 
   -s --seed <seedval>                      Integer for setting seed so we can reproduce the results [default: NULL]
   -n --numclusters <J>                     Number of clusters in population [default: 100]
