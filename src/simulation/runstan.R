@@ -113,7 +113,7 @@ runstan <- function(num.clusters, num.units, use.sizes, rootdir, sim,
                        logMj_sam = logMj_sam,
                        xbar_pop = xbar_pop)
     } 
-
+print(str(standata))
   ##########################################
   ### Run stan
   ##########################################
@@ -236,7 +236,7 @@ print(str(par.ests))
     cat("summary of Mj_sam: \n")
     print(summary(Mj_sam))
     cat("summary of Mj_unsamp posterior means:\n")
-    print(summary(par.ests[grep("Mj_unsamp", rownames(par.ests)), "mean"]))
+    print(summary(par.ests[grep("Mj_mis", rownames(par.ests)), "mean"]))
     cat("########################################################\n")
 
     print("saving results")

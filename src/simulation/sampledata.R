@@ -48,11 +48,9 @@ if (num.units == 999) {
     pop.data$orig.cluster.id <- pop.data$cluster.id
     pop.data$cluster.id <- pop.data$new.cluster.id
     pop.data$new.cluster.id <- NULL
-
     # pull out Mj again
-    pop.data <- tbl_df(pop.data)
-    tmp <- distinct(pop.data, cluster.id, Mj)
-    tmp <- arrange(tmp, cluster.id)
+    tmp <- dplyr::distinct(pop.data, cluster.id, Mj)
+    tmp <- dplyr::arrange(tmp, cluster.id)
     Mj <- tmp$Mj
 
     # if num.units <= 1, then it's actually a proportion, so we need to convert
@@ -80,13 +78,14 @@ if (num.units == 999) {
     tt <- cbind(Mj[1:num.clusters], num.units.vec[1:num.clusters])
     sampled.unit.list <- plyr::mlply(tt, unit.sampler)
 
+    pop.data$insample <- 0
     # pull out sampled data
     for (j in 1:num.clusters) {
       curr.units <- sampled.unit.list[[j]]
       pop.data <- dplyr::mutate(pop.data,
-                                insample = ifelse(cluster.id == j &
-                                                  unit.id %in% curr.units,
-                                                  1, 0))
+                                insample = replace(insample,
+                                                   cluster.id == j &
+                                                    unit.id %in% curr.units, 1))
     }
     sample.data <- dplyr::filter(pop.data, insample == 1)
     sample.data$insample <- NULL

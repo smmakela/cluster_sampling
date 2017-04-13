@@ -8,6 +8,8 @@ print-%  : ; @echo $* = $($*)
 
 # *****************************************************************************
 # Define variables that will be used in this makefile
+# *****************************************************************************
+# File paths
 ROOT_DIR       = /vega/stats/users/smm2253/cluster_sampling
 OUT_DIR       := $(ROOT_DIR)/output
 SIM_OUT_DIR   := $(OUT_DIR)/simulation
@@ -22,19 +24,19 @@ R_OPTS         = --no-save --no-restore --no-init-file --no-site-file
 # Hard-code highest-level simulation parameters
 NUM_POP_CLUSTERS = 100
 NUM_SIMS         = 1
+USE_SIZE_VALS    = 0 1
 
 # Variables that store filenames of population data
 # e.g. <file path>/popdata_usesizes_<0,1>_<continuous, binary>.<rds, Rout>
-USE_SIZE_VALS  = 0 1
 # Here we create the stems of the file names:
 # popdata_usesizes_<0,1>_<continuous,binary>
+
 # First we add the prefix "popdata_usesizes_" to the values of USE_SIZE_VALS
 # There's probably a more elegant way to do this in one step with vectors,
 # but I couldn't figure out how to do it because addprefix/addsuffix will not
 # take vectors for the prefix/suffix parameter
 POP_FILE_STEMS := $(addprefix popdata_usesizes_, $(USE_SIZE_VALS))
 POP_FILE_STEMS := $(addsuffix _continuous, $(POP_FILE_STEMS))
-#                  $(addsuffix _binary, $(POP_FILE_STEMS))
 # Now add the file path in $(SIM_OUT_DIR) to the filename stems
 POP_FILE_PATHS := $(addprefix $(SIM_OUT_DIR)/, $(POP_FILE_STEMS))
 # Then add the .rds and .Rout file endings to the file paths
@@ -47,10 +49,10 @@ POP_FILES_ALL  := $(POP_DATA_FILES) $(POP_ROUT_FILES)
 # e.g. sampling code, stan code, other model code files, figure code
 SAMPLE_SRC_FILE := $(SIM_SRC_DIR)/sampledata.R
 STAN_SRC_FILES  := $(wildcard $(MODEL_SRC_DIR)/*.stan)
-STAN_MOD_FILES  := $(wildcard $(MODEL_SRC_DIR)/*.RData)
+STAN_MOD_FILES  := $(patsubst %.stan, %.rds, $(STAN_SRC_FILES))
+#STAN_MOD_FILES  := $(wildcard $(MODEL_SRC_DIR)/*.rda)
 MODEL_SRC_FILES := $(STAN_SRC_FILES) $(MODEL_SRC_DIR)/lmer_compare.R \
                    $(MODEL_SRC_DIR)/svy_ests.R
-FIG_SRC_FILES   := $(wildcard $(FIG_SRC_DIR)/figure_*.R)
 
 # Computational coherence check files
 #CCC_MODELS := knowsizes cluster_inds_only lmer
@@ -87,13 +89,14 @@ SIM_RES_CHECK_PREREQS := $(POP_ROUT_FILES) \
 SIM_RES_COMPILED_PREREQS := $(SIM_RES_CHECK_FILES) \
                             $(SIM_SRC_DIR)/compile_simulation_results.R 
 
-# Figure pdf files
-FIG_PDF_FILES := $(wildcard $(FIG_OUT_DIR)/figures_*.pdf)
+# Define substring extracting functions -- these are used to pull out various
+# parts of strings like 0_continuous_lmer
+get_firstword  = $(firstword $(subst _, ,$1)) # pulls out 0
+get_secondword = $(word 2, $(subst _, ,$1))   # pulls out continuous
+get_thirdword = $(word 3, $(subst _, ,$1))    # pulls out lmer
 
-# Paper file
-PAPER_TEX_FILE := $(PAPER_OUT_DIR)/paper.tex
-PAPER_BIB_FILE := $(PAPER_OUT_DIR)/clusterrefs.bib
-PAPER_PDF_FILE := $(PAPER_OUT_DIR)/paper.pdf
+# *****************************************************************************
+# Commands to build targets
 # *****************************************************************************
 
 .PHONY: all stanmodels ccc
@@ -105,12 +108,6 @@ stanmodels: $(STAN_MOD_FILES)
 ccc: $(CCC_FILES)
 #all: $(SIM_RES_CHECK_FILES) $(SIM_OUT_DIR)/compiled_simulation_results.rds
 
-# Define substring extracting functions -- these are used to pull out various
-# parts of strings like 0_continuous_lmer
-get_firstword  = $(firstword $(subst _, ,$1)) # pulls out 0
-get_secondword = $(word 2, $(subst _, ,$1))   # pulls out continuous
-get_thirdword = $(word 3, $(subst _, ,$1))    # pulls out lmer
-
 # GENERATE POPULATION DATA
 # We only need to check whether the output files (the ones
 # ending in .Rout) are older than makepopdata.r, since running makepopdata.r
@@ -118,8 +115,10 @@ get_thirdword = $(word 3, $(subst _, ,$1))    # pulls out lmer
 # The % is used to extract the <use_sizes>_<outcome_type> part of the filenames,
 # e.g. 0_continuous for the case that use_sizes is 0 and outcome_type is
 # "continuous". The $* in the recipe uses the stem, which for this example
-# would be 0_continuous, and the arg1 and arg2 functions split 0_continuous
-# into "0" and "continous"
+# would be 0_continuous, and the functions get_firstword and get_secondword 
+# split 0_continuous into "0" and "continous". The $@ part tells R to use the
+# name of the target as the R output file filename (this is how the target
+# gets created).
 $(SIM_OUT_DIR)/popdata_usesizes_%.Rout: $(SIM_SRC_DIR)/makepopdata.R
 	@echo ----------------------- making pop data --------------------------
 	Rscript $(R_OPTS) $<\
@@ -129,18 +128,9 @@ $(SIM_OUT_DIR)/popdata_usesizes_%.Rout: $(SIM_SRC_DIR)/makepopdata.R
 	 > $@ 2>&1 
 
 # COMPILE STAN MODELS
-$(MODEL_SRC_DIR)/%.RData: $(MODEL_SRC_DIR)/%.stan
+$(MODEL_SRC_DIR)/%.rds: $(MODEL_SRC_DIR)/%.stan
 	@echo -------------------- compiling stan models -----------------------
 	Rscript $(R_OPTS) compile_stan_models.R --model_name $* > $*.Rout 2>&1
-
-# COMPUTATIONAL COHERENCE CHECK
-$(SIM_OUT_DIR)/ccc_usesizes_%.rds: ccc.R $(STAN_MOD_FILES) $(SIM_SRC_DIR)/runstan.R
-	@echo ------------------------- doing CCC ------------------------------
-	USV=$(call get_firstword, $*);\
-	OTV=$(call get_secondword, $*);\
-	MOD=$(call get_thirdword, $*);\
-	qsub -v US_VAL=$${USV},OT_VAL=$${OTV},MOD_NAME=$(MOD)\
-	 $(SIM_SRC_DIR)/do_ccc.sh
 
 # RUN SIMULATION
 # If a check file for the simulation is older than its prereqs (pop data,
@@ -165,24 +155,6 @@ $(SIM_OUT_DIR)/total_sim_res_check_usesizes_%.txt: $(SIM_OUT_DIR)/popdata_usesiz
 #	echo $${OTV};\
 #	Rscript $(R_OPTS) count_sim_res_check_files.R --use_sizes=$${USV} --outcome_type=$${OT} --num_sims=$(NUM_SIMS)
 
-
-# COMPILE RESULTS
-$(SIM_OUT_DIR)/compiled_simulation_results.rds: $(SIM_RES_COMPILED_PREREQS)
-	@echo ---------------------- compiling results -------------------------
-	@echo $^
-	Rscript $(R_OPTS) $(SIM_SRC_DIR)/compile_simulation_results.R > \
-	$(SIM_OUT_DIR)/compiled_simulation_results.routput 2>&1
-
-# CREATE FIGURES
-#$(FIG_OUT_DIR)/figure_%.pdf: $(FIG_SRC_DIR)/figure_%.R
-#	Rscript $(R_OPTS) $<
-
-# GENERATE PAPER
-#$(PAPER_PDF_FILE): $(FIG_PDF_FILES) $(PAPER_TEX_FILE) $(PAPER_BIB_FILE)
-#	pdflatex paper
-#	bibtex paper
-#	pdflatex paper
-#	pdflatex paper
 
 # only remove simulation results (not pop data)
 #simclean:

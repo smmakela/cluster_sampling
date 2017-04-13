@@ -1,0 +1,49 @@
+Loading required package: docopt
+Loading required package: methods
+Loading required package: rstan
+Loading required package: ggplot2
+Loading required package: StanHeaders
+rstan (Version 2.12.1, packaged: 2016-09-11 13:07:50 UTC, GitRev: 85f7a56811da)
+For execution on a local, multicore CPU with excess RAM we recommend calling
+rstan_options(auto_write = TRUE)
+options(mc.cores = parallel::detectCores())
+List of 1
+ $ model_name: chr "bb_old"
+NULL
+[1] "model_name"
+*******compiling  bb_old *************
+SYNTAX ERROR, MESSAGE(S) FROM PARSER:
+
+Warning (non-fatal): assignment operator <- deprecated in the Stan language; use = instead.
+Warning (non-fatal): assignment operator <- deprecated in the Stan language; use = instead.
+Warning (non-fatal): assignment operator <- deprecated in the Stan language; use = instead.
+Warning (non-fatal): assignment operator <- deprecated in the Stan language; use = instead.
+Warning (non-fatal): assignment operator <- deprecated in the Stan language; use = instead.
+Warning (non-fatal): assignment operator <- deprecated in the Stan language; use = instead.
+Warning (non-fatal): assignment operator <- deprecated in the Stan language; use = instead.
+Warning (non-fatal): assignment operator <- deprecated in the Stan language; use = instead.
+Warning (non-fatal): assignment operator <- deprecated in the Stan language; use = instead.
+Warning (non-fatal): assignment operator <- deprecated in the Stan language; use = instead.
+Warning (non-fatal): assignment operator <- deprecated in the Stan language; use = instead.
+Warning (non-fatal): assignment operator <- deprecated in the Stan language; use = instead.
+Warning (non-fatal): assignment operator <- deprecated in the Stan language; use = instead.
+Warning (non-fatal): assignment operator <- deprecated in the Stan language; use = instead.
+Warning (non-fatal): assignment operator <- deprecated in the Stan language; use = instead.
+Warning (non-fatal): assignment operator <- deprecated in the Stan language; use = instead.
+No matches for: 
+
+  rep(int, int)
+
+Function rep not found.
+
+ERROR at line 106
+
+ 105:      // NEW: randomly drop one of the imputed Mj's in Mj_unsamp and replace it with a value that makes sum(Mj_unsamp) = Tx_star
+ 106:        dropind <- categorical_rng(rep(1, JminusK)); // should return number between 1 and JminusK
+                                                       ^
+ 107:        offby <- Tx_star - (sum(head(Mj_unsamp, dropind-1)) + sum(tail(Mj_unsamp, 
+
+Error in stanc(file = file, model_code = model_code, model_name = model_name,  : 
+  failed to parse Stan model 'bb_old' due to the above error.
+Calls: stan_model -> stanc
+Execution halted

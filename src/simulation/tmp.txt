@@ -1,14 +1,20 @@
-Loading required package: docopt
-Loading required package: methods
-Loading required package: plyr
-Loading required package: dplyr
+[1] "/usr/lib64/R/bin/exec/R"                                                    
+[2] "--slave"                                                                    
+[3] "--no-restore"                                                               
+[4] "--no-save"                                                                  
+[5] "--vanilla"                                                                  
+[6] "--file=/vega/stats/users/smm2253/cluster_sampling/src/simulation/with_rng.R"
+[7] "--args"                                                                     
+[8] "-1"                                                                         
+[1] 1
+Loading required package: ggplot2
+Loading required package: StanHeaders
+rstan (Version 2.12.1, packaged: 2016-09-11 13:07:50 UTC, GitRev: 85f7a56811da)
+For execution on a local, multicore CPU with excess RAM we recommend calling
+rstan_options(auto_write = TRUE)
+options(mc.cores = parallel::detectCores())
 
 Attaching package: ‘dplyr’
-
-The following objects are masked from ‘package:plyr’:
-
-    arrange, count, desc, failwith, id, mutate, rename, summarise,
-    summarize
 
 The following objects are masked from ‘package:stats’:
 
@@ -18,1395 +24,305 @@ The following objects are masked from ‘package:base’:
 
     intersect, setdiff, setequal, union
 
-Loading required package: tidyr
-Loading required package: lme4
-Loading required package: Matrix
 
-Attaching package: ‘Matrix’
+Attaching package: ‘tidyr’
 
-The following object is masked from ‘package:tidyr’:
-
-    expand
-
-Loading required package: rstan
-Loading required package: ggplot2
-Loading required package: StanHeaders
-rstan (Version 2.12.1, packaged: 2016-09-11 13:07:50 UTC, GitRev: 85f7a56811da)
-For execution on a local, multicore CPU with excess RAM we recommend calling
-rstan_options(auto_write = TRUE)
-options(mc.cores = parallel::detectCores())
-
-Attaching package: ‘rstan’
-
-The following object is masked from ‘package:tidyr’:
+The following object is masked from ‘package:rstan’:
 
     extract
 
-Loading required package: foreach
-Loading required package: doParallel
-Loading required package: iterators
-Loading required package: parallel
-Loading required package: survey
-Loading required package: grid
-
-Attaching package: ‘survey’
-
-The following object is masked from ‘package:graphics’:
-
-    dotchart
-
-List of 4
- $ simno       : chr "60"
- $ use_sizes   : chr "0"
- $ outcome_type: chr "continuous"
- $ numclusters : chr "100"
+/vega/stats/users/smm2253/rpackages/StanHeaders/include/stan/math/rev/core/set_zero_all_adjoints.hpp:14: warning: ‘void stan::math::set_zero_all_adjoints()’ defined but not used
+/vega/stats/users/smm2253/rpackages/StanHeaders/include/stan/math/rev/core/set_zero_all_adjoints.hpp:14: warning: ‘void stan::math::set_zero_all_adjoints()’ defined but not used
+[1] "str(all.data)"
+List of 2
+ $ pop.data    :'data.frame':	1602005 obs. of  7 variables:
+  ..$ cluster.id  : int [1:1602005] 1 1 1 1 1 1 1 1 1 1 ...
+  ..$ Nj.pop      : num [1:1602005] 771 771 771 771 771 771 771 771 771 771 ...
+  ..$ log.Nj.pop.c: num [1:1602005] -0.0362 -0.0362 -0.0362 -0.0362 -0.0362 ...
+  ..$ unit.id     : int [1:1602005] 1 2 3 4 5 6 7 8 9 10 ...
+  ..$ x           : int [1:1602005] 44 41 28 17 33 35 22 43 30 43 ...
+  ..$ y           : num [1:1602005] 11.51 10.6 6.91 3.85 8.38 ...
+  ..$ mod         : chr [1:1602005] "nb" "nb" "nb" "nb" ...
+ $ true.pars.df:'data.frame':	11 obs. of  2 variables:
+  ..$ true.pars: num [1:11] 800 200 6.6815 0.0789 -0.6624 ...
+  ..$ parnames : chr [1:11] "mu_nb" "phi" "mu" "sigma" ...
 NULL
-[1] "simno"        "use_sizes"    "outcome_type" "numclusters" 
-[1] "Assigning 60 to simno"
-[1] "Assigning 0 to use_sizes"
-[1] "Assigning continuous to outcome_type"
-[1] "Assigning 100 to numclusters[[[[1]]
-[1] "/vega/stats/users/smm2253/rpackages" "/usr/lib64/R/library"               
-[3] "/usr/share/R/library"               
+[1] "TRUE PARS:"
+'data.frame':	11 obs. of  2 variables:
+ $ true.pars: num  800 200 6.6815 0.0789 -0.6624 ...
+ $ parnames : chr  "mu_nb" "phi" "mu" "sigma" ...
+NULL
+[1] "Nj.pop.dat:"
+'data.frame':	1000 obs. of  2 variables:
+ $ cluster.id: int  1 2 3 4 5 6 7 8 9 10 ...
+ $ Nj.pop    : num  771 686 913 779 751 754 794 777 752 803 ...
+NULL
+[1] "Nj.pop.dat:"
+'data.frame':	1000 obs. of  2 variables:
+ $ cluster.id: int  1 2 3 4 5 6 7 8 9 10 ...
+ $ Nj.pop    : num  692 812 734 864 793 ...
+NULL
 
-[[2]]
-[1] "/vega/stats/users/smm2253/rpackages" "/usr/lib64/R/library"               
-[3] "/usr/share/R/library"               
+========================================================================
+MODEL: nb ,  simno: 1 
+starting worker pid=43030 on localhost:11543 at 15:15:02.962
+starting worker pid=43039 on localhost:11543 at 15:15:03.173
+starting worker pid=43048 on localhost:11543 at 15:15:03.386
+starting worker pid=43057 on localhost:11543 at 15:15:03.604
 
-[[3]]
-[1] "/vega/stats/users/smm2253/rpackages" "/usr/lib64/R/library"               
-[3] "/usr/share/R/library"               
+SAMPLING FOR MODEL 'negbin_full_centered' NOW (CHAIN 1).
 
-[[4]]
-[1] "/vega/stats/users/smm2253/rpackages" "/usr/lib64/R/library"               
-[3] "/usr/share/R/library"               
+Chain 1, Iteration:    1 / 2000 [  0%]  (Warmup)
+SAMPLING FOR MODEL 'negbin_full_centered' NOW (CHAIN 2).
 
-[[5]]
-[1] "/vega/stats/users/smm2253/rpackages" "/usr/lib64/R/library"               
-[3] "/usr/share/R/library"               
+Chain 2, Iteration:    1 / 2000 [  0%]  (Warmup)
+SAMPLING FOR MODEL 'negbin_full_centered' NOW (CHAIN 3).
 
-[[6]]
-[1] "/vega/stats/users/smm2253/rpackages" "/usr/lib64/R/library"               
-[3] "/usr/share/R/library"               
+Chain 3, Iteration:    1 / 2000 [  0%]  (Warmup)
+SAMPLING FOR MODEL 'negbin_full_centered' NOW (CHAIN 4).
 
-[[7]]
-[1] "/vega/stats/users/smm2253/rpackages" "/usr/lib64/R/library"               
-[3] "/usr/share/R/library"               
+Chain 4, Iteration:    1 / 2000 [  0%]  (Warmup)
+Chain 3, Iteration:  200 / 2000 [ 10%]  (Warmup)
+Chain 2, Iteration:  200 / 2000 [ 10%]  (Warmup)
+Chain 1, Iteration:  200 / 2000 [ 10%]  (Warmup)
+Chain 4, Iteration:  200 / 2000 [ 10%]  (Warmup)
+Chain 2, Iteration:  400 / 2000 [ 20%]  (Warmup)
+Chain 3, Iteration:  400 / 2000 [ 20%]  (Warmup)
+Chain 1, Iteration:  400 / 2000 [ 20%]  (Warmup)
+Chain 4, Iteration:  400 / 2000 [ 20%]  (Warmup)
+Chain 1, Iteration:  600 / 2000 [ 30%]  (Warmup)
+Chain 4, Iteration:  600 / 2000 [ 30%]  (Warmup)
+Chain 2, Iteration:  600 / 2000 [ 30%]  (Warmup)
+Chain 3, Iteration:  600 / 2000 [ 30%]  (Warmup)
+Chain 4, Iteration:  800 / 2000 [ 40%]  (Warmup)
+Chain 1, Iteration:  800 / 2000 [ 40%]  (Warmup)
+Chain 2, Iteration:  800 / 2000 [ 40%]  (Warmup)
+Chain 3, Iteration:  800 / 2000 [ 40%]  (Warmup)
+Chain 4, Iteration: 1000 / 2000 [ 50%]  (Warmup)
+Chain 4, Iteration: 1001 / 2000 [ 50%]  (Sampling)
+Chain 1, Iteration: 1000 / 2000 [ 50%]  (Warmup)
+Chain 1, Iteration: 1001 / 2000 [ 50%]  (Sampling)
+Chain 2, Iteration: 1000 / 2000 [ 50%]  (Warmup)
+Chain 2, Iteration: 1001 / 2000 [ 50%]  (Sampling)
+Chain 3, Iteration: 1000 / 2000 [ 50%]  (Warmup)
+Chain 3, Iteration: 1001 / 2000 [ 50%]  (Sampling)
+Chain 4, Iteration: 1200 / 2000 [ 60%]  (Sampling)
+Chain 1, Iteration: 1200 / 2000 [ 60%]  (Sampling)
+Chain 2, Iteration: 1200 / 2000 [ 60%]  (Sampling)
+Chain 3, Iteration: 1200 / 2000 [ 60%]  (Sampling)
+Chain 4, Iteration: 1400 / 2000 [ 70%]  (Sampling)
+Chain 1, Iteration: 1400 / 2000 [ 70%]  (Sampling)
+Chain 2, Iteration: 1400 / 2000 [ 70%]  (Sampling)
+Chain 3, Iteration: 1400 / 2000 [ 70%]  (Sampling)
+Chain 4, Iteration: 1600 / 2000 [ 80%]  (Sampling)
+Chain 1, Iteration: 1600 / 2000 [ 80%]  (Sampling)
+Chain 2, Iteration: 1600 / 2000 [ 80%]  (Sampling)
+Chain 3, Iteration: 1600 / 2000 [ 80%]  (Sampling)
+Chain 4, Iteration: 1800 / 2000 [ 90%]  (Sampling)
+Chain 1, Iteration: 1800 / 2000 [ 90%]  (Sampling)
+Chain 2, Iteration: 1800 / 2000 [ 90%]  (Sampling)
+Chain 3, Iteration: 1800 / 2000 [ 90%]  (Sampling)
+Chain 4, Iteration: 2000 / 2000 [100%]  (Sampling)
+ Elapsed Time: 370.72 seconds (Warm-up)
+               218.83 seconds (Sampling)
+               589.55 seconds (Total)
 
-[[8]]
-[1] "/vega/stats/users/smm2253/rpackages" "/usr/lib64/R/library"               
-[3] "/usr/share/R/library"               
+The following numerical problems occured the indicated number of times after warmup on chain 4
+                                                                                                count
+Exception thrown at line 93: neg_binomial_2_log: Location parameter is inf, but must be finite!     6
+Exception thrown at line 90: normal_log: Scale parameter is 0, but must be > 0!                     1
+When a numerical problem occurs, the Hamiltonian proposal gets rejected.
+See http://mc-stan.org/misc/warnings.html#exception-hamiltonian-proposal-rejected
+If the number in the 'count' column is small, do not ask about this message on stan-users.
 
-[[9]]
-[1] "/vega/stats/users/smm2253/rpackages" "/usr/lib64/R/library"               
-[3] "/usr/share/R/library"               
+Chain 1, Iteration: 2000 / 2000 [100%]  (Sampling)
+ Elapsed Time: 377.99 seconds (Warm-up)
+               217.38 seconds (Sampling)
+               595.37 seconds (Total)
 
-[[10]]
-[1] "/vega/stats/users/smm2253/rpackages" "/usr/lib64/R/library"               
-[3] "/usr/share/R/library"               
+The following numerical problems occured the indicated number of times after warmup on chain 1
+                                                                                                count
+Exception thrown at line 93: neg_binomial_2_log: Location parameter is inf, but must be finite!     7
+When a numerical problem occurs, the Hamiltonian proposal gets rejected.
+See http://mc-stan.org/misc/warnings.html#exception-hamiltonian-proposal-rejected
+If the number in the 'count' column is small, do not ask about this message on stan-users.
 
-[1] 10
-[[1]]
- [1] "survey"      "grid"        "doParallel"  "parallel"    "iterators"  
- [6] "foreach"     "rstan"       "StanHeaders" "ggplot2"     "lme4"       
-[11] "Matrix"      "tidyr"       "dplyr"       "plyr"        "docopt"     
-[16] "methods"     "stats"       "graphics"    "grDevices"   "utils"      
-[21] "datasets"    "base"       
+Chain 2, Iteration: 2000 / 2000 [100%]  (Sampling)
+ Elapsed Time: 386.43 seconds (Warm-up)
+               219.9 seconds (Sampling)
+               606.33 seconds (Total)
 
-[[2]]
- [1] "survey"      "grid"        "doParallel"  "parallel"    "iterators"  
- [6] "foreach"     "rstan"       "StanHeaders" "ggplot2"     "lme4"       
-[11] "Matrix"      "tidyr"       "dplyr"       "plyr"        "docopt"     
-[16] "methods"     "stats"       "graphics"    "grDevices"   "utils"      
-[21] "datasets"    "base"       
+The following numerical problems occured the indicated number of times after warmup on chain 2
+                                                                                                count
+Exception thrown at line 93: neg_binomial_2_log: Location parameter is inf, but must be finite!     7
+Exception thrown at line 90: normal_log: Scale parameter is 0, but must be > 0!                     1
+When a numerical problem occurs, the Hamiltonian proposal gets rejected.
+See http://mc-stan.org/misc/warnings.html#exception-hamiltonian-proposal-rejected
+If the number in the 'count' column is small, do not ask about this message on stan-users.
 
-[[3]]
- [1] "survey"      "grid"        "doParallel"  "parallel"    "iterators"  
- [6] "foreach"     "rstan"       "StanHeaders" "ggplot2"     "lme4"       
-[11] "Matrix"      "tidyr"       "dplyr"       "plyr"        "docopt"     
-[16] "methods"     "stats"       "graphics"    "grDevices"   "utils"      
-[21] "datasets"    "base"       
+Chain 3, Iteration: 2000 / 2000 [100%]  (Sampling)
+ Elapsed Time: 391.47 seconds (Warm-up)
+               218.71 seconds (Sampling)
+               610.18 seconds (Total)
 
-[[4]]
- [1] "survey"      "grid"        "doParallel"  "parallel"    "iterators"  
- [6] "foreach"     "rstan"       "StanHeaders" "ggplot2"     "lme4"       
-[11] "Matrix"      "tidyr"       "dplyr"       "plyr"        "docopt"     
-[16] "methods"     "stats"       "graphics"    "grDevices"   "utils"      
-[21] "datasets"    "base"       
-
-[[5]]
- [1] "survey"      "grid"        "doParallel"  "parallel"    "iterators"  
- [6] "foreach"     "rstan"       "StanHeaders" "ggplot2"     "lme4"       
-[11] "Matrix"      "tidyr"       "dplyr"       "plyr"        "docopt"     
-[16] "methods"     "stats"       "graphics"    "grDevices"   "utils"      
-[21] "datasets"    "base"       
-
-[[6]]
- [1] "survey"      "grid"        "doParallel"  "parallel"    "iterators"  
- [6] "foreach"     "rstan"       "StanHeaders" "ggplot2"     "lme4"       
-[11] "Matrix"      "tidyr"       "dplyr"       "plyr"        "docopt"     
-[16] "methods"     "stats"       "graphics"    "grDevices"   "utils"      
-[21] "datasets"    "base"       
-
-[[7]]
- [1] "survey"      "grid"        "doParallel"  "parallel"    "iterators"  
- [6] "foreach"     "rstan"       "StanHeaders" "ggplot2"     "lme4"       
-[11] "Matrix"      "tidyr"       "dplyr"       "plyr"        "docopt"     
-[16] "methods"     "stats"       "graphics"    "grDevices"   "utils"      
-[21] "datasets"    "base"       
-
-[[8]]
- [1] "survey"      "grid"        "doParallel"  "parallel"    "iterators"  
- [6] "foreach"     "rstan"       "StanHeaders" "ggplot2"     "lme4"       
-[11] "Matrix"      "tidyr"       "dplyr"       "plyr"        "docopt"     
-[16] "methods"     "stats"       "graphics"    "grDevices"   "utils"      
-[21] "datasets"    "base"       
-
-[[9]]
- [1] "survey"      "grid"        "doParallel"  "parallel"    "iterators"  
- [6] "foreach"     "rstan"       "StanHeaders" "ggplot2"     "lme4"       
-[11] "Matrix"      "tidyr"       "dplyr"       "plyr"        "docopt"     
-[16] "methods"     "stats"       "graphics"    "grDevices"   "utils"      
-[21] "datasets"    "base"       
-
-[[10]]
- [1] "survey"      "grid"        "doParallel"  "parallel"    "iterators"  
- [6] "foreach"     "rstan"       "StanHeaders" "ggplot2"     "lme4"       
-[11] "Matrix"      "tidyr"       "dplyr"       "plyr"        "docopt"     
-[16] "methods"     "stats"       "graphics"    "grDevices"   "utils"      
-[21] "datasets"    "base"       
-
-[[1]]
- [1] "survey"      "grid"        "doParallel"  "parallel"    "iterators"  
- [6] "foreach"     "rstan"       "StanHeaders" "ggplot2"     "lme4"       
-[11] "Matrix"      "tidyr"       "dplyr"       "plyr"        "docopt"     
-[16] "methods"     "stats"       "graphics"    "grDevices"   "utils"      
-[21] "datasets"    "base"       
-
-[[2]]
- [1] "survey"      "grid"        "doParallel"  "parallel"    "iterators"  
- [6] "foreach"     "rstan"       "StanHeaders" "ggplot2"     "lme4"       
-[11] "Matrix"      "tidyr"       "dplyr"       "plyr"        "docopt"     
-[16] "methods"     "stats"       "graphics"    "grDevices"   "utils"      
-[21] "datasets"    "base"       
-
-[[3]]
- [1] "survey"      "grid"        "doParallel"  "parallel"    "iterators"  
- [6] "foreach"     "rstan"       "StanHeaders" "ggplot2"     "lme4"       
-[11] "Matrix"      "tidyr"       "dplyr"       "plyr"        "docopt"     
-[16] "methods"     "stats"       "graphics"    "grDevices"   "utils"      
-[21] "datasets"    "base"       
-
-[[4]]
- [1] "survey"      "grid"        "doParallel"  "parallel"    "iterators"  
- [6] "foreach"     "rstan"       "StanHeaders" "ggplot2"     "lme4"       
-[11] "Matrix"      "tidyr"       "dplyr"       "plyr"        "docopt"     
-[16] "methods"     "stats"       "graphics"    "grDevices"   "utils"      
-[21] "datasets"    "base"       
-
-[[5]]
- [1] "survey"      "grid"        "doParallel"  "parallel"    "iterators"  
- [6] "foreach"     "rstan"       "StanHeaders" "ggplot2"     "lme4"       
-[11] "Matrix"      "tidyr"       "dplyr"       "plyr"        "docopt"     
-[16] "methods"     "stats"       "graphics"    "grDevices"   "utils"      
-[21] "datasets"    "base"       
-
-[[6]]
- [1] "survey"      "grid"        "doParallel"  "parallel"    "iterators"  
- [6] "foreach"     "rstan"       "StanHeaders" "ggplot2"     "lme4"       
-[11] "Matrix"      "tidyr"       "dplyr"       "plyr"        "docopt"     
-[16] "methods"     "stats"       "graphics"    "grDevices"   "utils"      
-[21] "datasets"    "base"       
-
-[[7]]
- [1] "survey"      "grid"        "doParallel"  "parallel"    "iterators"  
- [6] "foreach"     "rstan"       "StanHeaders" "ggplot2"     "lme4"       
-[11] "Matrix"      "tidyr"       "dplyr"       "plyr"        "docopt"     
-[16] "methods"     "stats"       "graphics"    "grDevices"   "utils"      
-[21] "datasets"    "base"       
-
-[[8]]
- [1] "survey"      "grid"        "doParallel"  "parallel"    "iterators"  
- [6] "foreach"     "rstan"       "StanHeaders" "ggplot2"     "lme4"       
-[11] "Matrix"      "tidyr"       "dplyr"       "plyr"        "docopt"     
-[16] "methods"     "stats"       "graphics"    "grDevices"   "utils"      
-[21] "datasets"    "base"       
-
-[[9]]
- [1] "survey"      "grid"        "doParallel"  "parallel"    "iterators"  
- [6] "foreach"     "rstan"       "StanHeaders" "ggplot2"     "lme4"       
-[11] "Matrix"      "tidyr"       "dplyr"       "plyr"        "docopt"     
-[16] "methods"     "stats"       "graphics"    "grDevices"   "utils"      
-[21] "datasets"    "base"       
-
-[[10]]
- [1] "survey"      "grid"        "doParallel"  "parallel"    "iterators"  
- [6] "foreach"     "rstan"       "StanHeaders" "ggplot2"     "lme4"       
-[11] "Matrix"      "tidyr"       "dplyr"       "plyr"        "docopt"     
-[16] "methods"     "stats"       "graphics"    "grDevices"   "utils"      
-[21] "datasets"    "base"       
-
-[[1]]
- [1] "survey"      "grid"        "doParallel"  "parallel"    "iterators"  
- [6] "foreach"     "rstan"       "StanHeaders" "ggplot2"     "lme4"       
-[11] "Matrix"      "tidyr"       "dplyr"       "plyr"        "docopt"     
-[16] "methods"     "stats"       "graphics"    "grDevices"   "utils"      
-[21] "datasets"    "base"       
-
-[[2]]
- [1] "survey"      "grid"        "doParallel"  "parallel"    "iterators"  
- [6] "foreach"     "rstan"       "StanHeaders" "ggplot2"     "lme4"       
-[11] "Matrix"      "tidyr"       "dplyr"       "plyr"        "docopt"     
-[16] "methods"     "stats"       "graphics"    "grDevices"   "utils"      
-[21] "datasets"    "base"       
-
-[[3]]
- [1] "survey"      "grid"        "doParallel"  "parallel"    "iterators"  
- [6] "foreach"     "rstan"       "StanHeaders" "ggplot2"     "lme4"       
-[11] "Matrix"      "tidyr"       "dplyr"       "plyr"        "docopt"     
-[16] "methods"     "stats"       "graphics"    "grDevices"   "utils"      
-[21] "datasets"    "base"       
-
-[[4]]
- [1] "survey"      "grid"        "doParallel"  "parallel"    "iterators"  
- [6] "foreach"     "rstan"       "StanHeaders" "ggplot2"     "lme4"       
-[11] "Matrix"      "tidyr"       "dplyr"       "plyr"        "docopt"     
-[16] "methods"     "stats"       "graphics"    "grDevices"   "utils"      
-[21] "datasets"    "base"       
-
-[[5]]
- [1] "survey"      "grid"        "doParallel"  "parallel"    "iterators"  
- [6] "foreach"     "rstan"       "StanHeaders" "ggplot2"     "lme4"       
-[11] "Matrix"      "tidyr"       "dplyr"       "plyr"        "docopt"     
-[16] "methods"     "stats"       "graphics"    "grDevices"   "utils"      
-[21] "datasets"    "base"       
-
-[[6]]
- [1] "survey"      "grid"        "doParallel"  "parallel"    "iterators"  
- [6] "foreach"     "rstan"       "StanHeaders" "ggplot2"     "lme4"       
-[11] "Matrix"      "tidyr"       "dplyr"       "plyr"        "docopt"     
-[16] "methods"     "stats"       "graphics"    "grDevices"   "utils"      
-[21] "datasets"    "base"       
-
-[[7]]
- [1] "survey"      "grid"        "doParallel"  "parallel"    "iterators"  
- [6] "foreach"     "rstan"       "StanHeaders" "ggplot2"     "lme4"       
-[11] "Matrix"      "tidyr"       "dplyr"       "plyr"        "docopt"     
-[16] "methods"     "stats"       "graphics"    "grDevices"   "utils"      
-[21] "datasets"    "base"       
-
-[[8]]
- [1] "survey"      "grid"        "doParallel"  "parallel"    "iterators"  
- [6] "foreach"     "rstan"       "StanHeaders" "ggplot2"     "lme4"       
-[11] "Matrix"      "tidyr"       "dplyr"       "plyr"        "docopt"     
-[16] "methods"     "stats"       "graphics"    "grDevices"   "utils"      
-[21] "datasets"    "base"       
-
-[[9]]
- [1] "survey"      "grid"        "doParallel"  "parallel"    "iterators"  
- [6] "foreach"     "rstan"       "StanHeaders" "ggplot2"     "lme4"       
-[11] "Matrix"      "tidyr"       "dplyr"       "plyr"        "docopt"     
-[16] "methods"     "stats"       "graphics"    "grDevices"   "utils"      
-[21] "datasets"    "base"       
-
-[[10]]
- [1] "survey"      "grid"        "doParallel"  "parallel"    "iterators"  
- [6] "foreach"     "rstan"       "StanHeaders" "ggplot2"     "lme4"       
-[11] "Matrix"      "tidyr"       "dplyr"       "plyr"        "docopt"     
-[16] "methods"     "stats"       "graphics"    "grDevices"   "utils"      
-[21] "datasets"    "base"       
-
-automatically exporting the following variables from the local environment:
-  lmer_compare, num.chains, num.iter, numclusters, outcome.type, rootdir, runstan, sampledata, sim.params, simno, stanmod_list, svy_ests, use.sizes 
-explicitly exporting variables(s): cl, doc, j, libdir, num.clusters.list, num.units.list, opts, opts.names, outcome_type, tmplist, use_sizes
-numValues: 32, numResults: 0, stopped: TRUE
 The following numerical problems occured the indicated number of times after warmup on chain 3
-                                                                                count
-Exception thrown at line 30: normal_log: Scale parameter is 0, but must be > 0!     1
+                                                                                                count
+Exception thrown at line 93: neg_binomial_2_log: Location parameter is inf, but must be finite!     7
 When a numerical problem occurs, the Hamiltonian proposal gets rejected.
 See http://mc-stan.org/misc/warnings.html#exception-hamiltonian-proposal-rejected
 If the number in the 'count' column is small, do not ask about this message on stan-users.
-The following numerical problems occured the indicated number of times after warmup on chain 2
-                                                                                count
-Exception thrown at line 30: normal_log: Scale parameter is 0, but must be > 0!     1
-When a numerical problem occurs, the Hamiltonian proposal gets rejected.
-See http://mc-stan.org/misc/warnings.html#exception-hamiltonian-proposal-rejected
-If the number in the 'count' column is small, do not ask about this message on stan-users.
-The following numerical problems occured the indicated number of times after warmup on chain 1
-                                                                                count
-Exception thrown at line 30: normal_log: Scale parameter is 0, but must be > 0!     1
-When a numerical problem occurs, the Hamiltonian proposal gets rejected.
-See http://mc-stan.org/misc/warnings.html#exception-hamiltonian-proposal-rejected
-If the number in the 'count' column is small, do not ask about this message on stan-users.
-The following numerical problems occured the indicated number of times after warmup on chain 2
-                                                                                count
-Exception thrown at line 30: normal_log: Scale parameter is 0, but must be > 0!     1
-When a numerical problem occurs, the Hamiltonian proposal gets rejected.
-See http://mc-stan.org/misc/warnings.html#exception-hamiltonian-proposal-rejected
-If the number in the 'count' column is small, do not ask about this message on stan-users.
-The following numerical problems occured the indicated number of times after warmup on chain 1
-                                                                                count
-Exception thrown at line 30: normal_log: Scale parameter is 0, but must be > 0!     2
-When a numerical problem occurs, the Hamiltonian proposal gets rejected.
-See http://mc-stan.org/misc/warnings.html#exception-hamiltonian-proposal-rejected
-If the number in the 'count' column is small, do not ask about this message on stan-users.
-The following numerical problems occured the indicated number of times after warmup onThe following numerical problems occured the indicated number of times after warmup on chain 1
-                                                                                count
-Exception thrown at line 30: normal_log: Scale parameter is 0, but must be > 0!     2
-When a numerical problem occurs, the Hamiltonian proposal gets rejected.
-See http://mc-stan.org/misc/warnings.html#exception-hamiltonian-proposal-rejected
-If thThe following numerical problems occured the indicated number of times after warmup on chain 3
-                                                                                count
-Exception thrown at line 33: normal_log: Scale parameter is 0, but must be > 0!     2
-When a numerical problem occurs, the Hamiltonian proposal gets rejected.
-See http://mc-stan.org/misc/warnings.html#exception-hamiltonian-proposal-rejected
-If the number in the 'count' column is small, do not ask about this message on stan-users.
-The following numerical problems occured the indicated number of times after warmup onThe following numerical problems occured the indicated number of times after warmup on chain 2
-                                                                                count
-Exception thrown at line 39: normal_log: Scale parameter is 0, but must be > 0!     1
-When a numerical problem occurs, the Hamiltonian proposal gets rejected.
-See http://mc-stan.org/misc/warnings.html#exception-hamiltonian-proposal-rejected
-If the number in the 'count' column is small, do not ask about this message on stan-users.
-The following numerical problems occured the indicated number of times after warmup on chain 1
-                                                                                count
-Exception thrown at line 31: normal_log: Scale parameter is 0, but must be > 0!     2
-When a numerical problem occurs, the Hamiltonian proposal gets rejected.
-See http://mc-stan.org/misc/warnings.html#exception-hamiltonian-proposal-rejected
-If the number in the 'count' column is small, do not ask about this message on stan-users.
-The following numerical problems occured the indicated number of times after warmup on chain 2
-                                                                                count
-Exception thrown at line 31: normal_log: Scale parameter is 0, but must be > 0!     2
-When a numerical problem occurs, the Hamiltonian proposal gets rejected.
-See http://mc-stan.org/misc/warnings.html#exception-hamiltonian-proposal-rejected
-If the number in the 'count' column is small, do not ask about this message on stan-users.
-The following numerical problems occured the indicated number of times after warmup on chain 4
-                                                                                count
-Exception thrown at line 33: normal_log: Scale parameter is 0, but must be > 0!     2
-Exception thrown at line 30: normal_log: Scale parameter is 0, but must be > 0!     1
-When a numerical problem occurs, the Hamiltonian proposal gets rejected.
-See http://mc-stan.org/misc/warnings.html#exception-hamiltonian-proposal-rejected
-If the number in the 'count' column is small, do not ask about this message on stan-users.
-The following numerical problems occured the indicated number of times after warmup on chain 1
-                                                                                count
-Exception thrown at line 42: normal_log: Scale parameter is 0, but must be > 0!     2
-Exception thrown at line 40: normal_log: Scale parameter is 0, but must be > 0!     1
-When a numerical problem occurs, the Hamiltonian proposal gets rejected.
-See http://mc-stan.org/misc/warnings.html#exception-hamiltonian-proposal-rejected
-If the number in the 'count' column is small, do not ask about this message on stan-users.
-The following numerical problems occured the indicated number of times after warmup on chain 2
-                                                                                count
-Exception thrown at line 31: normal_log: Scale parameter is 0, but must be > 0!     1
-When a numerical problem occurs, the Hamiltonian proposal gets rejected.
-See http://mc-stan.org/misc/warnings.html#exception-hamiltonian-proposal-rejected
-If the number in the 'count' column is small, do not ask about this message on stan-users.
-The following numerical problems occured the indicated number of times after warmup on chain 1
-                                                                                count
-Exception thrown at line 42: normal_log: Scale parameter is 0, but must be > 0!     3
-When a numerical problem occurs, the Hamiltonian proposal gets rejected.
-See http://mc-stan.org/misc/warnings.html#exception-hamiltonian-proposal-rejected
-If the number in the 'count' column is small, do not ask about this message on stan-users.
-The following numerical problems occured the indicated number of times after warmup on chain 1
-                                                                                count
-Exception thrown at line 39: normal_log: Scale parameter is 0, but must be > 0!     1
-When a numerical problem occurs, the Hamiltonian proposal gets rejected.
-See http://mc-stan.org/misc/warnings.html#exception-hamiltonian-proposal-rejected
-If the number in the 'count' column is small, do not ask about this message on stan-users.
-The following numerical problems occured the indicated number of times after warmup on chain 4
-                                                                                count
-Exception thrown at line 40: normal_log: Scale parameter is 0, but must be > 0!     1
-When a numerical problem occurs, the Hamiltonian proposal gets rejected.
-See http://mc-stan.org/misc/warnings.html#exception-hamiltonian-proposal-rejected
-If the number in the 'count' column is small, do not ask about this message on stan-users.
-The following numerical problems occured the indicated number of times after warmup on chain 4
-                                                                                count
-Exception thrown at line 31: normal_log: Scale parameter is 0, but must be > 0!     2
-When a numerical problem occurs, the Hamiltonian proposal gets rejected.
-See http://mc-stan.org/misc/warnings.html#exception-hamiltonian-proposal-rejected
-If the number in the 'count' column is small, do not ask about this message on stan-users.
-The following numerical problems occured the indicated number of times after warmup on chain 2
-                                                                                count
-Exception thrown at line 39: normal_log: Scale parameter is 0, but must be > 0!     1
-When a numerical problem occurs, the Hamiltonian proposal gets rejected.
-SThe following numerical problems occured the indicated number of times after warmup on chain 3
-                                                                             The following numerical problems occured the indicated number of times after warmup on chain 3
-                                                                                count
-Exception thrown at line 42: normal_log: Scale parameter is 0, but must be > 0!     3
-When a numerical problem occurs, the Hamiltonian proposal gets rejected.
-See http://mc-stan.org/misc/warnings.html#exception-hamiltonian-proposal-rejected
-If the number in the 'count' column is small, do not ask about this message on stan-users.
+Inference for Stan model: negbin_full_centered.
+4 chains, each with iter=2000; warmup=1000; thin=1; 
+post-warmup draws per chain=1000, total post-warmup draws=4000.
+
+              mean se_mean    sd   2.5%    25%    50%    75%  97.5% n_eff Rhat
+alpha0       -0.56    0.00  0.09  -0.74  -0.61  -0.55  -0.50  -0.38  4000    1
+gamma0       -0.38    0.01  0.77  -1.89  -0.89  -0.39   0.12   1.14  4000    1
+alpha1        0.10    0.00  0.05   0.00   0.07   0.11   0.14   0.21  4000    1
+gamma1       -1.22    0.01  0.61  -2.40  -1.65  -1.21  -0.79  -0.01  4000    1
+sigma_beta0   0.64    0.00  0.07   0.52   0.59   0.63   0.68   0.78  4000    1
+sigma_beta1   0.38    0.00  0.04   0.31   0.35   0.38   0.40   0.47  4000    1
+sigma_y       0.04    0.00  0.00   0.04   0.04   0.04   0.04   0.04  4000    1
+mu          802.63    0.14  8.71 785.10 796.98 802.70 808.43 819.31  4000    1
+phi         231.87    0.95 60.16 135.22 188.62 225.26 267.87 362.01  4000    1
+
+Samples were drawn using NUTS(diag_e) at Thu Apr  6 15:25:18 2017.
+For each parameter, n_eff is a crude measure of effective sample size,
+and Rhat is the potential scale reduction factor on split chains (at 
+convergence, Rhat=1).
+[1] "joining stan_samps and true pars"
+'data.frame':	36000 obs. of  2 variables:
+ $ parnames: chr  "alpha0" "alpha0" "alpha0" "alpha0" ...
+ $ value   : num  -0.618 -0.682 -0.533 -0.553 -0.501 ...
+NULL
+'data.frame':	11 obs. of  2 variables:
+ $ true.pars: num  800 200 6.6815 0.0789 -0.6624 ...
+ $ parnames : chr  "mu_nb" "phi" "mu" "sigma" ...
+NULL
+[1] "joining beta_samps and curr pop dat"
+
+========================================================================
+MODEL: ln ,  simno: 1 
+starting worker pid=43459 on localhost:11543 at 15:26:02.423
+starting worker pid=43468 on localhost:11543 at 15:26:02.665
+starting worker pid=43477 on localhost:11543 at 15:26:02.906
+starting worker pid=43486 on localhost:11543 at 15:26:03.147
+
+SAMPLING FOR MODEL 'lognormal_full_centered' NOW (CHAIN 1).
+
+Chain 1, Iteration:    1 / 2000 [  0%]  (Warmup)
+SAMPLING FOR MODEL 'lognormal_full_centered' NOW (CHAIN 2).
+
+Chain 2, Iteration:    1 / 2000 [  0%]  (Warmup)
+SAMPLING FOR MODEL 'lognormal_full_centered' NOW (CHAIN 3).
+
+Chain 3, Iteration:    1 / 2000 [  0%]  (Warmup)
+SAMPLING FOR MODEL 'lognormal_full_centered' NOW (CHAIN 4).
+
+Chain 4, Iteration:    1 / 2000 [  0%]  (Warmup)
+Chain 1, Iteration:  200 / 2000 [ 10%]  (Warmup)
+Chain 4, Iteration:  200 / 2000 [ 10%]  (Warmup)
+Chain 3, Iteration:  200 / 2000 [ 10%]  (Warmup)
+Chain 2, Iteration:  200 / 2000 [ 10%]  (Warmup)
+Chain 1, Iteration:  400 / 2000 [ 20%]  (Warmup)
+Chain 4, Iteration:  400 / 2000 [ 20%]  (Warmup)
+Chain 3, Iteration:  400 / 2000 [ 20%]  (Warmup)
+Chain 2, Iteration:  400 / 2000 [ 20%]  (Warmup)
+Chain 1, Iteration:  600 / 2000 [ 30%]  (Warmup)
+Chain 3, Iteration:  600 / 2000 [ 30%]  (Warmup)
+Chain 4, Iteration:  600 / 2000 [ 30%]  (Warmup)
+Chain 2, Iteration:  600 / 2000 [ 30%]  (Warmup)
+Chain 3, Iteration:  800 / 2000 [ 40%]  (Warmup)
+Chain 1, Iteration:  800 / 2000 [ 40%]  (Warmup)
+Chain 4, Iteration:  800 / 2000 [ 40%]  (Warmup)
+Chain 2, Iteration:  800 / 2000 [ 40%]  (Warmup)
+Chain 1, Iteration: 1000 / 2000 [ 50%]  (Warmup)
+Chain 3, Iteration: 1000 / 2000 [ 50%]  (Warmup)
+Chain 1, Iteration: 1001 / 2000 [ 50%]  (Sampling)
+Chain 3, Iteration: 1001 / 2000 [ 50%]  (Sampling)
+Chain 4, Iteration: 1000 / 2000 [ 50%]  (Warmup)
+Chain 4, Iteration: 1001 / 2000 [ 50%]  (Sampling)
+Chain 2, Iteration: 1000 / 2000 [ 50%]  (Warmup)
+Chain 2, Iteration: 1001 / 2000 [ 50%]  (Sampling)
+Chain 1, Iteration: 1200 / 2000 [ 60%]  (Sampling)
+Chain 3, Iteration: 1200 / 2000 [ 60%]  (Sampling)
+Chain 4, Iteration: 1200 / 2000 [ 60%]  (Sampling)
+Chain 2, Iteration: 1200 / 2000 [ 60%]  (Sampling)
+Chain 1, Iteration: 1400 / 2000 [ 70%]  (Sampling)
+Chain 3, Iteration: 1400 / 2000 [ 70%]  (Sampling)
+Chain 4, Iteration: 1400 / 2000 [ 70%]  (Sampling)
+Chain 2, Iteration: 1400 / 2000 [ 70%]  (Sampling)
+Chain 3, Iteration: 1600 / 2000 [ 80%]  (Sampling)
+Chain 1, Iteration: 1600 / 2000 [ 80%]  (Sampling)
+Chain 4, Iteration: 1600 / 2000 [ 80%]  (Sampling)
+Chain 2, Iteration: 1600 / 2000 [ 80%]  (Sampling)
+Chain 3, Iteration: 1800 / 2000 [ 90%]  (Sampling)
+Chain 1, Iteration: 1800 / 2000 [ 90%]  (Sampling)
+Chain 4, Iteration: 1800 / 2000 [ 90%]  (Sampling)
+Chain 2, Iteration: 1800 / 2000 [ 90%]  (Sampling)
+Chain 3, Iteration: 2000 / 2000 [100%]  (Sampling)
+ Elapsed Time: 332.96 seconds (Warm-up)
+               185.52 seconds (Sampling)
+               518.48 seconds (Total)
+
 The following numerical problems occured the indicated number of times after warmup on chain 3
-                                                                                count
-Exception thrown at line 30: normal_log: Scale parameter is 0, but must be > 0!     2
+                                                                                           count
+Exception thrown at line 83: lognormal_log: Location parameter is inf, but must be finite!     6
 When a numerical problem occurs, the Hamiltonian proposal gets rejected.
 See http://mc-stan.org/misc/warnings.html#exception-hamiltonian-proposal-rejected
 If the number in the 'count' column is small, do not ask about this message on stan-users.
-The following numerical problems occured the indicated number of times after warmup on chain 3
-                                                                                count
-Exception thrown at line 40: normal_log: Scale parameter is 0, but must be > 0!     1
-When a numerical problem occurs, the Hamiltonian proposal gets rejected.
-SThe following numerical problems occured the indicated number of times after warmup on chain 2
-                                                                             The following numerical problems occured the indicated number of times after warmup on chain 4
-                                                                                count
-Exception thrown at line 40: normal_log: Scale parameter is 0, but must be > 0!     1
-When a numerical problem occurs, the Hamiltonian proposal gets rejected.
-SThe following numerical problems occured the indicated number of times after warmup on chain 3
-                                                                                count
-Exception thrown at line 31: normal_log: Scale parameter is 0, but must be > 0!     1
-When a numerical problem occurs, the Hamiltonian proposal gets rejected.
-See http://mc-stan.org/misc/warnings.html#exception-hamiltonian-proposal-rejected
-If the number in the 'count' column is small, do not ask about this message on stan-users.
+
+Chain 1, Iteration: 2000 / 2000 [100%]  (Sampling)
+ Elapsed Time: 334 seconds (Warm-up)
+               186.3 seconds (Sampling)
+               520.3 seconds (Total)
+
+
+Chain 4, Iteration: 2000 / 2000 [100%]  (Sampling)
+ Elapsed Time: 334.81 seconds (Warm-up)
+               186.86 seconds (Sampling)
+               521.67 seconds (Total)
+
 The following numerical problems occured the indicated number of times after warmup on chain 4
-                                                                                count
-Exception thrown at line 33: normal_log: Scale parameter is 0, but must be > 0!     2
-Exception thrown at line 30: normal_log: Scale parameter is 0, but must be > 0!     1
-When a numerical problem occurs, the Hamiltonian proposal gets rejected.
-See http://mc-stan.org/misc/warnings.html#exception-hamiltonian-proposal-rejected
-If the number in the 'count' column is small, do not ask about this message on stan-users.
-The following numerical problems occured the indicated number of times after warmup on chain 1
-                                                                                count
-Exception thrown at line 33: normal_log: Scale parameter is 0, but must be > 0!     3
-When a numerical problem occurs, the Hamiltonian proposal gets rejected.
-See http://mc-stan.org/misc/warnings.html#exception-hamiltonian-proposal-rejected
-If the number in the 'count' column is small, do not ask about this message on stan-users.
-The following numerical problems occured the indicated number of times after warmup on chain 2
-                                                                                count
-Exception thrown at line 30: normal_log: Scale parameter is 0, but must be > 0!     2
-When a numerical problem occurs, the Hamiltonian proposal gets rejected.
-See http://mc-stan.org/misc/warnings.html#exception-hamiltonian-proposal-rejected
-If the number in the 'count' column is small, do not ask about this message on stan-users.
-The following numerical problems occured the indicated number of times after warmup on chain 4
-                                                                                count
-Exception thrown at line 30: normal_log: Scale parameter is 0, but must be > 0!     1
-When a numerical problem occurs, the Hamiltonian proposal gets rejected.
-See http://mc-stan.org/misc/warnings.html#exception-hamiltonian-proposal-rejected
-If the number in the 'count' column is small, do not ask about this message on stan-users.
-The following numerical problems occured the indicated number of times after warmup on chain 1
-                                                                                count
-Exception thrown at line 42: normal_log: Scale parameter is 0, but must be > 0!     4
-When a numerical problem occurs, the Hamiltonian proposal gets rejected.
-See http://mc-stan.org/misc/warnings.html#exception-hamiltonian-proposal-rejected
-If the number in the 'count' column is small, do not ask about this message on stan-users.
-The following numerical problems occured the indicated number of times after warmup on chain 2
-                                                                                count
-Exception thrown at line 31: normal_log: Scale parameter is 0, but must be > 0!     2
-When a numerical problem occurs, the Hamiltonian proposal gets rejected.
-See http://mc-stan.org/misc/warnings.html#exception-hamiltonian-proposal-rejected
-If thThe following numerical problems occured the indicated number of times after warmup on chain 2
-                                                                                count
-Exception thrown at line 40: normal_log: Scale parameter is 0, but must be > 0!     1
-When a numerical problem occurs, the Hamiltonian proposal gets rejected.
-See http://mc-stan.org/misc/warnings.html#exception-hamiltonian-proposal-rejected
-If the number in the 'count' column is small, do not ask about this message on stan-users.
-The following numerical problems occured the indicated number of times after warmup on chain 4
-                                                                                count
-Exception thrown at line 31: normal_log: Scale parameter is 0, but must be > 0!     2
-When a numerical problem occurs, the Hamiltonian proposal gets rejected.
-See http://mc-stan.org/misc/warnings.html#exception-hamiltonian-proposal-rejected
-If the number in the 'count' column is small, do not ask about this message on stan-users.
-The following numerical problems occured the indicated number of times after warmup on chain 3
-                                                                                count
-Exception thrown at line 40: normal_log: Scale parameter is 0, but must be > 0!     2
-When a numerical problem occurs, the Hamiltonian proposal gets rejected.
-See http://mc-stan.org/misc/warnings.html#exception-hamiltonian-proposal-rejected
-If the number in the 'count' column is small, do not ask about this message on stan-users.
-The following numerical problems occured the indicated number of times after warmup on chain 3
-                                                                                count
-Exception thrown at line 39: normal_log: Scale parameter is 0, but must be > 0!     1
-When a numerical problem occurs, the Hamiltonian proposal gets rejected.
-See http://mc-stan.org/misc/warnings.html#exception-hamiltonian-proposal-rejected
-If the number in the 'count' column is small, do not ask about this message on stan-users.
-The following numerical problems occured the indicated number of times after warmup on chain 4
-                                                                                count
-Exception thrown at line 39: normal_log: Scale parameter is 0, but must be > 0!     2
-When a numerical problem occurs, the Hamiltonian proposal gets rejected.
-See http://mc-stan.org/misc/warnings.html#exception-hamiltonian-proposal-rejected
-If the number in the 'count' column is small, do not ask about this message on stan-users.
-The following numerical problems occured the indicated number of times after warmup on chain 1
-                                                                                count
-Exception thrown at line 42: normal_log: Scale parameter is 0, but must be > 0!     2
-Exception thrown at line 39: normal_log: Scale parameter is 0, but must be > 0!     1
-When a numerical problem occurs, the Hamiltonian proposal gets rejected.
-See http://mc-stan.org/misc/warnings.html#exception-hamiltonian-proposal-rejected
-If the number in the 'count' column is small, do not ask about this message on stan-users.
-The following numerical problems occured the indicated number of times after warmup on chain 3
-                                                                                count
-Exception thrown at line 30: normal_log: Scale parameter is 0, but must be > 0!     2
-When a numerical problem occurs, the Hamiltonian proposal gets rejected.
-See http://mc-stan.org/misc/warnings.html#exception-hamiltonian-proposal-rejected
-If the number in the 'count' column is small, do not ask about this message on stan-users.
-The following numerical problems occured the indicated number of times after warmup on chain 1
-                                                                                count
-Exception thrown at line 31: normal_log: Scale parameter is 0, but must be > 0!     1
-When a numerical problem occurs, the Hamiltonian proposal gets rejected.
-See The following numerical problems occured the indicated number of times after warmup on chain 3
-                                                                          The following numerical problems occured the indicated number of times after warmup on chain 2
-                                                                                count
-Exception thrown at line 40: normal_log: Scale parameter is 0, but must be > 0!     2
-When a numerical problem occurs, the Hamiltonian proposal gets rejected.
-See http://mc-stan.org/misc/warnings.html#exception-hamiltonian-proposal-rejected
-If the nThe following numerical problems occured the indicated number of times after warmupThe following numerical problems occured the indicated number of times after warmup on chain 2
-                                                                                count
-Exception thrown at line 33: normal_log: Scale parameter is 0, but must be > 0!     2
-When a numerical problem occurs, the Hamiltonian proposal gets rejected.
-See http://mc-stan.org/misc/warnings.html#exception-hamiltonian-proposal-rejected
-If the number in the 'count' column is small, do not ask about this message on stan-users.
-The following numerical problems occured the indicated number of times after warmup on chain 3
-                                                                                count
-Exception thrown at line 31: normal_log: Scale parameter is 0, but must be > 0!     1
-When a numerical problem occurs, the Hamiltonian proposal gets rejected.
-See http://mc-stan.org/misc/warnings.html#exception-hamiltonian-proposal-rejected
-If the number in the 'count' column is small, do not ask about this message on stan-users.
-The following numerical problems occured the indicated number of times after warmup on chain 1
-                                                                                count
-Exception thrown at line 30: normal_log: Scale parameter is 0, but must be > 0!     2
-When a numerical problem occurs, the Hamiltonian proposal gets rejected.
-See http://mc-stan.org/misc/warnings.html#exception-hamiltonian-proposal-rejected
-If the number in the 'count' column is small, do not ask about this message on stan-users.
-The following numerical problems occured the indicated number of times after warmup on chain 4
-                                                                                count
-Exception thrown at line 31: normal_log: Scale parameter is 0, but must be > 0!     1
-When a numerical problem occurs, the Hamiltonian proposal gets rejected.
-See http://mc-stan.org/misc/warnings.html#exception-hamiltonian-proposal-rejected
-If the number in the 'count' column is small, do not ask about this message on stan-users.
-The following numerical problems occured the indicated number of times after warmup on chain 1
-                                                                                count
-Exception thrown at line 40: normal_log: Scale parameter is 0, but must be > 0!     1
-Exception thrown at line 42: normal_log: Scale parameter is 0, but must be > 0!     1
-When a numerical problem occurs, the Hamiltonian proposal gets rejected.
-See http://mc-stan.org/misc/warnings.html#exception-hamiltonian-proposal-rejected
-If the number in the 'count' column is small, do not ask about this message on stan-users.
-The following numerical problems occured the indicated number of times after warmup on chain 4
-                                                                                count
-Exception thrown at line 39: normal_log: Scale parameter is 0, but must be > 0!     1
-When a numerical problem occurs, the Hamiltonian proposal gets rejected.
-See http://mc-stan.org/misc/warnings.html#exception-hamiltonian-proposal-rejected
-If the number in the 'count' column is small, do not ask about this message on stan-users.
-The following numerical problems occured the indicated number of times after warmup on chain 4
-                                                                                count
-Exception thrown at line 31: normal_log: Scale parameter is 0, but must be > 0!     2
-Exception thrown at line 33: normal_log: Scale parameter is 0, but must be > 0!     1
-When a numerical problem occurs, the Hamiltonian proposal gets rejected.
-See http://mc-stan.org/misc/warnings.html#exception-hamiltonian-proposal-rejected
-If the number in the 'count' column is small, do not ask about this message on stan-users.
-The following numerical problems occured the indicated number of times after warmup on chain 2
-                                                                                count
-Exception thrown at line 39: normal_log: Scale parameter is 0, but must be > 0!     1
-When a numerical problem occurs, the Hamiltonian proposal gets rejected.
-See http://mc-stan.org/misc/warnings.html#exception-hamiltonian-proposal-rejected
-If the number in the 'count' column is small, do not ask about this message on stan-users.
-The following numerical problems occured the indicated number of times after warmup on chain 1
-                                                                                count
-Exception thrown at line 31: normal_log: Scale parameter is 0, but must be > 0!     1
-When a numerical problem occurs, the Hamiltonian proposal gets rejected.
-See http://mc-stan.org/misc/warnings.html#exception-hamiltonian-proposal-rejected
-If the number in the 'count' column is small, do not ask about this message on stan-users.
-The following numerical problems occured the indicated number of times after warmup on chain 2
-                                                                                count
-Exception thrown at line 33: normal_log: Scale parameter is 0, but must be > 0!     2
-When a numerical problem occurs, the Hamiltonian proposal gets rejected.
-See http://mc-stan.org/misc/warnings.html#exception-hamiltonian-proposal-rejected
-If the number in the 'count' column is small, do not ask about this message on stan-users.
-The following numerical problems occured the indicated number of times after warmup on chain 1
-                                                                                count
-Exception thrown at line 31: normal_log: Scale parameter is 0, but must be > 0!     1
-When a numerical problem occurs, the Hamiltonian proposal gets rejected.
-See http://mc-stan.org/misc/warnings.html#exception-hamiltonian-proposal-rejected
-If the number in the 'count' column is small, do not ask about this message on stan-users.
-The following numerical problems occured the indicated number of times after warmup on chain 1
-                                                                                count
-Exception thrown at line 39: normal_log: Scale parameter is 0, but must be > 0!     2
-When a numerical problem occurs, the Hamiltonian proposal gets rejected.
-See http://mc-stan.org/misc/warnings.html#exception-hamiltonian-proposal-rejected
-If the number in the 'count' column is small, do not ask about this message on stan-users.
-The following numerical problems occured the indicated number of times after warmup on chain 4
-                                                                                count
-Exception thrown at line 30: normal_log: Scale parameter is 0, but must be > 0!     1
-When a numerical problem occurs, the Hamiltonian proposal gets rejected.
-See http://mc-stan.org/misc/warnings.html#exception-hamiltonian-proposal-rejected
-If the number in the 'count' column is small, do not ask about this message on stan-users.
-The following numerical problems occured the indicated number of times after warmup on chain 4
-                                                                                count
-Exception thrown at line 31: normal_log: Scale parameter is 0, but must be > 0!     1
-When a numerical problem occurs, the Hamiltonian proposal gets rejected.
-See http://mc-stan.org/misc/warnings.html#exception-hamiltonian-proposal-rejected
-If the number in the 'count' column is small, do not ask about this message on stan-users.
-The following numerical problems occured the indicated number of times after warmup on chain 1
-                                                                                count
-Exception thrown at line 39: normal_log: Scale parameter is 0, but must be > 0!     1
-When a numerical problem occurs, the Hamiltonian proposal gets rejected.
-See http://mc-stan.org/misc/warnings.html#exception-hamiltonian-proposal-rejected
-If the number in the 'count' column is small, do not ask about this message on stan-users.
-The following numerical problems occured the indicated number of times after warmup on chain 1
-                                                                                count
-Exception thrown at line 40: normal_log: Scale parameter is 0, but must be > 0!     1
-When a numerical problem occurs, the Hamiltonian proposal gets rejected.
-See http://mc-stan.org/misc/warnings.html#exception-hamiltonian-proposal-rejected
-If the number in the 'count' column is small, do not ask about this message on stan-users.
-The following numerical problems occured the indicated number of times after warmup on chain 2
-                                                                                count
-Exception thrown at line 39: normal_log: Scale parameter is 0, but must be > 0!     1
-When a numerical problem occurs, the Hamiltonian proposal gets rejected.
-See http://mc-stan.org/misc/warnings.html#exception-hamiltonian-proposal-rejected
-If the number in the 'count' column is small, do not ask about this message on stan-users.
-The following numerical problems occured the indicated number of times after warmup on chain 1
-                                                                             The following numerical problems occured the indicated number of times after warmup on chain 3
-                                                                                count
-Exception thrown at line 30: normal_log: Scale parameter is 0, but must be > 0!     1
-When a numerical problem occurs, the Hamiltonian proposal gets rejected.
-SThe following numerical problems occured the indicated number of times after warmup on chain 3
-                                                                                count
-Exception thrown at line 39: normal_log: Scale parameter is 0, but must be > 0!     1
-When a numerical problem occurs, the Hamiltonian proposal gets rejected.
-See http://mc-stan.org/misc/warnings.html#exception-hamiltonian-proposal-rejected
-If the number in the 'count' column is small, do not ask about this message on stan-users.
-The following numerical problems occured the indicated number of times after warmup on chain 2
-                                                                             The following numerical problems occured the indicated number of times after warmup on chain 1
-                                                                                count
-Exception thrown at line 40: normal_log: Scale parameter is 0, but must be > 0!     1
-When a numerical problem occurs, the Hamiltonian proposal gets rejected.
-See http://mc-stan.org/misc/warnings.html#exception-hamiltonian-proposal-rejected
-If the number in the 'count' column is small, do not ask about this message on stan-users.
-The following numerical problems occured the indicated number of times after warmup on chain 1
-                                                                                count
-Exception thrown at line 39: normal_log: Scale parameter is 0, but must be > 0!     1
-When a numerical problem occurs, the Hamiltonian proposal gets rejected.
-SThe following numerical problems occured the indicated number of times after warmup on chain 4
-                                                                                count
-Exception thrown at line 39: normal_log: Scale parameter is 0, but must be > 0!     2
-When a numerical problem occurs, the Hamiltonian proposal gets rejected.
-See http://mc-stan.org/misc/warnings.html#exception-hamiltonian-proposal-rejected
-If the number in the 'count' column is small, do not ask about this message on stan-users.
-The following numerical problems occured the indicated number of times after warmup on chain 3
-                                                                                count
-Exception thrown at line 42: normal_log: Scale parameter is 0, but must be on chain 1
-                                                                                count
-Exception thrown at line 42: normal_log: Scale parameter is 0, but must be > 0!     4
-When a numerical problem occurs, the Hamiltonian proposal gets rejected.
-SThe following numerical problems occured the indicated number of times after warmup on chain 4
-                                                                                count
-Exception thrown at line 33: normal_log: Scale parameter is 0, but must be > 0!     2
-Exception thrown at line 30: normal_log: Scale parameter is 0, but must be > 0!     1
-When a numerical problem occurs, the Hamiltonian proposal gets rejected.
-See http://mc-stan.org/misc/warnings.html#exception-hamiltonian-proposal-rejected
-If the number in the 'count' column is small, do not ask about this message on stan-users.
-The following numerical problems occured the indicated number of times after warmup on chain 1
-                                                                                count
-Exception thrown at line 31: normal_log: Scale parameter is 0, but must be > 0!     2
-When a numerical problem occurs, the Hamiltonian proposal gets rejected.
-See http://mc-stan.org/misc/warnings.html#exception-hamiltonian-proposal-rejected
-If the nThe following numerical problems occured the indicated number of times after warmup on chain 2
-                                                                                count
-Exception thrown at line 30: normal_log: Scale parameter is 0, but must beThe following numerical problems occured the indicated number of times after warmup on chain 1
-                                                                                count
-Exception thrown at line 42: normal_log: Scale parameter is 0, but must be > The following numerical problems occured the indicated number of times after warmup on chain 1
-                                                                                count
-Exception thrown at line 40: normal_log: Scale parameter is 0, but must beThe following numerical problems occured the indicated number of times after warmup on chain 1
-                                                                                count
-Exception thrown at line 42: normal_log: Scale parameter is 0, but must be > 0!     4
-When a numerical problem occurs, the Hamiltonian proposal gets rejected.
-SThe following numerical problems occured the indicated number of times after warmup on chain 3
-                                                                             The following numerical problems occured the indicated number of times after warmup on chain 4
-                                                                                count
-Exception thrown at line 31: normal_log: Scale parameter is 0, but must be > The following numerical problems occured the indicated number of times after warmup on chain 2
-                                                                                count
-Exception thrown at line 31: normal_log: Scale parameter is 0, but must be > 0!     1
-When a numerical problem occurs, the Hamiltonian proposal gets rejected.
-SThe following numerical problems occured the indicated number of times after warmup on chain 3
-                                                                                count
-Exception thrown at line 39: normal_log: Scale parameter is 0, but must be > 0!     1
-When a numerical problem occurs, the Hamiltonian proposal gets rejected.
-See http://mc-stan.org/misc/warnings.html#exception-hamiltonian-proposal-rejected
-If the number in the 'count' column is small, do not ask about this message on stan-users.
-The following numerical problems occured the indicated number of times after warmup on chain 4
-                                                                                count
-Exception thrown at line 39: normal_log: Scale parameter is 0, but must be > 0!     1
-When a numerical problem occurs, the Hamiltonian proposal gets rejected.
-See http://mc-stan.org/misc/warnings.html#exception-hamiltonian-proposal-rejected
-If the number in the 'count' column is small, do not ask about this message on stan-users.
-The following numerical problems occured the indicated number of times after warmup on chain 4
-                                                                                count
-Exception thrown at line 40: normal_log: Scale parameter is 0, but must be > 0!     1
-When a numerical problem occurs, the Hamiltonian proposal gets rejected.
-See http://mc-stan.org/misc/warnings.html#exception-hamiltonian-proposal-rejected
-If the number in the 'count' column is small, do not ask about this message on stan-users.
-The following numerical problems occured the indicated number of times after warmup on chain 2
-                                                                                count
-Exception thrown at line 33: normal_log: Scale parameter is 0, but must be > 0!     1
-When a numerical problem occurs, the Hamiltonian proposal gets rejected.
-See http://mc-stan.org/misc/warnings.html#exception-hamiltonian-proposal-rejected
-If the number in the 'count' column is small, do not ask about this message on stan-users.
-The following numerical problems occured the indicated number of times after warmup on chain 1
-                                                                                count
-Exception thrown at line 33: normal_log: Scale parameter is 0, but must be > 0!     1
-When a numerical problem occurs, the Hamiltonian proposal gets rejected.
-See http://mc-stan.org/misc/warnings.html#exception-hamiltonian-proposal-rejected
-If the number in the 'count' column is small, do not ask about this message on stan-users.
-The following numerical problems occured the indicated number of times after warmup on chain 1
-                                                                                count
-Exception thrown at line 30: normal_log: Scale parameter is 0, but must be > 0!     1
-Exception thrown at line 31: normal_log: Scale parameter is 0, but must be > 0!     1
-When a numerical problem occurs, the Hamiltonian proposal gets rejected.
-See http://mc-stan.org/misc/warnings.html#exception-hamiltonian-proposal-rejected
-If the number in the 'count' column is small, do not ask about this message on stan-users.
-The following numerical problems occured the indicated number of times after warmup onThe following numerical problems occured the indicated number of times after warmup on chain 2
-                                                                                count
-Exception thrown at line 39: normal_log: Scale parameter is 0, but must be > 0!     2
-When a numerical problem occurs, the Hamiltonian proposal gets rejected.
-See http://mc-stan.org/misc/warnings.html#exception-hamiltonian-proposal-rejected
-If thThe following numerical problems occured the indicated number of times after warmup onThe following numerical problems occured the indicated number of times after warmup on chain 2
-                                                                                count
-Exception thrown at line 40: normal_log: Scale parameter is 0, but must be > 0!     1
-When a numerical problem occurs, the Hamiltonian proposal gets rejected.
-See http://mc-stan.org/misc/warnings.html#exception-hamiltonian-proposal-rejected
-If the number in the 'count' column is small, do not ask about this message on stan-users.
-The following numerical problems occured the indicated number of times after warmup on chain 4
-                                                                                count
-Exception thrown at line 31: normal_log: Scale parameter is 0, but must be > 0!     2
-When a numerical problem occurs, the Hamiltonian proposal gets rejected.
-See http://mc-stan.org/misc/warnings.html#exception-hamiltonian-proposal-rejected
-If the number in the 'count' column is small, do not ask about this message on stan-users.
-The following numerical problems occured the indicated number of times after warmup on chain 4
-                                                                                count
-Exception thrown at line 33: normal_log: Scale parameter is 0, but must be > 0!     3
-When a numerical problem occurs, the Hamiltonian proposal gets rejected.
-See http://mc-stan.org/misc/warnings.html#exception-hamiltonian-proposal-rejected
-If the number in the 'count' column is small, do not ask about this message on stan-users.
-The following numerical problems occured the indicated number of times after warmup on chain 4
-                                                                                count
-Exception thrown at line 30: normal_log: Scale parameter is 0, but must beThe following numerical problems occured the indicated number of times after warmup on chain 3
-                                                                                count
-Exception thrown at line 39: normal_log: Scale parameter is 0, but must be > The following numerical problems occured the indicated number of times after warmup on chain 1
-                                                                                count
-Exception thrown at line 30: normal_log: Scale parameter is 0, but must be > 0!     2
-When a numerical problem occurs, the Hamiltonian proposal gets rejected.
-See http://mc-stan.org/misc/warnings.html#exception-hamiltonian-proposal-rejected
-If the number in the 'count' column is small, do not ask about this message on stan-users.
-The following numerical problems occured the indicated number of times after warmup on chain 1
-                                                                                count
-Exception thrown at line 40: normal_log: Scale parameter is 0, but must beThe following numerical problems occured the indicated number of times after warmup on chain 4
-                                                                                count
-Exception thrown at line 42: normal_log: Scale parameter is 0, but must be > The following numerical problems occured the indicated number of times after warmup onThe following numerical problems occured the indicated number of times after warmup on chain 3
-                                                                                count
-Exception thrown at line 40: normal_log: Scale parameter is 0, but must be > 0!     1
-When a numerical problem occurs, the Hamiltonian proposal gets rejected.
-See http://mc-stan.org/misc/warnings.html#exception-hamiltonian-proposal-rejected
-If thThe following numerical problems occured the indicated number of times after warmup on chain 3
-                                                                                count
-Exception thrown at line 31: normal_log: Scale parameter is 0, but must be > 0!     1
-When a numerical problem occurs, the Hamiltonian proposal gets rejected.
-See http://mc-stan.org/misc/warnings.html#exception-hamiltonian-proposal-rejected
-If the number in the 'count' column is small, do not ask about this message on stan-users.
-The following numerical problems occured the indicated number of times after warmup on chain 3
-                                                                                count
-Exception thrown at line 39: normal_log: Scale parameter is 0, but must be > 0!     1
-When a numerical problem occurs, the Hamiltonian proposal gets rejected.
-See http://mc-stan.org/misc/warnings.html#exception-hamiltonian-proposal-rejected
-If the number in the 'count' column is small, do not ask about this message on stan-users.
-The following numerical problems occured the indicated number of times after warmup onThe following numerical problems occured the indicated number of times after warmup on chain 3
-                                                                                count
-Exception thrown at line 30: normal_log: Scale parameter is 0, but must be > 0!     1
-When a numerical problem occurs, the Hamiltonian proposal gets rejected.
-See http://mc-stan.org/misc/warnings.html#exception-hamiltonian-proposal-rejected
-If the number in the 'count' column is small, do not ask about this message on stan-users.
-The following numerical problems occured the indicated number of times after warmup on chain 4
-                                                                                count
-Exception thrown at line 42: normal_log: Scale parameter is 0, but must be > 0!     4
-When a numerical problem occurs, the Hamiltonian proposal gets rejected.
-See http://mc-stan.org/misc/warnings.html#exception-hamiltonian-proposal-rejected
-If thThe following numerical problems occured the indicated number of times after warmup onThe following numerical problems occured the indicated number of times after warmup on chain 1
-                                                                                count
-Exception thrown at line 30: normal_log: Scale parameter is 0, but must be > 0!     2
-When a numerical problem occurs, the Hamiltonian proposal gets rejected.
-See http://mc-stan.org/misc/warnings.html#exception-hamiltonian-proposal-rejected
-If thThe following numerical problems occured the indicated number of times after warmup on chain 4
-                                                                                count
-Exception thrown at line 39: normal_log: Scale parameter is 0, but must be > 0!     2
-Exception thrown at line 42: normal_log: Scale parameter is 0, but must be > 0!     2
-When a numerical problem occurs, the Hamiltonian proposal gets rejected.
-See http://mc-stan.org/misc/warnings.html#exception-hamiltonian-proposal-rejected
-If the number in the 'count' column is small, do not ask about this message on stan-users.
-The following numerical problems occured the indicated number of times after warmup on chain 2
-                                                                                count
-Exception thrown at line 39: normal_log: Scale parameter is 0, but must be > 0!     1
-When a numerical problem occurs, the Hamiltonian proposal gets rejected.
-See http://mc-stan.org/misc/warnings.html#exception-hamiltonian-proposal-rejected
-If thThe following numerical problems occured the indicated number of times after warmup on chain 4
-                                                                                count
-Exception thrown at line 39: normal_log: Scale parameter is 0, but must be > 0!     1
-When a numerical problem occurs, the Hamiltonian proposal gets rejected.
-See http://mc-stan.org/misc/warnings.html#exception-hamiltonian-proposal-rejected
-If the number in the 'count' column is small, do not ask about this message on stan-users.
-The following numerical problems occured the indicated number of times after warmup on chain 4
-                                                                                count
-Exception thrown at line 30: normal_log: Scale parameter is 0, but must be > 0!     1
-When a numerical problem occurs, the Hamiltonian proposal gets rejected.
-See http://mc-stan.org/misc/warnings.html#exception-hamiltonian-proposal-rejected
-If the number in the 'count' column is small, do not ask about this message on stan-users.
-The following numerical problems occured the indicated number of times after warmup onThe following numerical problems occured the indicated number of times after warmup on chain 1
-                                                                                count
-Exception thrown at line 40: normal_log: Scale parameter is 0, but must be > 0!     2
-When a numerical problem occurs, the Hamiltonian proposal gets rejected.
-See http://mc-stan.org/misc/warnings.html#exception-hamiltonian-proposal-rejected
-If thThe following numerical problems occured the indicated number of times after warmup on chain 2
-                                                                                count
-Exception thrown at line 39: normal_log: Scale parameter is 0, but must be > 0!     2
-When a numerical problem occurs, the Hamiltonian proposal gets rejected.
-See http://mc-stan.org/misc/warnings.html#exception-hamiltonian-proposal-rejected
-If the nThe following numerical problems occured the indicated number of times after warmupThe following numerical problems occured the indicated number of times after warmup on chain 4
-                                                                                count
-Exception thrown at line 40: normal_log: Scale parameter is 0, but must be > 0!     1
-When a numerical problem occurs, the Hamiltonian proposal gets rejected.
-See http://mc-stan.org/misc/warnings.html#exception-hamiltonian-proposal-rejected
-If the number in the 'count' column is small, do not ask about this message on stan-users.
-The following numerical problems occured the indicated number of times after warmup on chain 1
-                                                                                count
-Exception thrown at line 40: normal_log: Scale parameter is 0, but must be > 0!     2
-When a numerical problem occurs, the Hamiltonian proposal gets rejected.
-See http://mc-stan.org/misc/warnings.html#exception-hamiltonian-proposal-rejected
-If the number in the 'count' column is small, do not ask about this message on stan-users.
-The following numerical problems occured the indicated number of times after warmup on chain 2
-                                                                                count
-Exception thrown at line 39: normal_log: Scale parameter is 0, but must be > 0!     2
-When a numerical problem occurs, the Hamiltonian proposal gets rejected.
-See http://mc-stan.org/misc/warnings.html#exception-hamiltonian-proposal-rejected
-If the number in the 'count' column is small, do not ask about this message on stan-users.
-The following numerical problems occured the indicated number of times after warmup on chain 4
-                                                                                count
-Exception thrown at line 39: normal_log: Scale parameter is 0, but must be > 0!     1
-When a numerical problem occurs, the Hamiltonian proposal gets rejected.
-See http://mc-stan.org/misc/warnings.html#exception-hamiltonian-proposal-rejected
-If the number in the 'count' column is small, do not ask about this message on stan-users.
-The following numerical problems occured the indicated number of times after warmup on chain 1
-                                                                                count
-Exception thrown at line 30: normal_log: Scale parameter is 0, but must be > 0!     1
-Exception thrown at line 31: normal_log: Scale parameter is 0, but must be > 0!     1
-When a numerical problem occurs, the Hamiltonian proposal gets rejected.
-See http://mc-stan.org/misc/warnings.html#exception-hamiltonian-proposal-rejected
-If the number in the 'count' column is small, do not ask about this message on stan-users.
-The following numerical problems occured the indicated number of times after warmup on chain 3
-                                                                                count
-Exception thrown at line 30: normal_log: Scale parameter is 0, but must be > 0!     2
-When a numerical problem occurs, the Hamiltonian proposal gets rejected.
-See http://mc-stan.org/misc/warnings.html#exception-hamiltonian-proposal-rejected
-If the number in the 'count' column is small, do not ask about this message on stan-users.
-The following numerical problems occured the indicated number of times after warmup on chain 4
-                                                                                count
-Exception thrown at line 31: normal_log: Scale parameter is 0, but must be > 0!     2
-When a numerical problem occurs, the Hamiltonian proposal gets rejected.
-See http://mc-stan.org/misc/warnings.html#exception-hamiltonian-proposal-rejected
-If the number in the 'count' column is small, do not ask about this message on stan-users.
-The following numerical problems occured the indicated number of times after warmup on chain 1
-                                                                                count
-Exception thrown at line 40: normal_log: Scale parameter is 0, but must be > 0!     2
-When a numerical problem occurs, the Hamiltonian proposal gets rejected.
-See http://mc-stan.org/misc/warnings.html#exception-hamiltonian-proposal-rejected
-If the number in the 'count' column is small, do not ask about this message on stan-users.
-The following numerical problems occured the indicated number of times after warmup on chain 3
-                                                                                count
-Exception thrown at line 39: normal_log: Scale parameter is 0, but must be > 0!     1
-When a numerical problem occurs, the Hamiltonian proposal gets rejected.
-See http://mc-stan.org/misc/warnings.html#exception-hamiltonian-proposal-rejected
-If the number in the 'count' column is small, do not ask about this message on stan-users.
-The following numerical problems occured the indicated number of times after warmup on chain 4
-                                                                                count
-Exception thrown at line 39: normal_log: Scale parameter is 0, but must be > 0!     1
-When a numerical problem occurs, the Hamiltonian proposal gets rejected.
-See http://mc-stan.org/misc/warnings.html#exception-hamiltonian-proposal-rejected
-If the number in the 'count' column is small, do not ask about this message on stan-users.
-got results for task 1
-numValues: 32, numResults: 1, stopped: TRUE
-returning status FALSE
-got results for task 2
-numValues: 32, numResults: 2, stopped: TRUE
-returning status FALSE
-got results for task 3
-numValues: 32, numResults: 3, stopped: TRUE
-returning status FALSE
-got results for task 4
-numValues: 32, numResults: 4, stopped: TRUE
-returning status FALSE
-got results for task 5
-numValues: 32, numResults: 5, stopped: TRUE
-The following numerical problems occured the indicated number of times after warmup on chain 4
-                                                                                count
-Exception thrown at line 40: normal_log: Scale parameter is 0, but must be > 0!     2
-When a numerical problem occurs, the Hamiltonian proposal gets rejected.
-See http://mc-stan.org/misc/warnings.html#exception-hamiltonian-proposal-rejected
-If the number in the 'count' column is small, do not ask about this message on stan-users.
-got results for task 1
-numValues: 32, numResults: 1, stopped: TRUE
-returning status FALSE
-got results for task 2
-numValues: 32, numResults: 2, stopped: TRUE
-returning status FALSE
-got results for task 3
-numValues: 32, numResults: 3, stopped: TRUE
-returning status FALSE
-got results for task 4
-numValues: 32, numResults: 4, stopped: TRUE
-returning status FALSE
-got results for task 5
-numValues: 32, numResults: 5, stopped: TRUE
-returning status FALSE
-got results for task 6
-numValues: 32, numResults: 6, stopped: TRUE
-returning status FALSE
-got results for task 7
-numValues: 32, numResults: 7, stopped: TRUE
-returning status FALSE
-got results for task 8
-numValues: 32, numResults: 8, stopped: TRUE
-returning status FALSE
-got results for task 9
-numValues: 32, numResults: 9, stopped: TRUE
-returning status FALSE
-got results for task 10
-numValues: 32, numResults: 10, stopped: TRUE
-returning status FALSE
-got results for task 11
-numValues: 32, numResults: 11, stopped: TRUE
-returning status FALSE
-got results for task 12
-numValues: 32, numResults: 12, stopped: TRUE
-returning status FALSE
-got results for task 13
-nuThe following numerical problems occured the indicated number of times after warmup on chain 4
-                                                                                count
-Exception thrown at line 31: normal_log: Scale parameter is 0, but must be > 0!     2
-When a numerical problem occurs, the Hamiltonian proposal gets rejected.
-See http://mc-stan.org/misc/warnings.html#exception-hamiltonian-proposal-rejected
-If the number in the 'count' column is small, do not ask about this message on stan-users.
-status FALSE
-got results for task 19
-numValues: 32, numResults: 19, stopped: TRUE
-returning status FALSE
-got results for task 20
-numValues: 32, numResults: 20, stopped: TRUThe following numerical problems occured the indicated number of times after warmup on chain 4
-                                                                                count
-Exception thrown at line 31: normal_log: Scale parameter is 0, but must be > 0!     2
-When a numerical problem occurs, the Hamiltonian proposal gets rejected.
-See http://mc-stan.org/misc/warnings.html#exception-hamiltonian-proposal-rejected
-If the number in the 'count' column is small, do not ask about this message on stan-users.
-alues: 32, numResults: 26, stopped: TRUE
-returning status FALSE
-got results for task 27
-numValues: 32, numResults: 27, stopped: TRUE
-returning status FALSE
-got results for task 28
-numValues: 32, numResults: 28, stopped: TRUE
-returning status FALSE
-got results for task 29
-numValues: 32, numResults: 29, stopped: TRUE
-returning status FALSE
-got results for task 30
-numValues: 32, numResults: 30, stopped: TRUE
-returning status FALSE
-got results for task 31
-numValues: 32, numResults: 31, stopped: TRUE
-returning status FALSE
-got results for task 32
-numValues: 32, numResults: 32, stopped: TRUE
-calling combine function
-evaluating call object to combine results:
-  fun(accum, result.1, result.2, result.3, result.4, result.5, 
-    result.6, result.7, result.8, result.9, result.10, result.11, 
-    result.12, result.13, result.14, result.15, result.16, result.17, 
-    result.18, result.19, result.20, result.21, result.22, result.23, 
-    result.24, result.25, result.26, result.27, result.28, result.29, 
-    result.30, result.31, result.32)
-returning status TRUE
-Warning message:
-In e$fun(obj, substitute(ex), parent.frame(), e$data) :
-  already exporting variable(s): lmer_compare, num.chains,The following numerical problems occured the indicated number of times after warmup on chain 1
-                                                                                count
-Exception thrown at line 39: normal_log: Scale parameter is 0, but must be > 0!     2
-When a numerical problem occurs, the Hamiltonian proposal gets rejected.
-See http://mc-stan.org/misc/warnings.html#exception-hamiltonian-proposal-rejected
-If the number in the 'count' column is small, do not ask about this message on stan-users.
-E
-returning status FALSE
-got results for task 21
-numValues: 32, numResults: 21, stopped: TRUE
-returning status FALSE
-got results for task 22
-numValues: 32, numResults: 22, stopped: TRUE
-returning status FALSE
-got results for task 23
-numValues: 32, numResults: 23, stopped: TRUE
-returning status FALSE
-got results for task 24
-numValues: 32, numRThe following numerical problems occured the indicated number of times after warmup on chain 3
-                                                                                count
-Exception thrown at line 42: normal_log: Scale parameter is 0, but must be > 0!     3
-Exception thrown at line 39: normal_log: Scale parameter is 0, but must be > 0!     2
-When a numerical problem occurs, the Hamiltonian proposal gets rejected.
-See http://mc-stan.org/misc/warnings.html#exception-hamiltonian-proposal-rejected
-If the number in the 'count' column is small, do not ask about this message on stan-users.
-The following numerical problems occured the indicated number of times after warmup on chain 4
-                                                                                count
-Exception thrown at line 40: normal_log: Scale parameter is 0, but must be > 0!     2
-When a numerical problem occurs, the Hamiltonian proposal gets rejected.
-See http://mc-stan.org/misc/warnings.html#exception-hamiltonian-proposal-rejected
-If the number in the 'count' column is small, do not ask about this message on stan-users.
-got results for task 1
-numValues: 32, numResults: 1, stopped: TRUE
-returning status FALSE
-got results for task 2
-numValues: 32, numResults: 2, stopped: TRUE
-returning status FALSE
-got results for task 3
-numValues: 32, numResults: 3, stopped: TRUE
-returning status FALSE
-got results for task 4
-numValues: 32, numResults: 4, stopped: TRUE
-returning status FALSE
-got results for task 5
-numValues: 32, numResults: 5, stopped: TRUE
-returning status FALSE
-got results for task 6
-numValues: 32, numResults: 6, stopped: TRUE
-returning status FALSE
-got results for task 7
-numValues: 32, numResults: 7, stopped: TRUE
-returning status FALSE
-got results for task 8
-numValues: 32, numResults: 8, stopped: TRUE
-returning status FALSE
-got results for task 9
-numValues: 32, numResults: 9, stopped: TRUE
-returning status FALSE
-got results for task 10
-numValues: 32, numResults: 10, stopped: TRUE
-returning status FALSE
-got results for task 11
-numValues: 32,The following numerical problems occured the indicated number of times after warmup on chain 4
-                                                                                count
-Exception thrown at line 31: normal_log: Scale parameter is 0, but must be > 0!     2
-When a numerical problem occurs, the Hamiltonian proposal gets rejected.
-See http://mc-stan.org/misc/warnings.html#exception-hamiltonian-proposal-rejected
-If the number in the 'count' column is small, do not ask about this message on stan-users.
-   count
-Exception thrown at line 40: normal_log: Scale parameter is 0, but must be > 0!     2
-When a numerical problem occurs, the Hamiltonian proposal gets rejected.
-See http://mc-stan.org/misc/warnings.html#exception-hamiltonian-proposal-rejected
-If the number in the 'count' column is small, do not ask about this message on stan-users.
-TRUE
-returning status FALSE
-got results for task 21
-numValues: 32, numResults: 21, stopped: TRUE
-returning status FALSE
-got results for task 22
-numValues: 32, numResults: 22, stopped: TRUE
-returning status FALSE
-got results for task 23
-numValues: 32, numResults: 23, stopped: TRUE
-returning status FALSE
-got results for task 24
-numValues: 32, numResults: 24, stopped: TRUE
-returning status FALSE
-got results for task 25
-numValues: 32, numResults: 25, stopped: TRUE
-returning status FALSE
-got results for task 26
-numValues: 32, numResults: 26, stopped: TRUE
-returning status FALSE
-got results for task 27
-numValues: 32, numResults: 27, stopped: TRUE
-returning status FALSE
-got results for task 28
-numValues: 32, numResults: 28, stopped: TRUE
-returning status FALSE
-got results for task 29
-numValues: 32, numResults: 29, stopped: TRUE
-returning status FALSE
-got results for task 30
-numValues: 32, numResults: 30, stopped: TRUE
-returning status FALSE
-got results for task 31
-numValues: 32, numResults: 31, stopped: TRUE
-returning status FALSE
-got results for task 32
-numValues: 32, numResults: 32, stopped: TRUE
-calling combine function
-evaluating call object to combine results:
-  fun(accum, result.1, result.2, result.3, result.4, result.5, 
-    result.6, result.7, result.8, result.9, result.10, result.11, 
-    result.12, result.13, result.14, result.15, result.16, result.17, 
-    result.18, result.19, result.20, result.21, result.22, result.23, 
-    result.24, result.25, result.26, result.27, result.28, result.29, 
-    result.30, result.31, result.32)
-returning status TRUE
-Warning message:
-In e$fun(obj, substitute(ex), parent.frame(), e$data) :
-  already exporting variable(s): lmer_compare, num.chains, num.iter, numclusters, outcome.type, rootdir, runstan, sampledata, sim.params, simno, stanmod_list, svy_ests, use.sizes
- stopped: TRUE
-returning status FALSE
-got results for task 28
-numValues: 32, numResults: 28, stopped: TRUE
-returning status FALSE
-got results for task 29
-numValues: 32, numResults: 29, stopped: TRUE
-returning status FALSE
-got results for task 30
-numValues: 32, numResults: 30, stopped: TRUE
-returning status FALSE
-got results for task 31
-numValues: 32, numResults: 31, stopped: TRUE
-returning status FALSE
-got results for task 32
-numValues: 32, numResults: 32, stopped: TRUE
-calling combine function
-evaluating call object to combine results:
-  fun(accum, result.1, result.2, result.3, result.4, result.5, 
-    result.6, result.7, result.8, result.9, result.10, result.11, 
-    result.12, result.13, result.14, result.15, result.16, result.17, 
-    result.18, result.19, result.20, result.21, result.22, result.23, 
-    result.24, result.25, result.26, result.27, result.28, result.29, 
-    result.30, result.31, result.32)
-returning status TRUE
-Warning message:
-In e$fun(obj, substitute(ex), parent.frame(), e$data) :
-  already exporting variable(s): lmer_compare, num.chains, num.iter, numclusters, outcome.type, rootdir, runstan, sampledata, sim.params, simno, stanmod_list, svy_ests, use.sizes
-ed the indicated number of times after warmup on chain 4
-                                                                                count
-Exception thrown at line 30: normal_log: Scale parameter is 0, but must be > 0!     2
-When a numerical problem occurs, the Hamiltonian proposal gets rejected.
-See http://mc-stan.org/misc/warnings.html#exception-hamiltonian-proposal-rejected
-If the number in the 'count' column is small, do not ask about this message on stan-users.
-The following numerical problems occured the indicated number of times after warmup on chain 1
-                                                                                count
-Exception thrown at line 40: normal_log: Scale parameter is 0, but must be > 0!     2
-When a numerical problem occurs, the Hamiltonian proposal gets rejected.
-See http://mc-stan.org/misc/warnings.html#exception-hamiltonian-proposal-rejected
-If the number in the 'count' column is small, do not ask about this message on stan-users.
-stopped: TRUE
-returning status FALSE
-got results for task 8
-numValues: 32, numResults:The following numerical problems occured the indicated number of times after warmup on chain 4
-                                                                                count
-Exception thrown at line 39: normal_log: Scale parameter is 0, but must be > 0!     2
-When a numerical problem occurs, the Hamiltonian proposal gets rejected.
-See http://mc-stan.org/misc/warnings.html#exception-hamiltonian-proposal-rejected
-If the number in the 'count' column is small, do not ask about this message on stan-users.
-got results for task 1
-numValues: 32, numResults: 1, stopped: TRUE
-returning status FALSE
-got results for task 2
-numValues: 32, numResults: 2, stopped: TRUE
-returning status FALSE
-got results for task 3
-numValues: 32, numResults: 3, stopped: TRUE
-returning status FALSE
-got results for task 4
-numValues: 32, numResults: 4, stopped: TRUE
-returning status FALSE
-got results for task 5
-numValues: 32, numResults: 5, stopped: TRUE
-returning status FALSE
-got results for task 6
-numValues: 32, numResults: 6, stopped: TRUE
-returning status FALSE
-got results for task 7
-numValues: 32, numResults: 7, stopped: TRUE
-returning status FALSE
-got results for task 8
-numValues: 32, numResults: 8, stopped: TRUE
-returning status FALSE
-got results for task 9
-numValues: 32, numResults: 9, stopped: TRUE
-returning status FALSE
-got results for task 10
-numValues: 32, numResults: 10, stopped: TRUE
-returning status FALSE
-got results for task 11
-numValues: 32, numResults: 11, stopped: TRUE
-returning status FALSE
-got results for task 12
-numValues: 32, numResults: 12, stopped: TRUE
-returning status FALSE
-got results for task 13
-numValues: 32, numResults: 13, stopped: TRUE
-returning status FALSE
-got results for task 14
-numValues: 32, numResults: 14, stopped: TRUE
-returning status FALSE
-got results for task 15
-numValues: 32, numResults: 15, stopped: TRUE
-returning status FALSE
-got results for task 16
-numValues: 32, numResults: 16, stopped: TRUE
-returning status FALSE
-got results for task 17
-numValues: 32, numResults: 17, stopped: TRUE
-returning status FALSE
-got results for task 18
-numValues: 32, numResults: 18, stopped: TRUE
-returning status FALSE
-got results for task 19
-numValues: 32, numResults: 19, stopped: TRUE
-returning status FALSE
-got results for task 20
-numValues: 32, numResults: 20, stopped: TRUE
-returning status FALSE
-got results for task 21
-numValues: 32, numResults: 21, stopped: TRUE
-returning status FALSE
-got results for task 22
-numValues: 32, numResults: 22, stopped: TRUE
-returning status FALSE
-got results for task 23
-numValues: 32, numResults: 23, stopped: TRUE
-returning status FALSE
-got results for task 24
-numValues: 32, numResults: 24, stopped: TRUE
-returning status FALSE
-got results for task 25
-numValues: 32, numResults: 25, stopped: TRUE
-returning status FALSE
-got results for task 26
-numValues: 32, numResults: 26, stopped: TRUE
-returning status FALSE
-got results for task 27
-numValues: 32, numResults: 27, stopped: TRUE
-returning status FALSE
-got results for task 28
-numValues: 32, numResults: 28, stopped: TRUE
-returning status FALSE
-got results for task 29
-numValues: 32, numResults: 29, stopped: TRUE
-returning status FALSE
-got results for task 30
-numValues: 32, numResults: 30, stopped: TRUE
-returning status FALSE
-got results for task 31
-numValues: 32, numResults: 31, stopped: TRUE
-returning status FALSE
-got results for task 32
-numValues: 32, numResults: 32, stopped: TRUE
-calling combine function
-evaluating call object to combine results:
-  fun(accum, result.1, result.2, result.3, result.4, result.5, 
-    result.6, result.7, result.8, result.9, result.10, result.11, 
-    result.12, result.13, result.14, result.15, result.16, result.17, 
-    result.18, result.19, result.20, result.21, result.22, result.23, 
-    result.24, result.25, result.26, result.27, result.28, result.29, 
-    result.30, result.31, result.32)
-returning status TRUE
-Warning message:
-In e$fun(obj, substitute(ex), parent.frame(), e$data) :
-  already exporting variable(s): lmer_compare, num.chains, num.iter, numclusters, outcome.type, rootdir, runstan, sampledata, sim.params, simno, stanmod_list, svy_ests, use.sizes
-32, numResults: 1, stopped: TRUE
-returning status FALSE
-got results for task 2
-numValues: 32, numResults: 2, stopped: TRUE
-returning status FALSE
-got results for task 3
-numValues: 32, numResults: 3, stopped: TRUE
-returning status FALSE
-got results for task 4
-numValues: 32, numResults: 4, stopped: TRUE
-returning status FALSE
-got results for task 5
-numValues: 32, numResults: 5, stopped: TRUE
-returning status FALSE
-got results for task 6
-numValues: 32, numResults: 6, stopped: TRUE
-returning status FALSE
-got results for task 7
-numValues: 32, numResults: 7, stopped: TRUE
-returning status FALSE
-got results for task 8
-numValues: 32, numResults: 8, stopped: TRUE
-returning status FALSE
-got results for task 9
-numValues: 32, numResults: 9, stopped: TRUE
-returning status FALSE
-got results for task 10
-numValues: 32, numResults: 10, stopped: TRUE
-returning status FALSE
-got results for task 11
-numValues: 32, numResults: 11, stopped: TRUE
-returning status FALSE
-got results for task 12
-numValues: 32, numResults: 12, stopped: TRUE
-returning status FALSE
-got results for task 13
-numValues: 32, numResults: 13, stopped: TRUE
-returning status FALSE
-got results for task 14
-numValues: 32, numResults: 14, stopped: TRUE
-returning status FALSE
-got results for task 15
-numValues: 32, numResults: 15, stopped: TRUE
-returning status FALSE
-got results for task 16
-numValues: 32, numResults: 16, stopped: TRUE
-returning status FALSE
-got results for task 17
-numValues: 32, numResults: 17, stopped: TRUE
-returning status FALSE
-got results for task 18
-numValues: 32, numResults: 18, stopped: TRUE
-returning status FALSE
-got results for task 19
-numValues: 32, numResults: 19, stopped: TRUE
-returning status FALSE
-got results for task 20
-numValues: 32, numResults: 20, stopped: TRUE
-returning status FALSE
-got results for task 21
-numValues: 32, numResults: 21, stopped: TRUE
-returning status FALSE
-got results for task 22
-numValues: 32, numResults: 22, stopped: TRUE
-returning status FALSE
-got results for task 23
-numValues: 32, numResults: 23, stopped: TRUE
-returning status FALSE
-got results for task 24
-numValues: 32, numResults: 24, stopped: TRUE
-returning status FALSE
-got results for task 25
-numValues: 32, numResults: 25, stopped: TRUE
-returning status FALSE
-got results for task 26
-numValues: 32, numResults: 26, stopped: TRUE
-returning status FALSE
-got results for task 27
-numValues: 32, numResults: 27, stopped: TRUE
-returning status FALSE
-got results for task 28
-numValues: 32, numResults: 28, stopped: TRUE
-returning status FALSE
-got results for task 29
-numValues: 32, numResults: 29, stopped: TRUE
-returning status FALSE
-got results for task 30
-numValues: 32, numResults: 30, stopped: TRUE
-returning status FALSE
-got results for task 31
-numValues: 32, numResults: 31, stopped: TRUE
-returning status FALSE
-got results for task 32
-numValues: 32, numResults: 32, stopped: TRUE
-calling combine function
-evaluating call object to combine results:
-  fun(accum, result.1, result.2, result.3, result.4, result.5, 
-    result.6, result.7, result.8, result.9, result.10, result.11, 
-    result.12, result.13, result.14, result.15, result.16, result.17, 
-    result.18, result.19, result.20, result.21, result.22, result.23, 
-    result.24, result.25, result.26, result.27, result.28, result.29, 
-    result.30, result.31, result.32)
-returning status TRUE
-Warning message:
-In e$fun(obj, substitute(ex), parent.frame(), e$data) :
-  already exporting variable(s): lmer_compare, num.chains, num.iter, numclusters, outcome.type, rootdir, runstan, sampledata, sim.params, simno, stanmod_list, svy_ests, use.sizes
- result.6, result.7, result.8, result.9, result.10, result.11, 
-    result.12, result.13, result.14, result.15, result.16, result.17, 
-    result.18, result.19, result.20, result.21, result.22, result.23, 
-    result.24, result.25, result.26, result.27, result.28, result.29, 
-    result.30, result.31, result.32)
-returning status TRUE
-Warning message:
-In e$fun(obj, substitute(ex), parent.frame(), e$data) :
-  already exporting variable(s): lmer_compare, num.chains, num.iter, numclusters, outcome.type, rootdir, runstan, sampledata, sim.params, simno, stanmod_list, svy_ests, use.sizes
+                                                                                           count
+Exception thrown at line 83: lognormal_log: Location parameter is inf, but must be finite!     9
+When a numerical problem occurs, the Hamiltonian proposal gets rejected.
+See http://mc-stan.org/misc/warnings.html#exception-hamiltonian-proposal-rejected
+If the number in the 'count' column is small, do not ask about this message on stan-users.
+
+Chain 2, Iteration: 2000 / 2000 [100%]  (Sampling)
+ Elapsed Time: 347.53 seconds (Warm-up)
+               184.27 seconds (Sampling)
+               531.8 seconds (Total)
+
+Inference for Stan model: lognormal_full_centered.
+4 chains, each with iter=2000; warmup=1000; thin=1; 
+post-warmup draws per chain=1000, total post-warmup draws=4000.
+
+             mean se_mean   sd  2.5%   25%   50%   75% 97.5% n_eff Rhat
+alpha0      -0.54    0.00 0.09 -0.73 -0.60 -0.54 -0.48 -0.35  4000    1
+gamma0      -0.07    0.01 0.74 -1.57 -0.56 -0.07  0.42  1.39  4000    1
+alpha1       0.02    0.00 0.06 -0.10 -0.02  0.02  0.07  0.15  4000    1
+gamma1      -0.79    0.01 0.61 -1.97 -1.20 -0.79 -0.39  0.41  4000    1
+sigma_beta0  0.68    0.00 0.07  0.56  0.63  0.67  0.72  0.83  4000    1
+sigma_beta1  0.45    0.00 0.05  0.37  0.42  0.45  0.48  0.55  4000    1
+sigma_y      0.04    0.00 0.00  0.04  0.04  0.04  0.04  0.04  4000    1
+mu           6.68    0.00 0.01  6.66  6.68  6.68  6.69  6.71  4000    1
+sigma        0.09    0.00 0.01  0.07  0.08  0.09  0.10  0.11  4000    1
+
+Samples were drawn using NUTS(diag_e) at Thu Apr  6 15:34:59 2017.
+For each parameter, n_eff is a crude measure of effective sample size,
+and Rhat is the potential scale reduction factor on split chains (at 
+convergence, Rhat=1).
+[1] "joining stan_samps and true pars"
+'data.frame':	36000 obs. of  2 variables:
+ $ parnames: chr  "alpha0" "alpha0" "alpha0" "alpha0" ...
+ $ value   : num  -0.512 -0.544 -0.492 -0.551 -0.441 ...
+NULL
+'data.frame':	11 obs. of  2 variables:
+ $ true.pars: num  800 200 6.6815 0.0789 -0.6624 ...
+ $ parnames : chr  "mu_nb" "phi" "mu" "sigma" ...
+NULL
+[1] "joining beta_samps and curr pop dat"
+Error: could not find function "writeRDS"
+Execution halted

@@ -1,4 +1,5 @@
-lmer_compare <- function(num.clusters, num.units, use.size, srootdir, sim) {
+lmer_compare <- function(num.clusters, num.units, use.sizes, outcome.type,
+                         rootdir, sim) {
   # num.clusters -- number of clusters to sample
   # num.units -- number of units to sample
   # use.sizes -- whether y depends on cluster sizes or not
@@ -17,8 +18,6 @@ lmer_compare <- function(num.clusters, num.units, use.size, srootdir, sim) {
                               use.sizes, "_", outcome.type, "_nclusters_",
                               num.clusters, "_nunits_", nunits, "_simno_", sim,
                               ".rds"))
-print(str(simdata))
-print(names(simdata))
     for (j in names(simdata)) {
       assign(j, simdata[[j]])
     }
@@ -80,9 +79,10 @@ print(names(simdata))
     print(allres)
     print("######################################################################")
     
-    write.table(allres, file = paste(rootdir, "/Results/Simplify/vary_K/parests_lmer_usesizes_", use.sizes,
-                                     "_nclusters_", num.clusters, "_nunits_", nunits,
-                                     "_sim_", sim, ".txt", sep = ""), sep = ",")
+    return(allres)
+    #write.table(allres, file = paste(rootdir, "/Results/Simplify/vary_K/parests_lmer_usesizes_", use.sizes,
+    #                                 "_nclusters_", num.clusters, "_nunits_", nunits,
+    #                                 "_sim_", sim, ".txt", sep = ""), sep = ",")
                                    
 
 }

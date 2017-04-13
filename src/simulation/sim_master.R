@@ -83,9 +83,9 @@ Options:
   #############################################################################
   ### Create list of parameters to loop through for sim
   #############################################################################
-    num.clusters.list <- c(5, 10)
+    num.clusters.list <- c(20)
     #num.clusters.list <- c(5, 10, 20, 50)
-    num.units.list <- c(0.05, 0.1)
+    num.units.list <- c(0.2)
     #num.units.list <- c(0.05, 0.1, 0.25, 0.5, 1, 10, 50, 100)
     #use.sizes.list <- c(0, 1)
     #outcome.type.list <- c("continuous", "binary")
@@ -100,8 +100,8 @@ Options:
   #############################################################################
   ### Loop through cluster/unit lists
   #############################################################################
-    stanmod_list <- c("cluster_inds_only", "knowsizes", "bb", "negbin")
-    #stanmod_list <- c("cluster_inds_only")
+    #stanmod_list <- c("cluster_inds_only", "knowsizes", "bb", "negbin")
+    stanmod_list <- c("knowsizes_noncentered")
     use.sizes <- use_sizes
     outcome.type <- outcome_type
 #    loopres <- foreach (k = 1:nrow(sim.params),
@@ -132,7 +132,7 @@ for (k in 1:nrow(sim.params)) {
                              length = length(stanmod_list)*2 + 2)
       for (p in 1:length(stanmod_list)) {
         stanmod_name <- stanmod_list[p]
-        load(paste0(rootdir, "/src/analysis/", stanmod_name, ".RData"))
+        load(paste0(rootdir, "/src/analysis/", stanmod_name, ".rds"))
 #print(str(stanmod))
         cat("##################################################################################\n")
         cat("##################################################################################\n")
@@ -141,8 +141,8 @@ for (k in 1:nrow(sim.params)) {
                      ", num.clusters = ", num.clusters,
                      ", num.units = ", num.units))
         print(Sys.time())
-        stan_res <- runstan(num.clusters, num.units, use.sizes,
-                            rootdir, simno, stanmod, stanmod_name)
+        stan_res <- runstan(num.clusters, num.units, use.sizes, rootdir, simno,
+                            stanmod, stanmod_name, num.iter = 1000, num.chains = 4)
         results.list[[2*p - 1]] <- stan_res[["par.ests"]]
         names(results.list)[2*p - 1] <- paste0("param_ests_", stanmod_name)
         results.list[[2*p]] <- stan_res[["ybar.ests"]]

@@ -32,6 +32,6 @@ Options:
   cat("*******compiling ", opts$model_name, "*************\n")
   stanmod <- stan_model(file = paste0(rootdir, "/src/analysis/",
                                       opts$model_name, ".stan"))
-  save(stanmod, file = paste0(rootdir, "/src/analysis/", opts$model_name, ".RData")) 
+  save(stanmod, file = paste0(rootdir, "/src/analysis/", opts$model_name, ".rds")) 
   
 

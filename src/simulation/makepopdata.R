@@ -7,7 +7,6 @@
 
   -s --seed <seedval>                      Integer for setting seed so we can reproduce the results [default: NULL]
   -n --numclusters <J>                     Number of clusters in population [default: 100]
-  -c --clustersize_range <Nj_range>        Min, max values for cluster sizes [default: 100,1000]
   -u --unitcovar_range <x_range>           Min, max values for unit covariate [default: 20,45]
   -z --use_sizes <usz>                     Whether outcomes are related to cluster sizes [default: 0]
   -o --outcome_type <y_type>               Whether outcomes are continuous or binary [default: continuous]
@@ -26,6 +25,9 @@
     library(dplyr)
     require(docopt)
     require(methods)
+
+    codedir <- "/vega/stats/users/smm2253/cluster_sampling/src/simulation"
+    source(paste0(codedir, "/draw_pop_cluster_sizes_for_sim.R"))
   
     # Store the docopt options as variables we can use in the code
     opts <- docopt(doc) 
@@ -84,8 +86,10 @@
     }
     
     # Draw number of clusters, cluster size, unit-level covariate
-    Mj <- sample(c(clustersize.range[1]:clustersize.range[2]), J,
-                 replace = TRUE)
+    # Here cluster sizes are taken from the observed pop cluster sizes
+    Mj <- draw_pop_cluster_sizes_for_sim(J)
+    #Mj <- sample(c(clustersize.range[1]:clustersize.range[2]), J,
+    #             replace = TRUE)
     logMj_c <- log(Mj) - mean(log(Mj))
     x <- sample(c(unitcovar.range[1]:unitcovar.range[2]), sum(Mj),
                  replace = TRUE)

@@ -1,0 +1,29 @@
+Loading required package: docopt
+Loading required package: methods
+Loading required package: rstan
+Loading required package: ggplot2
+Loading required package: StanHeaders
+rstan (Version 2.12.1, packaged: 2016-09-11 13:07:50 UTC, GitRev: 85f7a56811da)
+For execution on a local, multicore CPU with excess RAM we recommend calling
+rstan_options(auto_write = TRUE)
+options(mc.cores = parallel::detectCores())
+List of 1
+ $ model_name: chr "knowsizes_corr"
+NULL
+[1] "model_name"
+*******compiling  knowsizes_corr *************
+SYNTAX ERROR, MESSAGE(S) FROM PARSER:
+
+variable "betai" does not exist.
+
+ERROR at line 33
+
+ 32:      for (i in 1:N_sam) {
+ 33:        ymean[i] = betai[cluster_id_long[i]] + beta1[cluster_id_long[i]]*x[i];
+                            ^
+ 34:      }
+
+Error in stanc(file = file, model_code = model_code, model_name = model_name,  : 
+  failed to parse Stan model 'knowsizes_corr' due to the above error.
+Calls: stan_model -> stanc
+Execution halted
