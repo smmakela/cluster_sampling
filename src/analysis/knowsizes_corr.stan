@@ -5,8 +5,7 @@ data {
   int cluster_id_long[N_sam]; // cluster ids for sample units
   vector[N_sam] x;            // individual-level covar ("age")
   vector[N_sam] y;            // outcomes
-  vector[J_sam] Mj_sam;       // vector of cluster sizes for sampled clusters
-  vector[J_sam] logMj_sam;    // log of cluster sizes for sampled clusters
+  vector[J_sam] u;            // matrix with cluster-level predictors
   vector[J_pop] Mj_pop;       // cluster sizes
   vector[J_pop] xbar_pop;     // cluster avgs of xij
 }
@@ -18,40 +17,35 @@ transformed data{
   J_mis = J_pop - J_sam;
 }
 parameters {
-  real<lower=0> sigma_beta0;
-  real<lower=0> sigma_beta1;
   real<lower=0> sigma_y;
-  real alpha0;
-  real gamma0;
-  real alpha1;
-  real gamma1;
-  vector[J_sam] eta0;
-  vector[J_sam] eta1;
+  corr_matrix[2] Omega;
+  vector<lower=0>[2] sigma_betas;
+  matrix[2, 2] mu_betas;
+  vector[2] betas[J_sam];
 }
 transformed parameters {
-  vector[J_sam] beta0;
-  vector[J_sam] beta1;
-  vector[N_sam] yhat;
-  
-  beta0 = alpha0 + (gamma0 * logMj_sam) + eta0 * sigma_beta0;
-  beta1 = alpha1 + (gamma1 * logMj_sam) + eta1 * sigma_beta1;
+  vector[N_sam] ymean;
+  cov_matrix[2] Sigma_Betas;
+
+  Sigma_Betas = quad_form_diag(Omega, sigma_betas);
 
   for (i in 1:N_sam) {
-    yhat[i] = beta0[cluster_id_long[i]] + x[i] * beta1[cluster_id_long[i]];
+    ymean[i] = betai[cluster_id_long[i]] + beta1[cluster_id_long[i]]*x[i];
   }
 }
 model {
-  sigma_beta0 ~ cauchy(0, 2.5);
-  sigma_beta1 ~ cauchy(0, 2.5);
-  sigma_y ~ cauchy(0, 2.5);
-  alpha0 ~ normal(0, 1);
-  gamma0 ~ normal(0, 1);
-  alpha1 ~ normal(0, 1);
-  gamma1 ~ normal(0, 1);
-  eta0 ~ normal(0, 1);
-  eta1 ~ normal(0, 1);
-  y ~ normal(yhat, sigma_y);
+  sigma_betas ~ cauchy(0, 2.5);
+  Omega ~ ljk_corr(1);
+  {
+    row_vector[2] u_times_mu_betas[J_sam];
+    for (j in 1:J_sam) {
+      u_times_mu_betas[j] = u[j] * mu_betas;
+    }
+    betas ~ multi_normal(u_times_mu_beta, Sigma_Betas);
+  }
+  y ~ normal(ymean, sigma_y);
 }
+/*
 generated quantities {
   vector[J_mis] beta0_new;
   vector[J_mis] beta1_new;
@@ -68,7 +62,7 @@ generated quantities {
   }
   y_new[(J_sam + 1):J_pop] = beta0_new + beta1_new .* xbar_pop[(J_sam + 1):J_pop];
 
-  /*
+  /* commented out for now -- delete if above works
   for (j in 1:J_pop) {
     if (j <= J_sam) {
       y_new[j] = beta0[j] + beta1[j] * xbar_pop[j];
@@ -82,4 +76,4 @@ generated quantities {
   */
   ybar_new = sum(y_new .* Mj_pop) / sum(Mj_pop);
 }
-
+*/

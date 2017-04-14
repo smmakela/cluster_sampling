@@ -31,13 +31,12 @@ parameters {
 transformed parameters {
   vector[J_sam] beta0;
   vector[J_sam] beta1;
-  vector[N_sam] yhat;
-  
-  beta0 = alpha0 + (gamma0 * logMj_sam) + eta0 * sigma_beta0;
-  beta1 = alpha1 + (gamma1 * logMj_sam) + eta1 * sigma_beta1;
+  vector[N_sam] ymean;
 
+  beta0 = alpha0 + gamma0 * logMj_sam + eta0 * sigma_beta0;
+  beta1 = alpha1 + gamma1 * logMj_sam + eta1 * sigma_beta1;
   for (i in 1:N_sam) {
-    yhat[i] = beta0[cluster_id_long[i]] + x[i] * beta1[cluster_id_long[i]];
+    ymean[i] = beta0[cluster_id_long[i]] + beta1[cluster_id_long[i]]*x[i];
   }
 }
 model {
@@ -50,7 +49,7 @@ model {
   gamma1 ~ normal(0, 1);
   eta0 ~ normal(0, 1);
   eta1 ~ normal(0, 1);
-  y ~ normal(yhat, sigma_y);
+  y ~ normal(ymean, sigma_y);
 }
 generated quantities {
   vector[J_mis] beta0_new;
@@ -68,7 +67,7 @@ generated quantities {
   }
   y_new[(J_sam + 1):J_pop] = beta0_new + beta1_new .* xbar_pop[(J_sam + 1):J_pop];
 
-  /*
+  /* commented out for now -- delete if above works
   for (j in 1:J_pop) {
     if (j <= J_sam) {
       y_new[j] = beta0[j] + beta1[j] * xbar_pop[j];
