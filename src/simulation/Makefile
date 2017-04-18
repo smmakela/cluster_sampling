@@ -119,7 +119,7 @@ ccc: $(CCC_FILES)
 # split 0_continuous into "0" and "continous". The $@ part tells R to use the
 # name of the target as the R output file filename (this is how the target
 # gets created).
-$(SIM_OUT_DIR)/popdata_usesizes_%.Rout: $(SIM_SRC_DIR)/makepopdata.R
+$(SIM_OUT_DIR)/popdata_usesizes_%.Rout: $(SIM_SRC_DIR)/makepopdata.R $(SIM_SRC_DIR)/draw_pop_cluster_sizes_for_sim.R
 	@echo ----------------------- making pop data --------------------------
 	Rscript $(R_OPTS) $<\
 	 --numclusters $(NUM_POP_CLUSTERS)\

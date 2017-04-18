@@ -12,7 +12,3 @@ List of 1
 NULL
 [1] "model_name"
 *******compiling  bb *************
-DIAGNOSTIC(S) FROM PARSER:
-Warning (non-fatal): assignment operator <- deprecated in the Stan language; use = instead.
-Warning (non-fatal): assignment operator <- deprecated in the Stan language; use = instead.
-

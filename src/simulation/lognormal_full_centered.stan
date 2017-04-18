@@ -1,28 +1,36 @@
 functions {
-  real ybar_new_ln_rng(int J, int K, vector beta0, vector beta1, vector Nj_sample,
-                       vector xbar_pop, real mu_star, real sigma,
+  // draw new cluster sizes using ln model
+  vector Nj_new_ln_rng(int J, int K, vector Nj_sample,
+                       real mu_star, real sigma) {
+
+    vector[J] Nj_new;
+
+    Nj_new[1:K] = Nj_sample;
+    for (k in (K+1):J) {
+      Nj_new[k] = lognormal_rng(mu_star, sigma);
+    }
+
+    return Nj_new;
+  }
+  // estimate ybar using drawn cluster sizes
+  real ybar_new_ln_rng(int J, int K, vector beta0, vector beta1,
+                       vector xbar_pop,
                        real alpha0, real gamma0, real sigma_beta0,
-                       real alpha1, real gamma1, real sigma_beta1, real sigma_y) {
-    // here we get an estimate of y_bar, the finite-pop mean
-    // for sampled clusters, we can use the estimate
-    // for unsampled clusters, need to draw beta0, beta1, Nj, and then calculate
-    // y_bar
+                       real alpha1, real gamma1, real sigma_beta1,
+                       real sigma_y, vector Nj_new) {
+
     vector[J] beta0_new;
     vector[J] beta1_new;
-    vector[J] Nj_new;
     vector[J] log_Nj_new;
     vector[J] yj_new;
     real ybar_new;
     
+    log_Nj_new = log(Nj_new) - mean(log(Nj_new));
+
     beta0_new[1:K] = beta0;
     beta1_new[1:K] = beta1;
-    Nj_new[1:K] = Nj_sample;
     yj_new[1:K] = beta0 + beta1 .* xbar_pop[1:K];
   
-    for (k in (K+1):J) {
-      Nj_new[k] = lognormal_rng(mu_star, sigma);
-    }
-    log_Nj_new = log(Nj_new) - mean(log(Nj_new));
     for (j in (K+1):J) {
       beta0_new[j] = normal_rng(alpha0 + gamma0 * log_Nj_new[j], sigma_beta0);
       beta1_new[j] = normal_rng(alpha1 + gamma1 * log_Nj_new[j], sigma_beta1);
@@ -31,10 +39,9 @@ functions {
     }
     
     ybar_new = sum(yj_new .* to_vector(Nj_new)) / sum(Nj_new);
-    
-    return ybar_new;
- 
-  } # end est_ybar_new function
+
+    return ybar_new; 
+  } 
 } # end functions block
 data {
   int J; // number of pop clusters

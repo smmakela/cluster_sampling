@@ -63,13 +63,13 @@
   #############################################################################
   ### Checks
   #############################################################################
-    if (length(clustersize.range) != 2) {
-      stop("clustersize.range must be of length 2")
-    }
-    if (clustersize.range[1] >= clustersize.range[2]) {
-      stop(paste0("clustersize.range must be of the form
-                   (min.clustersize, max.clustersize)"))
-    }
+    #if (length(clustersize.range) != 2) {
+    #  stop("clustersize.range must be of length 2")
+    #}
+    #if (clustersize.range[1] >= clustersize.range[2]) {
+    #  stop(paste0("clustersize.range must be of the form
+    #               (min.clustersize, max.clustersize)"))
+    #}
     if (length(unitcovar.range) != 2) {
       stop("unitcovar.range must be of length 2")
     }
@@ -86,15 +86,26 @@
     }
     
     # Draw number of clusters, cluster size, unit-level covariate
-    # Here cluster sizes are taken from the observed pop cluster sizes
-    Mj <- draw_pop_cluster_sizes_for_sim(J)
+    # Here cluster sizes are taken from the observed pop cluster sizes by
+    # fitting a gamma distribution to the observed sizes, drawing from the
+    # fitted gamma, and then exponentiating; note we have to ROUND here so we
+    # get integer sizes
+    print("ENTERING DRAW_POP_CLUSTER_SIZES_FOR_SIM.R")
+    Mj <- round(draw_pop_cluster_sizes_for_sim(J))
+    print("str(Mj):")
+    print(str(Mj))
     #Mj <- sample(c(clustersize.range[1]:clustersize.range[2]), J,
     #             replace = TRUE)
     logMj_c <- log(Mj) - mean(log(Mj))
-    x <- sample(c(unitcovar.range[1]:unitcovar.range[2]), sum(Mj),
-                 replace = TRUE)
+    x <- base::sample(c(unitcovar.range[1]:unitcovar.range[2]), sum(Mj),
+                      replace = TRUE)
     x <- x - mean(x)
-   
+print(length(Mj))
+print(sum(Mj))
+print(length(x))   
+print(summary(x))
+print(summary(Mj))
+
     # Draw hyperparameters, varying slopes and coefficients, and outcomes
     if (outcome.type == "continuous") {
       alpha0 <- rnorm(1)
@@ -114,6 +125,28 @@
       beta0_rep <- rep(beta0, Mj)
       beta1 <- rnorm(n = J, mean = alpha1 + gamma1 * logMj_c, sd = sigma_beta1)
       beta1_rep <- rep(beta1, Mj)
+print("sum(Mj):")
+print(sum(Mj))
+print("length(Mj):")
+print(length(Mj))
+print("length(x):")
+print(length(x))
+print("length(beta1):")
+print(length(beta1))
+print("length(beta0):")
+print(length(beta0))
+print("length(beta1_rep):")
+print(length(beta1_rep))
+print("length(beta0_rep):")
+print(length(beta0_rep))
+print("Mj:")
+print(Mj)
+print("beta0_rep unique:")
+tt <- data.frame(beta0_rep, id = rep(c(1:J), Mj))
+tt %>%
+  dplyr::group_by(id) %>%
+  dplyr::summarise(n = n()) -> tt2
+print(tt2)
       ymean <- beta0_rep + beta1_rep * x 
       y <- rnorm(ymean, mean = ymean, sd = sigma_y)
     } else {

@@ -100,8 +100,8 @@ Options:
   #############################################################################
   ### Loop through cluster/unit lists
   #############################################################################
-    #stanmod_list <- c("cluster_inds_only", "knowsizes", "bb", "negbin")
-    stanmod_list <- c("knowsizes_noncentered")
+    stanmod_list <- c("bb", "negbin", "lognormal")
+    #stanmod_list <- c("knowsizes_noncentered")
     use.sizes <- use_sizes
     outcome.type <- outcome_type
 #    loopres <- foreach (k = 1:nrow(sim.params),
@@ -126,7 +126,8 @@ for (k in 1:nrow(sim.params)) {
       cat("Sampling data\n")
       print(Sys.time())
       sampledata(num.clusters, num.units, use.sizes, outcome.type, rootdir, simno)
-  
+      cat("DONE sampling\n")
+ 
       # Run stan models
       results.list <- vector(mode = "list",
                              length = length(stanmod_list)*2 + 2)

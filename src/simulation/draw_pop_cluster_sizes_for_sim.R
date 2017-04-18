@@ -20,7 +20,8 @@ draw_pop_cluster_sizes_for_sim <- function(J) {
   
     # Set up libraries, directories, options, etc
     library(rstan)
-    
+    library(bayesplot)
+
     rstan_options(auto_write = TRUE)
     options(mc.cores = parallel::detectCores())
     
@@ -29,20 +30,22 @@ draw_pop_cluster_sizes_for_sim <- function(J) {
   
   #############################################################################
   ### Load data and fit stan model
+  ### !!!!!!!!!!!!!!!!!!!!!!!!!!!!!! NOTE !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+  ### In order to end up with simulation data of a reasonable size, I divide
+  ### the population sizes by 1000, so that the min is about 200 and the max
+  ### is about 7300
   #############################################################################
     pop_dat <- read.csv(paste0(codedir, "/observed_city_pops.csv"), header = TRUE)
-    pops <- pop_dat$population
+    pop <- pop_dat$population/1000
   
-    pop_stan_dat <- list(N = length(pops), pop = pops)
-  
+    pop_stan_dat <- list(N = length(pop), logpop = log(pop))
+
+print(str(pop_stan_dat))
+print(summary(pop))
     pop_model_code <- '
       data {
         int N; # number of cities
-        vector[N] pop; # pop vector
-      }
-      transformed data {
-        vector[N] logpop;
-        logpop = log(pop);
+        vector[N] logpop; # log pop vector
       }
       parameters {
         real<lower=0> alpha;
@@ -70,6 +73,7 @@ draw_pop_cluster_sizes_for_sim <- function(J) {
                     pars = c("alpha", "beta"))
     ggsave(plot = p, width = 10, height = 8,
            file = paste0(rootdir, "/output/figures/obs_pop_pars_traceplot.pdf"))
+    print("saved mcmc trace plot")
   
     # Draw pop sizes to be used for simulation using posterior means of alpha
     # and beta
@@ -81,11 +85,12 @@ draw_pop_cluster_sizes_for_sim <- function(J) {
     # Plot densities of observed and simulated log pop sizes
     pdf(file = paste0(figdir, "/obs_pop_sim_pop_densities.pdf"),
         width = 10, height = 8)
-    plot(density(log(pops), xlab = "Log pop size", ylab = "Density",
-         main = paste0("Number of simulated clusters: ", J)))
+    plot(density(log(pop)), xlab = "Log pop size", ylab = "Density",
+         main = paste0("Number of simulated clusters: ", J))
     lines(density(log_pop_for_sim), lty = 2)
     legend(x = "topright", legend = c("Obs", "Sim"), lty = c(1, 2))
     dev.off()
+    print("saved density plot")
     
     return(pop_for_sim)
 }
