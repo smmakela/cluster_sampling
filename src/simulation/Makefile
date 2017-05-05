@@ -35,15 +35,17 @@ USE_SIZE_VALS    = 0 1
 # There's probably a more elegant way to do this in one step with vectors,
 # but I couldn't figure out how to do it because addprefix/addsuffix will not
 # take vectors for the prefix/suffix parameter
-POP_FILE_STEMS := $(addprefix popdata_usesizes_, $(USE_SIZE_VALS))
-POP_FILE_STEMS := $(addsuffix _continuous, $(POP_FILE_STEMS))
+POP_FILE_STEMS  := $(addprefix popdata_usesizes_, $(USE_SIZE_VALS))
+POP_FILE_STEMS1 := $(addsuffix _binary, $(POP_FILE_STEMS))
+POP_FILE_STEMS2 := $(addsuffix _continuous, $(POP_FILE_STEMS))
+POP_FILE_STEMS3 := $(POP_FILE_STEMS1) $(POP_FILE_STEMS2)
 # Now add the file path in $(SIM_OUT_DIR) to the filename stems
-POP_FILE_PATHS := $(addprefix $(SIM_OUT_DIR)/, $(POP_FILE_STEMS))
+POP_FILE_PATHS := $(addprefix $(SIM_OUT_DIR)/, $(POP_FILE_STEMS3))
 # Then add the .rds and .Rout file endings to the file paths
 POP_DATA_FILES := $(addsuffix .rds,  $(POP_FILE_PATHS))
 POP_ROUT_FILES := $(addsuffix .Rout, $(POP_FILE_PATHS))
 # Concatenate all pop files; used in clean:
-POP_FILES_ALL  := $(POP_DATA_FILES) $(POP_ROUT_FILES)
+POP_FILES_ALL  := $(POP_DATA_FILES) $(POP_ROUT_FILES) draw_
 
 # Code files that are used as either prereqs or in recipes
 # e.g. sampling code, stan code, other model code files, figure code
@@ -63,8 +65,10 @@ MODEL_SRC_FILES := $(STAN_SRC_FILES) $(MODEL_SRC_DIR)/lmer_compare.R \
 #done
 
 # Files used to check whether all simulations completed 
-SIM_RES_CHECK_STEMS := $(addprefix $(SIM_OUT_DIR)/total_sim_res_check_usesizes_, $(USE_SIZE_VALS))
-SIM_RES_CHECK_FILES := $(addsuffix _continuous.txt, $(SIM_RES_CHECK_STEMS))
+SIM_RES_CHECK_STEMS  := $(addprefix $(SIM_OUT_DIR)/total_sim_res_check_usesizes_, $(USE_SIZE_VALS))
+SIM_RES_CHECK_FILES1 := $(addsuffix _binary.txt, $(SIM_RES_CHECK_STEMS))
+SIM_RES_CHECK_FILES2 := $(addsuffix _continuous.txt, $(SIM_RES_CHECK_STEMS))
+SIM_RES_CHECK_FILES  := $(SIM_RES_CHECK_FILES1) $(SIM_RES_CHECK_FILES2)
 #SIM_RES_CHECK_FILES := $(wildcard $(SIM_RES_CHECK_FILES)_*.txt)
 
 # Prerequisites for $(SIM_RES_CHECK_FILES), also know as

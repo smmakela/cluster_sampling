@@ -37,34 +37,25 @@ if (num.units == 999) {
   #############################################################################
     # sample clusters
     #sampled.cluster.list <- sort(rspps(Mj, c(1:J), num.clusters)) # randomized systematic PPS sampling
-    sampled.cluster.list <- sort(sample(c(1:J), num.clusters, prob = Mj, replace = FALSE))
-print(sampled.cluster.list)
-print(length(sampled.cluster.list))
+    #sampled.cluster.list <- sort(sample(c(1:J), num.clusters, prob = Mj, replace = FALSE))
+    pik <- inclusionprobabilities(Mj, num.clusters)
+    PI.full <- UPtillepi2(pik)
+    sampled.cluster.list <- c(1:J)[UPtille(pik) == 1]
     rm(Mj) # remove Mj b/c will overwrite it after clusters are renumbered
 
     # RENUMBER cluster ids so that sampled clusters run from 1:num.clusters
     #   and the rest from (num.clusters + 1):J
     all.cluster.ids <- sort(unique(pop.data$cluster.id))
-print(all.cluster.ids)
     nonsampled.cluster.ids <- sort(setdiff(all.cluster.ids, sampled.cluster.list))
-print(nonsampled.cluster.ids)
     idmap <- data.frame(cluster.id = c(sampled.cluster.list, nonsampled.cluster.ids), new.cluster.id = c(1:J))
-print("ONE")
     pop.data <- merge(pop.data, idmap, by = "cluster.id")
-print("ONE")
     pop.data$orig.cluster.id <- pop.data$cluster.id
-print("ONE")
     pop.data$cluster.id <- pop.data$new.cluster.id
-print("ONE")
     pop.data$new.cluster.id <- NULL
-print("ONE")
     # pull out Mj again
     tmp <- dplyr::distinct(pop.data, cluster.id, Mj)
-print("ONE")
     tmp <- dplyr::arrange(tmp, cluster.id)
-print("ONE")
     Mj <- tmp$Mj
-print("ONE")
     # if num.units <= 1, then it's actually a proportion, so we need to convert
     # it to a vector of integers by multiplying by Mj
     if (num.units <= 1) {
@@ -77,13 +68,18 @@ print("ONE")
       num.units.vec <- rep(num.units, times = J)
     }
 
+    # reorder PI.full so that the sampled clusters are in the first 1:num.clusters
+    # rows/columns
+    new.inds <- c(sampled.cluster.list, nonsampled.cluster.ids)
+    PI_ij <- PI.full[new.inds, new.inds]
+    PI_i <- pik[new.inds]
+
     # function to sample num.units units in each sampled cluster
     unit.sampler <- function(cluster.size, num.units) {
       selection <- sort(sample.int(cluster.size, num.units, replace = FALSE))
       return(selection)
     }
 
-print("TWO")
     # use unit.sampler to sample the right number of units in each sampled
     # cluster because we 1) renumbered clusters in pop.data and 2) remade Mj
     # from the updated pop.data with the renumbered clusters, we can just
@@ -102,7 +98,6 @@ print("TWO")
     }
     sample.data <- dplyr::filter(pop.data, insample == 1)
     sample.data$insample <- NULL
-print("THREE")
 }
   ##########################################
   ### Save
@@ -113,8 +108,7 @@ print("THREE")
       nunits <- num.units
     }
     simdata <- list(pop.data = pop.data, sample.data = sample.data, J = J,
-                    Mj = Mj, logMj_c = logMj_c)
-print("FOUR")
+                    Mj = Mj, logMj_c = logMj_c, PI_i = PI_i, PI_ij = PI_ij)
     saveRDS(simdata,
             file = paste0(rootdir, "output/simulation/simdata_usesizes_",
                           use.sizes, "_", outcome.type,

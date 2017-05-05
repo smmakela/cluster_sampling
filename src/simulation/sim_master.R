@@ -38,6 +38,7 @@ Options:
     require(doParallel) 
     require(iterators)
     require(survey)
+    require(sampling)
 
     # Store the docopt options as variables we can use in the code
     opts <- docopt(doc) 
@@ -83,10 +84,10 @@ Options:
   #############################################################################
   ### Create list of parameters to loop through for sim
   #############################################################################
-    num.clusters.list <- c(20)
-    #num.clusters.list <- c(5, 10, 20, 50)
-    num.units.list <- c(0.2)
-    #num.units.list <- c(0.05, 0.1, 0.25, 0.5, 1, 10, 50, 100)
+    #num.clusters.list <- c(10)
+    num.clusters.list <- c(5, 10, 20, 30)
+    #num.units.list <- c(10)
+    num.units.list <- c(0.05, 0.1, 0.25, 0.5, 1, 10, 30, 60)
     #use.sizes.list <- c(0, 1)
     #outcome.type.list <- c("continuous", "binary")
     tmplist <- list(num.clusters.list = num.clusters.list,
@@ -94,20 +95,23 @@ Options:
                     #use.sizes.list    = use.sizes.list,
                     #outcome.type.list = outcome.type.list)
     sim.params <- expand.grid(tmplist)
-    #sim.params$outcome.type.list <- as.character(sim.params$outcome.type.list) 
-#print("sim params:")
-#print(sim.params)
   #############################################################################
   ### Loop through cluster/unit lists
   #############################################################################
-    stanmod_list <- c("bb", "negbin", "lognormal")
-    #stanmod_list <- c("knowsizes_noncentered")
-    use.sizes <- use_sizes
     outcome.type <- outcome_type
-#    loopres <- foreach (k = 1:nrow(sim.params),
-#                        .packages = c("rstan", "plyr", "tidyr", "lme4"),
-#                        .export = ls(envir = globalenv()),
-#                        .verbose=TRUE) %dopar% {
+    modlist <- c("cluster_inds_only", "negbin", "lognormal", "knowsizes", "bb")
+    if (outcome.type == "binary") {
+      stanmod_list <- paste0(modlist, "_binary")
+    } else {
+      stanmod_list <- modlist
+    }
+    #stanmod_list <- c("cluster_inds_only", "knowsizes", "lognormal", "negbin", "bb")
+    #stanmod_list <- c("bb")
+    use.sizes <- use_sizes
+    #loopres <- foreach (k = 1:nrow(sim.params),
+    #                    .packages = c("rstan", "dplyr", "tidyr", "lme4", "sampling"),
+    #                    .export = ls(envir = globalenv()),
+    #                    .verbose=TRUE) %dopar% {
 
 print(paste0("use sizes, outcome type: ", use.sizes, " ", outcome.type))
 
@@ -129,12 +133,11 @@ for (k in 1:nrow(sim.params)) {
       cat("DONE sampling\n")
  
       # Run stan models
-      results.list <- vector(mode = "list",
-                             length = length(stanmod_list)*2 + 2)
+      #results.list <- vector(mode = "list", 20) # arbitrarily long to be easier
+      #list_ctr <- 1
       for (p in 1:length(stanmod_list)) {
         stanmod_name <- stanmod_list[p]
-        load(paste0(rootdir, "/src/analysis/", stanmod_name, ".rds"))
-#print(str(stanmod))
+        stanmod <- readRDS(paste0(rootdir, "/src/analysis/", stanmod_name, ".rds"))
         cat("##################################################################################\n")
         cat("##################################################################################\n")
         print(paste0("Starting to run use.sizes = ", use.sizes,
@@ -142,13 +145,24 @@ for (k in 1:nrow(sim.params)) {
                      ", num.clusters = ", num.clusters,
                      ", num.units = ", num.units))
         print(Sys.time())
-        stan_res <- runstan(num.clusters, num.units, use.sizes, rootdir, simno,
-                            stanmod, stanmod_name, num.iter = 1000, num.chains = 4)
-        results.list[[2*p - 1]] <- stan_res[["par.ests"]]
-        names(results.list)[2*p - 1] <- paste0("param_ests_", stanmod_name)
-        results.list[[2*p]] <- stan_res[["ybar.ests"]]
-        names(results.list)[2*p] <- paste0("ybar_ests_", stanmod_name)
-        rm(stan_res)
+        run_status <- runstan(num.clusters, num.units, use.sizes, outcome.type,
+                              rootdir, simno, stanmod, stanmod_name,
+                              num.iter = 1000, num.chains = 4)
+        #stan_res <- runstan(num.clusters, num.units, use.sizes, outcome.type,
+        #                    rootdir, simno, stanmod, stanmod_name,
+        #                    num.iter = 1000, num.chains = 4)
+        #results.list[[list_ctr]] <- stan_res[["par_ests"]]
+        #names(results.list)[list_ctr] <- paste0("param_ests_", stanmod_name)
+        #list_ctr <- list_ctr + 1
+        #results.list[[list_ctr]] <- stan_res[["draw_summ"]]
+        #names(results.list)[list_ctr] <- paste0("draw_summ_", stanmod_name)
+        #list_ctr <- list_ctr + 1
+        #if (stanmod_name %in% c("lognormal", "negbin")) {
+        #  results.list[[list_ctr]] <- stan_res[["Nj_new_means"]]
+        #  names(results.list)[list_ctr] <- paste0("Nj_new_means_", stanmod_name)
+        #  list_ctr <- list_ctr + 1
+        #}
+        #rm(stan_res)
         cat("##################################################################################\n")
       } # end stanmod loop
   
@@ -156,17 +170,18 @@ for (k in 1:nrow(sim.params)) {
       print("Running lmer_compare")
       print(Sys.time())
       lmer_res <- lmer_compare(num.clusters, num.units, use.sizes, outcome.type, rootdir, simno)
-      results.list[[2*length(stanmod_list) + 1]] <- lmer_res
-      names(results.list)[2*length(stanmod_list) + 1] <- "param_ests_lmer"
-      rm(lmer_res)
+      #results.list[[list_ctr]] <- lmer_res
+      #names(results.list)[list_ctr] <- "param_ests_lmer"
+      #list_ctr <- list_ctr + 1
+      #rm(lmer_res)
   
       # Estimate ybar using survey package
       print("Running svy_ests")
       print(Sys.time())
       J <- numclusters # number of clusters in the population
       svy_res <- svy_ests(J, num.clusters, num.units, use.sizes, outcome.type, rootdir, simno)
-      results.list[[2*length(stanmod_list) + 2]] <- svy_res
-      names(results.list)[2*length(stanmod_list) + 2] <- "ybar_ests_svy"
+      results.list[[list_ctr]] <- svy_res
+      names(results.list)[list_ctr] <- "ybar_ests_svy"
       rm(svy_res)
 
       print("##################################################################################")

@@ -1,20 +1,14 @@
-[1] "/usr/lib64/R/bin/exec/R"                                                    
-[2] "--slave"                                                                    
-[3] "--no-restore"                                                               
-[4] "--no-save"                                                                  
-[5] "--vanilla"                                                                  
-[6] "--file=/vega/stats/users/smm2253/cluster_sampling/src/simulation/with_rng.R"
-[7] "--args"                                                                     
-[8] "-1"                                                                         
-[1] 1
-Loading required package: ggplot2
-Loading required package: StanHeaders
-rstan (Version 2.12.1, packaged: 2016-09-11 13:07:50 UTC, GitRev: 85f7a56811da)
-For execution on a local, multicore CPU with excess RAM we recommend calling
-rstan_options(auto_write = TRUE)
-options(mc.cores = parallel::detectCores())
+Loading required package: docopt
+Loading required package: methods
+Loading required package: plyr
+Loading required package: dplyr
 
 Attaching package: ‘dplyr’
+
+The following objects are masked from ‘package:plyr’:
+
+    arrange, count, desc, failwith, id, mutate, rename, summarise,
+    summarize
 
 The following objects are masked from ‘package:stats’:
 
@@ -24,305 +18,282 @@ The following objects are masked from ‘package:base’:
 
     intersect, setdiff, setequal, union
 
+Loading required package: tidyr
+Loading required package: lme4
+Loading required package: Matrix
 
-Attaching package: ‘tidyr’
+Attaching package: ‘Matrix’
 
-The following object is masked from ‘package:rstan’:
+The following object is masked from ‘package:tidyr’:
+
+    expand
+
+Loading required package: rstan
+Loading required package: ggplot2
+Loading required package: StanHeaders
+rstan (Version 2.12.1, packaged: 2016-09-11 13:07:50 UTC, GitRev: 85f7a56811da)
+For execution on a local, multicore CPU with excess RAM we recommend calling
+rstan_options(auto_write = TRUE)
+options(mc.cores = parallel::detectCores())
+
+Attaching package: ‘rstan’
+
+The following object is masked from ‘package:tidyr’:
 
     extract
 
+Loading required package: foreach
+Loading required package: doParallel
+Loading required package: iterators
+Loading required package: parallel
+Loading required package: survey
+Loading required package: grid
+
+Attaching package: ‘survey’
+
+The following object is masked from ‘package:graphics’:
+
+    dotchart
+
+List of 4
+ $ simno       : chr "1"
+ $ use_sizes   : chr "0"
+ $ outcome_type: chr "continuous"
+ $ numclusters : chr "100"
+NULL
+[1] "simno"        "use_sizes"    "outcome_type" "numclusters" 
+[1] "Assigning 1 to simno"
+[1] "Assigning 0 to use_sizes"
+[1] "Assigning continuous to outcome_type"
+[1] "Assigning 100 to numclusters"
+[1] "use sizes, outcome type: 0 continuous"
+Running in parallel for 20 clusters, 0.2 units, use_sizes = 0 , and continuous outcomes.
+Sampling data
+[1] "2017-04-19 02:11:05 EDT"
+ [1]   9  13  16  20  31  32  34  39  44  50  51  59  63  72  73  75  77  90  93
+[20] 100
+[1] 20
+  [1]   1   2   3   4   5   6   7   8   9  10  11  12  13  14  15  16  17  18
+ [19]  19  20  21  22  23  24  25  26  27  28  29  30  31  32  33  34  35  36
+ [37]  37  38  39  40  41  42  43  44  45  46  47  48  49  50  51  52  53  54
+ [55]  55  56  57  58  59  60  61  62  63  64  65  66  67  68  69  70  71  72
+ [73]  73  74  75  76  77  78  79  80  81  82  83  84  85  86  87  88  89  90
+ [91]  91  92  93  94  95  96  97  98  99 100
+ [1]  1  2  3  4  5  6  7  8 10 11 12 14 15 17 18 19 21 22 23 24 25 26 27 28 29
+[26] 30 33 35 36 37 38 40 41 42 43 45 46 47 48 49 52 53 54 55 56 57 58 60 61 62
+[51] 64 65 66 67 68 69 70 71 74 76 78 79 80 81 82 83 84 85 86 87 88 89 91 92 94
+[76] 95 96 97 98 99
+[1] "ONE"
+[1] "ONE"
+[1] "ONE"
+[1] "ONE"
+[1] "ONE"
+[1] "ONE"
+[1] "ONE"
+[1] "ONE"
+[1] "TWO"
+[1] "THREE"
+[1] "FOUR"
+DONE sampling
+##################################################################################
+##################################################################################
+[1] "Starting to run use.sizes = 0, stanmod = bb, num.clusters = 20, num.units = 0.2"
+[1] "2017-04-19 02:11:06 EDT"
+[1] "making stan data"
+[1] "2017-04-19 02:11:06 EDT"
 /vega/stats/users/smm2253/rpackages/StanHeaders/include/stan/math/rev/core/set_zero_all_adjoints.hpp:14: warning: ‘void stan::math::set_zero_all_adjoints()’ defined but not used
-/vega/stats/users/smm2253/rpackages/StanHeaders/include/stan/math/rev/core/set_zero_all_adjoints.hpp:14: warning: ‘void stan::math::set_zero_all_adjoints()’ defined but not used
-[1] "str(all.data)"
-List of 2
- $ pop.data    :'data.frame':	1602005 obs. of  7 variables:
-  ..$ cluster.id  : int [1:1602005] 1 1 1 1 1 1 1 1 1 1 ...
-  ..$ Nj.pop      : num [1:1602005] 771 771 771 771 771 771 771 771 771 771 ...
-  ..$ log.Nj.pop.c: num [1:1602005] -0.0362 -0.0362 -0.0362 -0.0362 -0.0362 ...
-  ..$ unit.id     : int [1:1602005] 1 2 3 4 5 6 7 8 9 10 ...
-  ..$ x           : int [1:1602005] 44 41 28 17 33 35 22 43 30 43 ...
-  ..$ y           : num [1:1602005] 11.51 10.6 6.91 3.85 8.38 ...
-  ..$ mod         : chr [1:1602005] "nb" "nb" "nb" "nb" ...
- $ true.pars.df:'data.frame':	11 obs. of  2 variables:
-  ..$ true.pars: num [1:11] 800 200 6.6815 0.0789 -0.6624 ...
-  ..$ parnames : chr [1:11] "mu_nb" "phi" "mu" "sigma" ...
+List of 12
+ $ J            : num 100
+ $ K            : num 20
+ $ n            : num 2945
+ $ N            : num 57764
+ $ M            : int 20
+ $ x            : num [1:2945] 10.49 -4.51 -10.51 -1.51 -7.51 ...
+ $ y            : num [1:2945] -4.563 0.921 1.1 -0.733 -1.312 ...
+ $ cluster_id   : int [1:2945] 1 1 1 1 1 1 1 1 1 1 ...
+ $ Nj_sample    : num [1:20] 1352 1043 816 537 1193 ...
+ $ log_Nj_sample: num [1:20] 1.061 0.801 0.556 0.137 0.936 ...
+ $ Nj_unique    : num [1:20] 252 366 382 388 394 425 470 537 539 561 ...
+ $ M_counts     : int [1:20] 1 1 1 1 1 1 1 1 1 1 ...
 NULL
-[1] "TRUE PARS:"
-'data.frame':	11 obs. of  2 variables:
- $ true.pars: num  800 200 6.6815 0.0789 -0.6624 ...
- $ parnames : chr  "mu_nb" "phi" "mu" "sigma" ...
+[1] "***********************************************************************"
+[1] "********** about to run stan for num.clusters = 20, num.units = 20pct, model bb"
+[1] "2017-04-19 02:11:26 EDT"
+
+SAMPLING FOR MODEL 'bb' NOW (CHAIN 1).
+
+Chain 1, Iteration:   1 / 1000 [  0%]  (Warmup)
+Chain 1, Iteration: 100 / 1000 [ 10%]  (Warmup)
+Chain 1, Iteration: 200 / 1000 [ 20%]  (Warmup)
+Chain 1, Iteration: 300 / 1000 [ 30%]  (Warmup)
+Chain 1, Iteration: 400 / 1000 [ 40%]  (Warmup)
+Chain 1, Iteration: 500 / 1000 [ 50%]  (Warmup)
+Chain 1, Iteration: 501 / 1000 [ 50%]  (Sampling)
+Chain 1, Iteration: 600 / 1000 [ 60%]  (Sampling)
+Chain 1, Iteration: 700 / 1000 [ 70%]  (Sampling)
+Chain 1, Iteration: 800 / 1000 [ 80%]  (Sampling)
+Chain 1, Iteration: 900 / 1000 [ 90%]  (Sampling)
+Chain 1, Iteration: 1000 / 1000 [100%]  (Sampling)
+ Elapsed Time: 27.46 seconds (Warm-up)
+               4.46 seconds (Sampling)
+               31.92 seconds (Total)
+
+
+SAMPLING FOR MODEL 'bb' NOW (CHAIN 2).
+
+Chain 2, Iteration:   1 / 1000 [  0%]  (Warmup)
+Chain 2, Iteration: 100 / 1000 [ 10%]  (Warmup)
+Chain 2, Iteration: 200 / 1000 [ 20%]  (Warmup)
+Chain 2, Iteration: 300 / 1000 [ 30%]  (Warmup)
+Chain 2, Iteration: 400 / 1000 [ 40%]  (Warmup)
+Chain 2, Iteration: 500 / 1000 [ 50%]  (Warmup)
+Chain 2, Iteration: 501 / 1000 [ 50%]  (Sampling)
+Chain 2, Iteration: 600 / 1000 [ 60%]  (Sampling)
+Chain 2, Iteration: 700 / 1000 [ 70%]  (Sampling)
+Chain 2, Iteration: 800 / 1000 [ 80%]  (Sampling)
+Chain 2, Iteration: 900 / 1000 [ 90%]  (Sampling)
+Chain 2, Iteration: 1000 / 1000 [100%]  (Sampling)
+ Elapsed Time: 28.2 seconds (Warm-up)
+               9.02 seconds (Sampling)
+               37.22 seconds (Total)
+
+
+SAMPLING FOR MODEL 'bb' NOW (CHAIN 3).
+
+Chain 3, Iteration:   1 / 1000 [  0%]  (Warmup)
+Chain 3, Iteration: 100 / 1000 [ 10%]  (Warmup)
+Chain 3, Iteration: 200 / 1000 [ 20%]  (Warmup)
+Chain 3, Iteration: 300 / 1000 [ 30%]  (Warmup)
+Chain 3, Iteration: 400 / 1000 [ 40%]  (Warmup)
+Chain 3, Iteration: 500 / 1000 [ 50%]  (Warmup)
+Chain 3, Iteration: 501 / 1000 [ 50%]  (Sampling)
+Chain 3, Iteration: 600 / 1000 [ 60%]  (Sampling)
+Chain 3, Iteration: 700 / 1000 [ 70%]  (Sampling)
+Chain 3, Iteration: 800 / 1000 [ 80%]  (Sampling)
+Chain 3, Iteration: 900 / 1000 [ 90%]  (Sampling)
+Chain 3, Iteration: 1000 / 1000 [100%]  (Sampling)
+ Elapsed Time: 24.28 seconds (Warm-up)
+               4.37 seconds (Sampling)
+               28.65 seconds (Total)
+
+
+SAMPLING FOR MODEL 'bb' NOW (CHAIN 4).
+
+Chain 4, Iteration:   1 / 1000 [  0%]  (Warmup)
+Chain 4, Iteration: 100 / 1000 [ 10%]  (Warmup)
+Chain 4, Iteration: 200 / 1000 [ 20%]  (Warmup)
+Chain 4, Iteration: 300 / 1000 [ 30%]  (Warmup)
+Chain 4, Iteration: 400 / 1000 [ 40%]  (Warmup)
+Chain 4, Iteration: 500 / 1000 [ 50%]  (Warmup)
+Chain 4, Iteration: 501 / 1000 [ 50%]  (Sampling)
+Chain 4, Iteration: 600 / 1000 [ 60%]  (Sampling)
+Chain 4, Iteration: 700 / 1000 [ 70%]  (Sampling)
+Chain 4, Iteration: 800 / 1000 [ 80%]  (Sampling)
+Chain 4, Iteration: 900 / 1000 [ 90%]  (Sampling)
+Chain 4, Iteration: 1000 / 1000 [100%]  (Sampling)
+ Elapsed Time: 23.23 seconds (Warm-up)
+               4.44 seconds (Sampling)
+               27.67 seconds (Total)
+
+[1] "done fitting stan model"
+[1] "2017-04-19 02:13:33 EDT"
+[1] "done saving stanfit object"
+[1] "2017-04-19 02:13:40 EDT"
+'data.frame':	2000 obs. of  20 variables:
+ $ phi_star.1 : num  0.1831 0.1975 0.0678 0.2865 0.2275 ...
+ $ phi_star.2 : num  0.0776 0.1999 0.058 0.0852 0.0533 ...
+ $ phi_star.3 : num  0.1269 0.0885 0.1525 0.0634 0.0776 ...
+ $ phi_star.4 : num  0.0786 0.0861 0.0628 0.1143 0.0411 ...
+ $ phi_star.5 : num  0.0553 0.0208 0.0762 0.0355 0.0895 ...
+ $ phi_star.6 : num  0.0577 0.086 0.0339 0.0687 0.0565 ...
+ $ phi_star.7 : num  0.0364 0.0491 0.0515 0.0476 0.044 ...
+ $ phi_star.8 : num  0.1194 0.0746 0.0878 0.0199 0.0676 ...
+ $ phi_star.9 : num  0.0566 0.021 0.1272 0.0384 0.1172 ...
+ $ phi_star.10: num  0.0499 0.0563 0.0516 0.0936 0.0532 ...
+ $ phi_star.11: num  0.01225 0.00963 0.07807 0.03309 0.00574 ...
+ $ phi_star.12: num  0.04171 0.01798 0.00272 0.00833 0.00509 ...
+ $ phi_star.13: num  0.01507 0.03819 0.00701 0.01074 0.03142 ...
+ $ phi_star.14: num  0.01067 0.00541 0.00323 0.00983 0.02993 ...
+ $ phi_star.15: num  0.02263 0.01337 0.02844 0.02867 0.00299 ...
+ $ phi_star.16: num  0.0203 0.00403 0.02039 0.00602 0.02809 ...
+ $ phi_star.17: num  0.01052 0.00667 0.01348 0.00977 0.03572 ...
+ $ phi_star.18: num  0.01182 0.01023 0.00213 0.00926 0.00257 ...
+ $ phi_star.19: num  0.00583 0.00312 0.06337 0.02388 0.00941 ...
+ $ phi_star.20: num  0.00759 0.01148 0.01196 0.00728 0.02168 ...
 NULL
-[1] "Nj.pop.dat:"
-'data.frame':	1000 obs. of  2 variables:
- $ cluster.id: int  1 2 3 4 5 6 7 8 9 10 ...
- $ Nj.pop    : num  771 686 913 779 751 754 794 777 752 803 ...
+Classes ‘grouped_df’, ‘tbl_df’, ‘tbl’ and 'data.frame':	40000 obs. of  3 variables:
+ $ cluster_id: num  1 1 1 1 1 1 1 1 1 1 ...
+ $ draw_num  : int  1 2 3 4 5 6 7 8 9 10 ...
+ $ phi_star  : num  0.1831 0.1975 0.0678 0.2865 0.2275 ...
+ - attr(*, "vars")=List of 1
+  ..$ : symbol cluster_id
+ - attr(*, "drop")= logi TRUE
+ - attr(*, "indices")=List of 20
+  ..$ : int  0 1 2 3 4 5 6 7 8 9 ...
+  ..$ : int  2000 2001 2002 2003 2004 2005 2006 2007 2008 2009 ...
+  ..$ : int  4000 4001 4002 4003 4004 4005 4006 4007 4008 4009 ...
+  ..$ : int  6000 6001 6002 6003 6004 6005 6006 6007 6008 6009 ...
+  ..$ : int  8000 8001 8002 8003 8004 8005 8006 8007 8008 8009 ...
+  ..$ : int  10000 10001 10002 10003 10004 10005 10006 10007 10008 10009 ...
+  ..$ : int  12000 12001 12002 12003 12004 12005 12006 12007 12008 12009 ...
+  ..$ : int  14000 14001 14002 14003 14004 14005 14006 14007 14008 14009 ...
+  ..$ : int  16000 16001 16002 16003 16004 16005 16006 16007 16008 16009 ...
+  ..$ : int  18000 18001 18002 18003 18004 18005 18006 18007 18008 18009 ...
+  ..$ : int  20000 20001 20002 20003 20004 20005 20006 20007 20008 20009 ...
+  ..$ : int  22000 22001 22002 22003 22004 22005 22006 22007 22008 22009 ...
+  ..$ : int  24000 24001 24002 24003 24004 24005 24006 24007 24008 24009 ...
+  ..$ : int  26000 26001 26002 26003 26004 26005 26006 26007 26008 26009 ...
+  ..$ : int  28000 28001 28002 28003 28004 28005 28006 28007 28008 28009 ...
+  ..$ : int  30000 30001 30002 30003 30004 30005 30006 30007 30008 30009 ...
+  ..$ : int  32000 32001 32002 32003 32004 32005 32006 32007 32008 32009 ...
+  ..$ : int  34000 34001 34002 34003 34004 34005 34006 34007 34008 34009 ...
+  ..$ : int  36000 36001 36002 36003 36004 36005 36006 36007 36008 36009 ...
+  ..$ : int  38000 38001 38002 38003 38004 38005 38006 38007 38008 38009 ...
+ - attr(*, "group_sizes")= int  2000 2000 2000 2000 2000 2000 2000 2000 2000 2000 ...
+ - attr(*, "biggest_group_size")= int 2000
+ - attr(*, "labels")='data.frame':	20 obs. of  1 variable:
+  ..$ cluster_id: num  1 2 3 4 5 6 7 8 9 10 ...
+  ..- attr(*, "vars")=List of 1
+  .. ..$ : symbol cluster_id
+  ..- attr(*, "drop")= logi TRUE
 NULL
-[1] "Nj.pop.dat:"
-'data.frame':	1000 obs. of  2 variables:
- $ cluster.id: int  1 2 3 4 5 6 7 8 9 10 ...
- $ Nj.pop    : num  692 812 734 864 793 ...
+[1] "done making samps"
+[1] "2017-04-19 02:13:40 EDT"
+[1] "done making par_ests"
+[1] "2017-04-19 02:13:50 EDT"
+[1] "making par_ests"
+[1] "2017-04-19 02:13:50 EDT"
+[1] "printing par_ests"
+[1] "2017-04-19 02:13:50 EDT"
+'data.frame':	7 obs. of  10 variables:
+ $ mean   : num  -1.354 -0.445 0.319 -0.338 1.166 ...
+ $ se_mean: num  0.0066 0.01032 0.00415 0.00691 0.00483 ...
+ $ sd     : num  0.295 0.461 0.186 0.309 0.216 ...
+ $ 2.5%   : num  -1.8969 -1.3452 -0.0528 -0.9569 0.8182 ...
+ $ 25%    : num  -1.545 -0.729 0.196 -0.54 1.021 ...
+ $ 50%    : num  -1.371 -0.439 0.319 -0.33 1.14 ...
+ $ 75%    : num  -1.171 -0.141 0.44 -0.131 1.287 ...
+ $ 97.5%  : num  -0.742 0.475 0.685 0.239 1.687 ...
+ $ n_eff  : num  2000 2000 2000 2000 2000 2000 2000
+ $ Rhat   : num  0.999 1 1 1.001 1 ...
 NULL
-
-========================================================================
-MODEL: nb ,  simno: 1 
-starting worker pid=43030 on localhost:11543 at 15:15:02.962
-starting worker pid=43039 on localhost:11543 at 15:15:03.173
-starting worker pid=43048 on localhost:11543 at 15:15:03.386
-starting worker pid=43057 on localhost:11543 at 15:15:03.604
-
-SAMPLING FOR MODEL 'negbin_full_centered' NOW (CHAIN 1).
-
-Chain 1, Iteration:    1 / 2000 [  0%]  (Warmup)
-SAMPLING FOR MODEL 'negbin_full_centered' NOW (CHAIN 2).
-
-Chain 2, Iteration:    1 / 2000 [  0%]  (Warmup)
-SAMPLING FOR MODEL 'negbin_full_centered' NOW (CHAIN 3).
-
-Chain 3, Iteration:    1 / 2000 [  0%]  (Warmup)
-SAMPLING FOR MODEL 'negbin_full_centered' NOW (CHAIN 4).
-
-Chain 4, Iteration:    1 / 2000 [  0%]  (Warmup)
-Chain 3, Iteration:  200 / 2000 [ 10%]  (Warmup)
-Chain 2, Iteration:  200 / 2000 [ 10%]  (Warmup)
-Chain 1, Iteration:  200 / 2000 [ 10%]  (Warmup)
-Chain 4, Iteration:  200 / 2000 [ 10%]  (Warmup)
-Chain 2, Iteration:  400 / 2000 [ 20%]  (Warmup)
-Chain 3, Iteration:  400 / 2000 [ 20%]  (Warmup)
-Chain 1, Iteration:  400 / 2000 [ 20%]  (Warmup)
-Chain 4, Iteration:  400 / 2000 [ 20%]  (Warmup)
-Chain 1, Iteration:  600 / 2000 [ 30%]  (Warmup)
-Chain 4, Iteration:  600 / 2000 [ 30%]  (Warmup)
-Chain 2, Iteration:  600 / 2000 [ 30%]  (Warmup)
-Chain 3, Iteration:  600 / 2000 [ 30%]  (Warmup)
-Chain 4, Iteration:  800 / 2000 [ 40%]  (Warmup)
-Chain 1, Iteration:  800 / 2000 [ 40%]  (Warmup)
-Chain 2, Iteration:  800 / 2000 [ 40%]  (Warmup)
-Chain 3, Iteration:  800 / 2000 [ 40%]  (Warmup)
-Chain 4, Iteration: 1000 / 2000 [ 50%]  (Warmup)
-Chain 4, Iteration: 1001 / 2000 [ 50%]  (Sampling)
-Chain 1, Iteration: 1000 / 2000 [ 50%]  (Warmup)
-Chain 1, Iteration: 1001 / 2000 [ 50%]  (Sampling)
-Chain 2, Iteration: 1000 / 2000 [ 50%]  (Warmup)
-Chain 2, Iteration: 1001 / 2000 [ 50%]  (Sampling)
-Chain 3, Iteration: 1000 / 2000 [ 50%]  (Warmup)
-Chain 3, Iteration: 1001 / 2000 [ 50%]  (Sampling)
-Chain 4, Iteration: 1200 / 2000 [ 60%]  (Sampling)
-Chain 1, Iteration: 1200 / 2000 [ 60%]  (Sampling)
-Chain 2, Iteration: 1200 / 2000 [ 60%]  (Sampling)
-Chain 3, Iteration: 1200 / 2000 [ 60%]  (Sampling)
-Chain 4, Iteration: 1400 / 2000 [ 70%]  (Sampling)
-Chain 1, Iteration: 1400 / 2000 [ 70%]  (Sampling)
-Chain 2, Iteration: 1400 / 2000 [ 70%]  (Sampling)
-Chain 3, Iteration: 1400 / 2000 [ 70%]  (Sampling)
-Chain 4, Iteration: 1600 / 2000 [ 80%]  (Sampling)
-Chain 1, Iteration: 1600 / 2000 [ 80%]  (Sampling)
-Chain 2, Iteration: 1600 / 2000 [ 80%]  (Sampling)
-Chain 3, Iteration: 1600 / 2000 [ 80%]  (Sampling)
-Chain 4, Iteration: 1800 / 2000 [ 90%]  (Sampling)
-Chain 1, Iteration: 1800 / 2000 [ 90%]  (Sampling)
-Chain 2, Iteration: 1800 / 2000 [ 90%]  (Sampling)
-Chain 3, Iteration: 1800 / 2000 [ 90%]  (Sampling)
-Chain 4, Iteration: 2000 / 2000 [100%]  (Sampling)
- Elapsed Time: 370.72 seconds (Warm-up)
-               218.83 seconds (Sampling)
-               589.55 seconds (Total)
-
-The following numerical problems occured the indicated number of times after warmup on chain 4
-                                                                                                count
-Exception thrown at line 93: neg_binomial_2_log: Location parameter is inf, but must be finite!     6
-Exception thrown at line 90: normal_log: Scale parameter is 0, but must be > 0!                     1
-When a numerical problem occurs, the Hamiltonian proposal gets rejected.
-See http://mc-stan.org/misc/warnings.html#exception-hamiltonian-proposal-rejected
-If the number in the 'count' column is small, do not ask about this message on stan-users.
-
-Chain 1, Iteration: 2000 / 2000 [100%]  (Sampling)
- Elapsed Time: 377.99 seconds (Warm-up)
-               217.38 seconds (Sampling)
-               595.37 seconds (Total)
-
-The following numerical problems occured the indicated number of times after warmup on chain 1
-                                                                                                count
-Exception thrown at line 93: neg_binomial_2_log: Location parameter is inf, but must be finite!     7
-When a numerical problem occurs, the Hamiltonian proposal gets rejected.
-See http://mc-stan.org/misc/warnings.html#exception-hamiltonian-proposal-rejected
-If the number in the 'count' column is small, do not ask about this message on stan-users.
-
-Chain 2, Iteration: 2000 / 2000 [100%]  (Sampling)
- Elapsed Time: 386.43 seconds (Warm-up)
-               219.9 seconds (Sampling)
-               606.33 seconds (Total)
-
-The following numerical problems occured the indicated number of times after warmup on chain 2
-                                                                                                count
-Exception thrown at line 93: neg_binomial_2_log: Location parameter is inf, but must be finite!     7
-Exception thrown at line 90: normal_log: Scale parameter is 0, but must be > 0!                     1
-When a numerical problem occurs, the Hamiltonian proposal gets rejected.
-See http://mc-stan.org/misc/warnings.html#exception-hamiltonian-proposal-rejected
-If the number in the 'count' column is small, do not ask about this message on stan-users.
-
-Chain 3, Iteration: 2000 / 2000 [100%]  (Sampling)
- Elapsed Time: 391.47 seconds (Warm-up)
-               218.71 seconds (Sampling)
-               610.18 seconds (Total)
-
-The following numerical problems occured the indicated number of times after warmup on chain 3
-                                                                                                count
-Exception thrown at line 93: neg_binomial_2_log: Location parameter is inf, but must be finite!     7
-When a numerical problem occurs, the Hamiltonian proposal gets rejected.
-See http://mc-stan.org/misc/warnings.html#exception-hamiltonian-proposal-rejected
-If the number in the 'count' column is small, do not ask about this message on stan-users.
-Inference for Stan model: negbin_full_centered.
-4 chains, each with iter=2000; warmup=1000; thin=1; 
-post-warmup draws per chain=1000, total post-warmup draws=4000.
-
-              mean se_mean    sd   2.5%    25%    50%    75%  97.5% n_eff Rhat
-alpha0       -0.56    0.00  0.09  -0.74  -0.61  -0.55  -0.50  -0.38  4000    1
-gamma0       -0.38    0.01  0.77  -1.89  -0.89  -0.39   0.12   1.14  4000    1
-alpha1        0.10    0.00  0.05   0.00   0.07   0.11   0.14   0.21  4000    1
-gamma1       -1.22    0.01  0.61  -2.40  -1.65  -1.21  -0.79  -0.01  4000    1
-sigma_beta0   0.64    0.00  0.07   0.52   0.59   0.63   0.68   0.78  4000    1
-sigma_beta1   0.38    0.00  0.04   0.31   0.35   0.38   0.40   0.47  4000    1
-sigma_y       0.04    0.00  0.00   0.04   0.04   0.04   0.04   0.04  4000    1
-mu          802.63    0.14  8.71 785.10 796.98 802.70 808.43 819.31  4000    1
-phi         231.87    0.95 60.16 135.22 188.62 225.26 267.87 362.01  4000    1
-
-Samples were drawn using NUTS(diag_e) at Thu Apr  6 15:25:18 2017.
-For each parameter, n_eff is a crude measure of effective sample size,
-and Rhat is the potential scale reduction factor on split chains (at 
-convergence, Rhat=1).
-[1] "joining stan_samps and true pars"
-'data.frame':	36000 obs. of  2 variables:
- $ parnames: chr  "alpha0" "alpha0" "alpha0" "alpha0" ...
- $ value   : num  -0.618 -0.682 -0.533 -0.553 -0.501 ...
+'data.frame':	100 obs. of  4 variables:
+ $ cluster_id: int  1 2 3 4 5 6 7 8 9 10 ...
+ $ draw_num  : int  0 0 0 0 0 0 0 0 0 0 ...
+ $ Nj_new    : num  1352 1043 816 537 1193 ...
+ $ in_sample : logi  FALSE FALSE FALSE FALSE FALSE FALSE ...
 NULL
-'data.frame':	11 obs. of  2 variables:
- $ true.pars: num  800 200 6.6815 0.0789 -0.6624 ...
- $ parnames : chr  "mu_nb" "phi" "mu" "sigma" ...
+'data.frame':	200000 obs. of  4 variables:
+ $ cluster_id: int  1 2 3 4 5 6 7 8 9 10 ...
+ $ draw_num  : int  1 1 1 1 1 1 1 1 1 1 ...
+ $ Nj_new    : num  1352 1043 816 537 1193 ...
+ $ in_sample : logi  TRUE TRUE TRUE TRUE TRUE TRUE ...
+ - attr(*, "out.attrs")=List of 2
+  ..$ dim     : Named int  100 2000
+  .. ..- attr(*, "names")= chr  "cluster_id" "draw_num"
+  ..$ dimnames:List of 2
+  .. ..$ cluster_id: chr  "cluster_id=  1" "cluster_id=  2" "cluster_id=  3" "cluster_id=  4" ...
+  .. ..$ draw_num  : chr  "draw_num=   1" "draw_num=   2" "draw_num=   3" "draw_num=   4" ...
 NULL
-[1] "joining beta_samps and curr pop dat"
-
-========================================================================
-MODEL: ln ,  simno: 1 
-starting worker pid=43459 on localhost:11543 at 15:26:02.423
-starting worker pid=43468 on localhost:11543 at 15:26:02.665
-starting worker pid=43477 on localhost:11543 at 15:26:02.906
-starting worker pid=43486 on localhost:11543 at 15:26:03.147
-
-SAMPLING FOR MODEL 'lognormal_full_centered' NOW (CHAIN 1).
-
-Chain 1, Iteration:    1 / 2000 [  0%]  (Warmup)
-SAMPLING FOR MODEL 'lognormal_full_centered' NOW (CHAIN 2).
-
-Chain 2, Iteration:    1 / 2000 [  0%]  (Warmup)
-SAMPLING FOR MODEL 'lognormal_full_centered' NOW (CHAIN 3).
-
-Chain 3, Iteration:    1 / 2000 [  0%]  (Warmup)
-SAMPLING FOR MODEL 'lognormal_full_centered' NOW (CHAIN 4).
-
-Chain 4, Iteration:    1 / 2000 [  0%]  (Warmup)
-Chain 1, Iteration:  200 / 2000 [ 10%]  (Warmup)
-Chain 4, Iteration:  200 / 2000 [ 10%]  (Warmup)
-Chain 3, Iteration:  200 / 2000 [ 10%]  (Warmup)
-Chain 2, Iteration:  200 / 2000 [ 10%]  (Warmup)
-Chain 1, Iteration:  400 / 2000 [ 20%]  (Warmup)
-Chain 4, Iteration:  400 / 2000 [ 20%]  (Warmup)
-Chain 3, Iteration:  400 / 2000 [ 20%]  (Warmup)
-Chain 2, Iteration:  400 / 2000 [ 20%]  (Warmup)
-Chain 1, Iteration:  600 / 2000 [ 30%]  (Warmup)
-Chain 3, Iteration:  600 / 2000 [ 30%]  (Warmup)
-Chain 4, Iteration:  600 / 2000 [ 30%]  (Warmup)
-Chain 2, Iteration:  600 / 2000 [ 30%]  (Warmup)
-Chain 3, Iteration:  800 / 2000 [ 40%]  (Warmup)
-Chain 1, Iteration:  800 / 2000 [ 40%]  (Warmup)
-Chain 4, Iteration:  800 / 2000 [ 40%]  (Warmup)
-Chain 2, Iteration:  800 / 2000 [ 40%]  (Warmup)
-Chain 1, Iteration: 1000 / 2000 [ 50%]  (Warmup)
-Chain 3, Iteration: 1000 / 2000 [ 50%]  (Warmup)
-Chain 1, Iteration: 1001 / 2000 [ 50%]  (Sampling)
-Chain 3, Iteration: 1001 / 2000 [ 50%]  (Sampling)
-Chain 4, Iteration: 1000 / 2000 [ 50%]  (Warmup)
-Chain 4, Iteration: 1001 / 2000 [ 50%]  (Sampling)
-Chain 2, Iteration: 1000 / 2000 [ 50%]  (Warmup)
-Chain 2, Iteration: 1001 / 2000 [ 50%]  (Sampling)
-Chain 1, Iteration: 1200 / 2000 [ 60%]  (Sampling)
-Chain 3, Iteration: 1200 / 2000 [ 60%]  (Sampling)
-Chain 4, Iteration: 1200 / 2000 [ 60%]  (Sampling)
-Chain 2, Iteration: 1200 / 2000 [ 60%]  (Sampling)
-Chain 1, Iteration: 1400 / 2000 [ 70%]  (Sampling)
-Chain 3, Iteration: 1400 / 2000 [ 70%]  (Sampling)
-Chain 4, Iteration: 1400 / 2000 [ 70%]  (Sampling)
-Chain 2, Iteration: 1400 / 2000 [ 70%]  (Sampling)
-Chain 3, Iteration: 1600 / 2000 [ 80%]  (Sampling)
-Chain 1, Iteration: 1600 / 2000 [ 80%]  (Sampling)
-Chain 4, Iteration: 1600 / 2000 [ 80%]  (Sampling)
-Chain 2, Iteration: 1600 / 2000 [ 80%]  (Sampling)
-Chain 3, Iteration: 1800 / 2000 [ 90%]  (Sampling)
-Chain 1, Iteration: 1800 / 2000 [ 90%]  (Sampling)
-Chain 4, Iteration: 1800 / 2000 [ 90%]  (Sampling)
-Chain 2, Iteration: 1800 / 2000 [ 90%]  (Sampling)
-Chain 3, Iteration: 2000 / 2000 [100%]  (Sampling)
- Elapsed Time: 332.96 seconds (Warm-up)
-               185.52 seconds (Sampling)
-               518.48 seconds (Total)
-
-The following numerical problems occured the indicated number of times after warmup on chain 3
-                                                                                           count
-Exception thrown at line 83: lognormal_log: Location parameter is inf, but must be finite!     6
-When a numerical problem occurs, the Hamiltonian proposal gets rejected.
-See http://mc-stan.org/misc/warnings.html#exception-hamiltonian-proposal-rejected
-If the number in the 'count' column is small, do not ask about this message on stan-users.
-
-Chain 1, Iteration: 2000 / 2000 [100%]  (Sampling)
- Elapsed Time: 334 seconds (Warm-up)
-               186.3 seconds (Sampling)
-               520.3 seconds (Total)
-
-
-Chain 4, Iteration: 2000 / 2000 [100%]  (Sampling)
- Elapsed Time: 334.81 seconds (Warm-up)
-               186.86 seconds (Sampling)
-               521.67 seconds (Total)
-
-The following numerical problems occured the indicated number of times after warmup on chain 4
-                                                                                           count
-Exception thrown at line 83: lognormal_log: Location parameter is inf, but must be finite!     9
-When a numerical problem occurs, the Hamiltonian proposal gets rejected.
-See http://mc-stan.org/misc/warnings.html#exception-hamiltonian-proposal-rejected
-If the number in the 'count' column is small, do not ask about this message on stan-users.
-
-Chain 2, Iteration: 2000 / 2000 [100%]  (Sampling)
- Elapsed Time: 347.53 seconds (Warm-up)
-               184.27 seconds (Sampling)
-               531.8 seconds (Total)
-
-Inference for Stan model: lognormal_full_centered.
-4 chains, each with iter=2000; warmup=1000; thin=1; 
-post-warmup draws per chain=1000, total post-warmup draws=4000.
-
-             mean se_mean   sd  2.5%   25%   50%   75% 97.5% n_eff Rhat
-alpha0      -0.54    0.00 0.09 -0.73 -0.60 -0.54 -0.48 -0.35  4000    1
-gamma0      -0.07    0.01 0.74 -1.57 -0.56 -0.07  0.42  1.39  4000    1
-alpha1       0.02    0.00 0.06 -0.10 -0.02  0.02  0.07  0.15  4000    1
-gamma1      -0.79    0.01 0.61 -1.97 -1.20 -0.79 -0.39  0.41  4000    1
-sigma_beta0  0.68    0.00 0.07  0.56  0.63  0.67  0.72  0.83  4000    1
-sigma_beta1  0.45    0.00 0.05  0.37  0.42  0.45  0.48  0.55  4000    1
-sigma_y      0.04    0.00 0.00  0.04  0.04  0.04  0.04  0.04  4000    1
-mu           6.68    0.00 0.01  6.66  6.68  6.68  6.69  6.71  4000    1
-sigma        0.09    0.00 0.01  0.07  0.08  0.09  0.10  0.11  4000    1
-
-Samples were drawn using NUTS(diag_e) at Thu Apr  6 15:34:59 2017.
-For each parameter, n_eff is a crude measure of effective sample size,
-and Rhat is the potential scale reduction factor on split chains (at 
-convergence, Rhat=1).
-[1] "joining stan_samps and true pars"
-'data.frame':	36000 obs. of  2 variables:
- $ parnames: chr  "alpha0" "alpha0" "alpha0" "alpha0" ...
- $ value   : num  -0.512 -0.544 -0.492 -0.551 -0.441 ...
-NULL
-'data.frame':	11 obs. of  2 variables:
- $ true.pars: num  800 200 6.6815 0.0789 -0.6624 ...
- $ parnames : chr  "mu_nb" "phi" "mu" "sigma" ...
-NULL
-[1] "joining beta_samps and curr pop dat"
-Error: could not find function "writeRDS"
+Error: is.integer(group) is not TRUE
 Execution halted

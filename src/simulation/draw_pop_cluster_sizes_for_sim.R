@@ -81,7 +81,19 @@ print(summary(pop))
     beta_hat <- mean(samps[,,"beta"])
     log_pop_for_sim <- rgamma(n = J, shape = alpha_hat, scale = 1/beta_hat)
     pop_for_sim <- exp(log_pop_for_sim)
-  
+    # truncate the top 90%
+    #p90 <- quantile(pop_for_sim, 0.9)
+    #pop_for_sim[pop_for_sim > p90] <- p90
+    # if we get a sample where we'd get selection probabilities >= 1, take a
+    # new sample
+    counter <- 0
+    while (max(30 * pop_for_sim / sum(pop_for_sim)) >= 1) {
+      log_pop_for_sim <- rgamma(n = J, shape = alpha_hat, scale = 1/beta_hat)
+      pop_for_sim <- exp(log_pop_for_sim)
+      counter <- counter + 1
+    }
+    cat("Drew", counter, "samples in order to avoid oversized clusters.\n")
+ 
     # Plot densities of observed and simulated log pop sizes
     pdf(file = paste0(figdir, "/obs_pop_sim_pop_densities.pdf"),
         width = 10, height = 8)

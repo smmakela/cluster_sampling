@@ -61,6 +61,14 @@
     J <- numclusters # since J is used in the rest of the code
 
   #############################################################################
+  ### Useful function 
+  #############################################################################
+    inv_logit <- function(x) {
+      y <- exp(x) / (1 + exp(x))
+      return(y)
+    }
+
+  #############################################################################
   ### Checks
   #############################################################################
     #if (length(clustersize.range) != 2) {
@@ -125,50 +133,25 @@ print(summary(Mj))
       beta0_rep <- rep(beta0, Mj)
       beta1 <- rnorm(n = J, mean = alpha1 + gamma1 * logMj_c, sd = sigma_beta1)
       beta1_rep <- rep(beta1, Mj)
-print("sum(Mj):")
-print(sum(Mj))
-print("length(Mj):")
-print(length(Mj))
-print("length(x):")
-print(length(x))
-print("length(beta1):")
-print(length(beta1))
-print("length(beta0):")
-print(length(beta0))
-print("length(beta1_rep):")
-print(length(beta1_rep))
-print("length(beta0_rep):")
-print(length(beta0_rep))
-print("Mj:")
-print(Mj)
-print("beta0_rep unique:")
-tt <- data.frame(beta0_rep, id = rep(c(1:J), Mj))
-tt %>%
-  dplyr::group_by(id) %>%
-  dplyr::summarise(n = n()) -> tt2
-print(tt2)
       ymean <- beta0_rep + beta1_rep * x 
       y <- rnorm(ymean, mean = ymean, sd = sigma_y)
     } else {
-      gamma0 <- rnorm(1)
       alpha0 <- rnorm(1)
       if (use.sizes == 1) {
-        gamma1 <- rnorm(1)
-        alpha1 <- rnorm(1)
+        gamma0 <- rnorm(1)
       }  else {
-        gamma1 <- 0
-        alpha1 <- 0
+        gamma0 <- 0
       }
       sigma_beta0 <- abs(rnorm(1, 0, 0.5))
-      sigma_beta1 <- abs(rnorm(1, 0, 0.5))
       sigma_y <- abs(rnorm(1, 0, 0.75))
         
-      beta0 <- rnorm(n = J, mean = gamma0 + gamma1*logMj_c, sd = sigma_beta0)
-      beta0_rep <- rep(beta0j, Mj)
-      beta1 <- rnorm(n = J, mean = alpha0 + alpha1*logMj_c, sd = sigma_beta1)
-      beta1_rep <- rep(beta1j, Mj)
-      ymean <- beta0_rep + beta1_rep * x 
-      y <- rnorm(ymean, mean = ymean, sd = sigma_y)
+      beta0 <- rnorm(n = J, mean = alpha0 + gamma0*logMj_c, sd = sigma_beta0)
+      beta0_rep <- rep(beta0, Mj)
+      y_prob <- inv_logit(beta0_rep) 
+      y <- rbinom(y_prob, size = 1, prob = y_prob)
+      # make x = 0 everywhere so we can still use svy_ests.R
+      x_new <- rep(0, length(x))
+      x <- x_new
     }
 
     # Make data frame of pop data
@@ -182,8 +165,9 @@ print(tt2)
       truepars <- data.frame(alpha0, gamma0, alpha1, gamma1, sigma_beta0,
                              sigma_beta1, sigma_y, ybar_true)
     } else {
-      truepars <- data.frame(alpha0, gamma0, alpha1, gamma1, sigma_beta0,
-                             sigma_beta1, ybar_true)
+      truepars <- data.frame(alpha0, gamma0,sigma_beta0,
+                             sigma_y, ybar_true)
+      beta1 = NA
     }
     popdata <- list(pop.data = pop.data, J = J, Mj = Mj, logMj_c = logMj_c,
                     beta0 = beta0, beta1 = beta1, truepars = truepars)
