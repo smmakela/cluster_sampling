@@ -1,58 +1,98 @@
+functions {
+  // draw new cluster sizes using nb model
+  vector Nj_new_nb_rng(int J, int K, vector Nj_sample,
+                       real mu, real phi) {
+
+    // need to make Nj_new_tmp b/c negbin rng function can only work w/ ints
+    int Nj_new_tmp[J-K];
+    vector[J] Nj_new;
+
+    for (k in 1:(J-K)) {
+      Nj_new_tmp[k] = neg_binomial_2_rng(mu, phi);
+      while (Nj_new_tmp[k] == 0) {
+        Nj_new_tmp[k] = neg_binomial_2_rng(mu, phi);
+      }
+    }
+
+    Nj_new[1:K] = Nj_sample;
+    Nj_new[(K+1):J] = to_vector(Nj_new_tmp);
+
+    return Nj_new;
+  }
+  // estimate ybar using drawn cluster sizes
+  real ybar_new_nb_rng(int J, int K, vector xbar_pop,
+                       vector beta0, vector beta1,
+                       real alpha0, real gamma0,
+                       real alpha1, real gamma1,
+                       real sigma_beta0, real sigma_beta1,
+                       real sigma_y, vector Nj_new) {
+
+    vector[J] beta0_new;
+    vector[J] beta1_new;
+    vector[J] log_Nj_new;
+    vector[J] yj_new;
+    real ybar_new;
+    
+    log_Nj_new = log(Nj_new) - mean(log(Nj_new));
+
+    beta0_new[1:K] = beta0;
+    beta1_new[1:K] = beta1;
+    yj_new[1:K] = beta0 + beta1 .* xbar_pop[1:K];
+  
+    for (j in (K+1):J) {
+      beta0_new[j] = normal_rng(alpha0 + gamma0 * log_Nj_new[j], sigma_beta0);
+      beta1_new[j] = normal_rng(alpha1 + gamma1 * log_Nj_new[j], sigma_beta1);
+      yj_new[j]  = normal_rng(beta0_new[j] + beta1_new[j] * xbar_pop[j],
+                              sigma_y/sqrt(Nj_new[j]));
+    }
+    
+    ybar_new = sum(yj_new .* to_vector(Nj_new)) / sum(Nj_new);
+
+    return ybar_new; 
+  } 
+} # end functions block
 data {
-  int<lower=0> J_pop;                // number of clusters
-  int<lower=0> J_sam;                // number of clusters
-  int<lower=0> N_sam;                // population size
-  int cluster_id_long[N_sam];        // renumbered cluster ids, length = N_sam
-  vector[N_sam] x;                   // individual-level covar ("age")
-  vector[N_sam] y;                   // outcomes
-  int Mj_sam[J_sam];                 // vector of sizes for sampled clusters
-  vector[J_sam] logMj_sam;           // log of cluster sizes
-  vector[J_pop] xbar_pop;            // cluster avgs of xij
+  int J; // number of pop clusters
+  int K; // number of sampled clusters
+  int n; // total sample size
+  vector[n] x;
+  vector[n] y;
+  int cluster_id[n]; // vector of cluster id's for each sampled unit
+  int Nj_sample[K];
+  vector[K] log_Nj_sample;
 }
 transformed data {
-  int J_mis;
-  int Mj_sam_minus1[J_sam]; // vector of observed cluster sizes minus 1
-
-  J_mis = J_pop - J_sam; // number of unsampled clusters
-  
-  for (j in 1:J_sam) {
-    Mj_sam_minus1[j] = Mj_sam[j] - 1;
+  int Nj_sample_minus1[K];
+  for (k in 1:K) {
+    Nj_sample_minus1[k] = Nj_sample[k] - 1;
   }
 }
 parameters {
   real<lower=0> sigma_beta0;
   real<lower=0> sigma_beta1;
   real<lower=0> sigma_y;
-  real gamma0;
-  real gamma1;
   real alpha0;
+  real gamma0;
   real alpha1;
-  vector[J_sam] eta0;
-  vector[J_sam] eta1;
-  real<lower=0> phi;
+  real gamma1;
+  vector[K] beta0;
+  vector[K] beta1;
   real<lower=0> mu;
+  real<lower=0> phi;
 }
 transformed parameters {
-  vector[J_sam] beta0;
-  vector[J_sam] beta1;
-  vector[N_sam] yhat;
+  vector[n] ymean;
   real<lower=0> mu_star;
   real<lower=0> phi_star;
-  
-  beta0 = alpha0 + gamma0 * logMj_sam + eta0 * sigma_beta0;
-  beta1 = alpha1 + gamma1 * logMj_sam + eta1 * sigma_beta1;
 
-  // size-biased params
   phi_star = phi + 1;
   mu_star = mu + (mu / phi);
 
-  for (i in 1:N_sam) {
-    yhat[i] = beta0[cluster_id_long[i]] + x[i] * beta1[cluster_id_long[i]];
+  for (i in 1:n) {
+    ymean[i] = beta0[cluster_id[i]] + beta1[cluster_id[i]] * x[i];
   }
 }
 model {
-  //mu ~ normal(1000,5);
-  //phi ~ normal(1,.1);
   sigma_beta0 ~ cauchy(0, 2.5);
   sigma_beta1 ~ cauchy(0, 2.5);
   sigma_y ~ cauchy(0, 2.5);
@@ -60,41 +100,34 @@ model {
   gamma0 ~ normal(0, 1);
   alpha1 ~ normal(0, 1);
   gamma1 ~ normal(0, 1);
-  eta0 ~ normal(0, 1);
-  eta1 ~ normal(0, 1);
-  y ~ normal(yhat, sigma_y);
-  Mj_sam_minus1 ~ neg_binomial_2(mu_star, phi_star);
+  beta0 ~ normal(alpha0 + gamma0 * log_Nj_sample, sigma_beta0);
+  beta1 ~ normal(alpha1 + gamma1 * log_Nj_sample, sigma_beta1);
+  y ~ normal(ymean, sigma_y);
+  Nj_sample_minus1 ~ neg_binomial_2(mu_star, phi_star);
 }
-generated quantities {
-  int<lower=0> Mj_mis[J_mis];
-  vector[J_pop] Mj_pop_est;
-  vector[J_pop] logMj_pop_est;
-  real M_tot_est;
-  vector[J_mis] beta0_new;
-  vector[J_mis] beta1_new;
-  vector[J_pop] y_new;
-  real ybar_new;
-
-  for (j in 1:J_mis) {
-    Mj_mis[j] = neg_binomial_2_rng(mu, phi);
-    while (Mj_mis[j] == 0) {
-      Mj_mis[j] = neg_binomial_2_rng(mu, phi);
-    }
-  }
-  Mj_pop_est = append_row(to_vector(Mj_sam), to_vector(Mj_mis));
-  M_tot_est = sum(Mj_pop_est);
-  logMj_pop_est = log(Mj_pop_est) - mean(log(Mj_pop_est));
-
-  // for the sample clusters, use posterior means of beta0, beta1
-  y_new[1:J_sam] = beta0 + beta1 .* xbar_pop[1:J_sam];
-
-  // for unsampled clusters, need to first draw new beta0, beta1 from their posteriors
-  for (j in 1:J_mis) {
-    beta0_new[j] = normal_rng(alpha0 + gamma0 * logMj_pop_est[J_sam + j], sigma_beta0);
-    beta1_new[j] = normal_rng(alpha1 + gamma1 * logMj_pop_est[J_sam + j], sigma_beta1);
-  }
-  y_new[(J_sam + 1):J_pop] = beta0_new + beta1_new .* xbar_pop[(J_sam + 1):J_pop];
-
-  ybar_new = sum(y_new .* Mj_pop_est) / sum(Mj_pop_est);
-}
-
+// generated quantities {
+//   // here we get an estimate of y_bar, the finite-pop mean
+//   // for sampled clusters, we can use the estimate 
+//   // for unsampled clusters, need to draw beta0, beta1, Nj, and then calculate
+//   // y_bar
+//   vector[J] beta0_new;
+//   vector[J] beta1_new;
+//   int Nj_new[J];
+//   vector[J] yj_new;
+//   real ybar_new;
+//   
+//   beta0_new[1:K] = beta0;
+//   beta1_new[1:K] = beta1;
+//   Nj_new[1:K]    = Nj_sample;
+//   yj_new[1:K] = beta0 + beta1 .* xbar_pop[1:K];
+//   
+//   for (j in (K+1):J) {
+//     Nj_new[j] = neg_binomial_2_rng(mu_star, phi_star);
+//     beta0_new[j] = normal_rng(alpha0 + gamma0 * log(Nj_new[j]), sigma_beta0);
+//     beta1_new[j] = normal_rng(alpha1 + gamma1 * log(Nj_new[j]), sigma_beta1);
+//     yj_new[j]  = normal_rng(beta0_new[j] + beta1_new[j] * xbar_pop[j], sigma_y/sqrt(Nj_new[j]));
+//   }
+//   
+//   ybar_new = sum(yj_new .* to_vector(Nj_new)) / sum(Nj_new);
+//   
+// }

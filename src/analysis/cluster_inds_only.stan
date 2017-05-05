@@ -1,16 +1,38 @@
+functions {
+  // estimate ybar using drawn cluster sizes
+  real ybar_new_inds_rng(int J, int K, vector xbar_pop,
+                         vector beta0, vector beta1,
+                         real alpha0, real alpha1,
+                         real sigma_beta0, real sigma_beta1,
+                         real sigma_y, vector Nj_pop) {
+    vector[J] beta0_new;
+    vector[J] beta1_new;
+    vector[J] yj_new;
+    real ybar_new;
+    
+    beta0_new[1:K] = beta0;
+    beta1_new[1:K] = beta1;
+    yj_new[1:K] = beta0 + beta1 .* xbar_pop[1:K];
+  
+    for (j in (K+1):J) {
+      beta0_new[j] = normal_rng(alpha0, sigma_beta0);
+      beta1_new[j] = normal_rng(alpha1, sigma_beta1);
+      yj_new[j]  = normal_rng(beta0_new[j] + beta1_new[j] * xbar_pop[j],
+                              sigma_y/sqrt(Nj_pop[j]));
+    }
+    
+    ybar_new = sum(yj_new .* to_vector(Nj_pop)) / sum(Nj_pop);
+
+    return ybar_new; 
+  } 
+} # end functions block
 data {
-  int<lower=0> J_pop;         // number of clusters in population
-  int<lower=0> J_sam;         // number of clusters in sample
-  int<lower=0> N_sam;         // sample size
-  int cluster_id_long[N_sam]; // cluster ids for sample units
-  vector[N_sam] x;            // individual-level covar ("age")
-  vector[N_sam] y;            // outcomes
-  vector[J_pop] Mj_pop;       // cluster sizes
-  vector[J_pop] xbar_pop;     // cluster avgs of xij
-}
-transformed data {
-  int<lower=0> J_mis;
-  J_mis = J_pop - J_sam;
+  int<lower=0> J;         // number of clusters in population
+  int<lower=0> K;         // number of clusters in sample
+  int<lower=0> n;         // sample size
+  int cluster_id[n]; // cluster ids for sample units
+  vector[n] x;            // individual-level covar ("age")
+  vector[n] y;            // outcomes
 }
 parameters {
   real<lower=0> sigma_beta0;
@@ -18,8 +40,15 @@ parameters {
   real<lower=0> sigma_y;
   real alpha0;
   real alpha1;
-  vector[J_sam] beta0;
-  vector[J_sam] beta1;
+  vector[K] beta0;
+  vector[K] beta1;
+}
+transformed parameters {
+  vector[n] ymean;
+
+  for (i in 1:n) {
+    ymean[i] = beta0[cluster_id[i]] + beta1[cluster_id[i]]*x[i];
+  }
 }
 model {
   sigma_beta0 ~ cauchy(0, 2.5);
@@ -29,26 +58,6 @@ model {
   alpha1 ~ normal(0, 1);
   beta0 ~ normal(alpha0, sigma_beta0);
   beta1 ~ normal(alpha1, sigma_beta1);
-  for (i in 1:N_sam) {
-    y[i] ~ normal(beta0[cluster_id_long[i]] + beta1[cluster_id_long[i]]*x[i], sigma_y);
-  }
-}
-generated quantities {
-  vector[J_mis] beta0_new;
-  vector[J_mis] beta1_new;
-  vector[J_pop] y_new;
-  real ybar_new;
-
-  // for the sample clusters, use posterior means of beta0, beta1
-  y_new[1:J_sam] = beta0 + beta1 .* xbar_pop[1:J_sam];
-
-  // for unsampled clusters, need to first draw new beta0, beta1 from their posteriors
-  for (j in 1:J_mis) {
-    beta0_new[j] = normal_rng(alpha0, sigma_beta0);
-    beta1_new[j] = normal_rng(alpha1, sigma_beta1);
-  }
-  y_new[(J_sam + 1):J_pop] = beta0_new + beta1_new .* xbar_pop[(J_sam + 1):J_pop];
-
-  ybar_new = sum(y_new .* Mj_pop) / sum(Mj_pop);
+  y ~ normal(ymean, sigma_y);
 }
 

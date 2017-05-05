@@ -31,35 +31,32 @@ functions {
 
     return(Nj_new);
   }
-  real ybar_new_bb_rng(int J, int K, vector xbar_pop,
-                       vector beta0, vector beta1,
+  real ybar_new_bb_rng(int J, int K,
+                       vector beta0,
                        real alpha0, real gamma0,
-                       real alpha1, real gamma1,
-                       real sigma_beta0, real sigma_beta1, real sigma_y,
+                       real sigma_beta0,
                        vector Nj_new) {
     real N_tot_new;
     vector[J] log_Nj_new;
-    vector[J] y_new;
+    vector[J] theta_new;
     vector[J] beta0_new;
-    vector[J] beta1_new;
     real ybar_new;
 
     N_tot_new = sum(Nj_new);
     log_Nj_new = log(Nj_new) - mean(log(Nj_new));
   
     beta0_new[1:K] = beta0;
-    beta1_new[1:K] = beta1;
-    y_new[1:K] = beta0_new[1:K] + beta1_new[1:K] .* xbar_pop[1:K];
-  
+    for (j in 1:K) {
+      theta_new[j] = inv_logit(beta0[j]);
+    }
+ 
     // for unsampled clusters, need to first draw new beta0, beta1 from their posteriors
     for (j in (K+1):J) {
       beta0_new[j] = normal_rng(alpha0 + gamma0 * log_Nj_new[j], sigma_beta0);
-      beta1_new[j] = normal_rng(alpha1 + gamma1 * log_Nj_new[j], sigma_beta1);
-      y_new[j] = normal_rng(beta0_new[j] + beta1_new[j] * xbar_pop[j],
-                            sigma_y / sqrt(Nj_new[j]));
+      theta_new[j] = inv_logit(beta0_new[j]); 
     }
-  
-    ybar_new = sum(y_new .* Nj_new) / sum(Nj_new);
+
+    ybar_new = sum(theta_new .* Nj_new) / sum(Nj_new);
 
     return(ybar_new);
   }
@@ -71,8 +68,7 @@ data {
   int<lower=0> N;          // population size
   int<lower=0> M;	   // number of unique cluster sizes
   int cluster_id[n];       // renumbered cluster ids, length = n
-  vector[n] x;             // individual-level covar ("age")
-  vector[n] y;             // outcomes
+  int<lower=0,upper=1> y[n];             // outcomes
   vector[K] Nj_sample;     // vector of cluster sizes for sampled clusters
   vector[K] log_Nj_sample;  // log of cluster sizes
   vector[M] Nj_unique;     // the unique sampled cluster sizes
@@ -85,25 +81,23 @@ transformed data {
 }
 parameters {
   real<lower=0> sigma_beta0;
-  real<lower=0> sigma_beta1;
-  real<lower=0> sigma_y;
-  real gamma0;
-  real gamma1;
   real alpha0;
-  real alpha1;
-  vector[K] beta0;
-  vector[K] beta1;
+  real gamma0;
+  vector[K] eta0;
   simplex[M] phi;
 }
 transformed parameters {
-  vector[n] yhat;
+  vector[K] beta0;
+  vector[n] y_prob;
   vector[M] phi_star_unnorm;
   simplex[M] phi_star;
   real cee; // normalizer for phi_star
   real pii;
 
+  beta0 = alpha0 + gamma0 * log_Nj_sample + eta0 * sigma_beta0;
+
   for (i in 1:n) {
-    yhat[i] = beta0[cluster_id[i]] + x[i] * beta1[cluster_id[i]];
+    y_prob[i] = beta0[cluster_id[i]];
   }
   for (m in 1:M) {
     pii = K * Nj_unique[m] / N;
@@ -115,15 +109,10 @@ transformed parameters {
 }
 model {
   sigma_beta0 ~ cauchy(0, 2.5);
-  sigma_beta1 ~ cauchy(0, 2.5);
-  sigma_y ~ cauchy(0, 2.5);
   alpha0 ~ normal(0, 1);
   gamma0 ~ normal(0, 1);
-  alpha1 ~ normal(0, 1);
-  gamma1 ~ normal(0, 1);
-  beta0 ~ normal(alpha0 + gamma0 * log_Nj_sample, sigma_beta0);
-  beta1 ~ normal(alpha1 + gamma1 * log_Nj_sample, sigma_beta1);
-  y ~ normal(yhat, sigma_y);
+  eta0 ~ normal(0, 1);
+  y ~ bernoulli_logit(y_prob);
   phi ~ dirichlet(alpha_phi);
   M_counts ~ multinomial(phi);
 }

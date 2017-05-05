@@ -1,21 +1,45 @@
-data {
-  int<lower=0> J_pop;         // number of clusters in population
-  int<lower=0> J_sam;         // number of clusters in sample
-  int<lower=0> N_sam;         // sample size
-  int cluster_id_long[N_sam]; // cluster ids for sample units
-  vector[N_sam] x;            // individual-level covar ("age")
-  vector[N_sam] y;            // outcomes
-  vector[J_sam] Mj_sam;       // vector of cluster sizes for sampled clusters
-  vector[J_sam] logMj_sam;    // log of cluster sizes for sampled clusters
-  vector[J_pop] Mj_pop;       // cluster sizes
-  vector[J_pop] xbar_pop;     // cluster avgs of xij
-}
-transformed data{
-  vector[J_pop] logMj_pop;
-  int J_mis;
+functions {
+  // estimate ybar using drawn cluster sizes
+  real ybar_new_know_rng(int J, int K, vector xbar_pop,
+                         vector beta0, vector beta1,
+                         real alpha0, real gamma0,
+                         real alpha1, real gamma1,
+                         real sigma_beta0, real sigma_beta1,
+                         real sigma_y, vector Nj_pop) {
 
-  logMj_pop = log(Mj_pop) - mean(log(Mj_pop));
-  J_mis = J_pop - J_sam;
+    vector[J] beta0_new;
+    vector[J] beta1_new;
+    vector[J] log_Nj_pop;
+    vector[J] yj_new;
+    real ybar_new;
+    
+    log_Nj_pop = log(Nj_pop) - mean(log(Nj_pop));
+
+    beta0_new[1:K] = beta0;
+    beta1_new[1:K] = beta1;
+    yj_new[1:K] = beta0 + beta1 .* xbar_pop[1:K];
+  
+    for (j in (K+1):J) {
+      beta0_new[j] = normal_rng(alpha0 + gamma0 * log_Nj_pop[j], sigma_beta0);
+      beta1_new[j] = normal_rng(alpha1 + gamma1 * log_Nj_pop[j], sigma_beta1);
+      yj_new[j]  = normal_rng(beta0_new[j] + beta1_new[j] * xbar_pop[j],
+                              sigma_y/sqrt(Nj_pop[j]));
+    }
+    
+    ybar_new = sum(yj_new .* to_vector(Nj_pop)) / sum(Nj_pop);
+
+    return ybar_new; 
+  } 
+} # end functions block
+data {
+  int<lower=0> J;         // number of clusters in population
+  int<lower=0> K;         // number of clusters in sample
+  int<lower=0> n;         // sample size
+  int cluster_id[n]; // cluster ids for sample units
+  vector[n] x;            // individual-level covar ("age")
+  vector[n] y;            // outcomes
+  vector[K] Nj_sample;       // vector of cluster sizes for sampled clusters
+  vector[K] log_Nj_sample;    // log of cluster sizes for sampled clusters
 }
 parameters {
   real<lower=0> sigma_beta0;
@@ -25,18 +49,14 @@ parameters {
   real gamma0;
   real alpha1;
   real gamma1;
-  vector[J_sam] eta0;
-  vector[J_sam] eta1;
+  vector[K] beta0;
+  vector[K] beta1;
 }
 transformed parameters {
-  vector[J_sam] beta0;
-  vector[J_sam] beta1;
-  vector[N_sam] ymean;
+  vector[n] ymean;
 
-  beta0 = alpha0 + gamma0 * logMj_sam + eta0 * sigma_beta0;
-  beta1 = alpha1 + gamma1 * logMj_sam + eta1 * sigma_beta1;
-  for (i in 1:N_sam) {
-    ymean[i] = beta0[cluster_id_long[i]] + beta1[cluster_id_long[i]]*x[i];
+  for (i in 1:n) {
+    ymean[i] = beta0[cluster_id[i]] + beta1[cluster_id[i]]*x[i];
   }
 }
 model {
@@ -47,40 +67,8 @@ model {
   gamma0 ~ normal(0, 1);
   alpha1 ~ normal(0, 1);
   gamma1 ~ normal(0, 1);
-  eta0 ~ normal(0, 1);
-  eta1 ~ normal(0, 1);
-  //beta0 ~ normal(alpha0 + gamma0 * logMj_sam, sigma_beta0);
-  //beta1 ~ normal(alpha1 + gamma1 * logMj_sam, sigma_beta1);
+  beta0 ~ normal(alpha0 + gamma0 * log_Nj_sample, sigma_beta0);
+  beta1 ~ normal(alpha1 + gamma1 * log_Nj_sample, sigma_beta1);
   y ~ normal(ymean, sigma_y);
-}
-generated quantities {
-  vector[J_mis] beta0_new;
-  vector[J_mis] beta1_new;
-  vector[J_pop] y_new;
-  real ybar_new;
-
-  // for the sample clusters, use posterior means of beta0, beta1
-  y_new[1:J_sam] = beta0 + beta1 .* xbar_pop[1:J_sam];
-
-  // for unsampled clusters, need to first draw new beta0, beta1 from their posteriors
-  for (j in 1:J_mis) {
-    beta0_new[j] = normal_rng(alpha0 + gamma0 * logMj_pop[J_sam + j], sigma_beta0);
-    beta1_new[j] = normal_rng(alpha1 + gamma1 * logMj_pop[J_sam + j], sigma_beta1);
-  }
-  y_new[(J_sam + 1):J_pop] = beta0_new + beta1_new .* xbar_pop[(J_sam + 1):J_pop];
-
-  /* commented out for now -- delete if above works
-  for (j in 1:J_pop) {
-    if (j <= J_sam) {
-      y_new[j] = beta0[j] + beta1[j] * xbar_pop[j];
-    }
-    else {
-      beta0_new = normal_rng(alpha0 + gamma0 * logMj_pop[j], sigma_beta0);
-      beta1_new = normal_rng(alpha1 + gamma1 * logMj_pop[j], sigma_beta1);
-      y_new[j] = beta0_draw + beta1_draw * xbar_pop[j];
-    }
-  }
-  */
-  ybar_new = sum(y_new .* Mj_pop) / sum(Mj_pop);
 }
 
