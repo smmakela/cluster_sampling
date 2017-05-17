@@ -17,6 +17,9 @@ runstan <- function(num.clusters, num.units, use.sizes, outcome.type, rootdir,
   ##########################################
   ### Load pop and sample data
   ##########################################
+  rstan_options(auto_write = TRUE)
+  options(mc.cores = parallel::detectCores())
+
   if (num.units <= 1) {
     nunits <- paste(100*num.units, "pct", sep = "")
   } else {
@@ -31,7 +34,7 @@ runstan <- function(num.clusters, num.units, use.sizes, outcome.type, rootdir,
   }
   rm(simdata)
   ybar.true <- mean(pop.data$y)
-print(sessionInfo()) 
+
   ##########################################
   ### Make data for stan
   ##########################################
@@ -162,7 +165,7 @@ print(sessionInfo())
   print("done fitting stan model")
   print(Sys.time())
 
-  if (sim %in% c(1, 200, 300, 400, 500, 999)) {
+  if (sim == 1) {
     save(fit, file = paste0(rootdir, "/output/simulation/stanfit_usesizes_",
                             use.sizes, "_nclusters_", num.clusters,
                             "_nunits_", nunits, "_simno_", sim, "_",
@@ -170,6 +173,23 @@ print(sessionInfo())
     print("done saving stanfit object")
     print(Sys.time())
   }
+  ##########################################
+  ### See if there are any divergent transitions -- if so need to exit 
+  ##########################################
+    samp_params <- get_sampler_params(fit)
+    num_div_trans <- 0
+    for (s in 1:length(samp_params)) {                                
+      num_div_trans <- num_div_trans + sum(samp_params[[s]][((num.iter/2)+1):num.iter, "divergent__"])
+    }
+    if (num_div_trans > 0) {
+      out_msg <- paste0("There were ", num_div_trans, " divergent transitions.")
+      saveRDS(out_msg, paste0(rootdir, "output/simulation/results_usesizes_",
+                              use.sizes, "_", outcome.type, "_", sn, 
+                              "_nclusters_", num.clusters,
+                              "_nunits_", nunits, "_sim_", simno, ".rds"))
+      return(NULL)
+    }
+
   ##########################################
   ### Extract samples, format param estimates to just keep necessary info 
   ##########################################
@@ -483,6 +503,5 @@ print(sessionInfo())
                  "_nclusters_", num.clusters,
                  "_nunits_", nunits, "_sim_", simno, ".rds"))
 
-  run_status <- "success"
-  return(run_status)
+  return(NULL)
 }

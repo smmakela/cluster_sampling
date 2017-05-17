@@ -108,11 +108,6 @@
     x <- base::sample(c(unitcovar.range[1]:unitcovar.range[2]), sum(Mj),
                       replace = TRUE)
     x <- x - mean(x)
-print(length(Mj))
-print(sum(Mj))
-print(length(x))   
-print(summary(x))
-print(summary(Mj))
 
     # Draw hyperparameters, varying slopes and coefficients, and outcomes
     if (outcome.type == "continuous") {
@@ -143,7 +138,6 @@ print(summary(Mj))
         gamma0 <- 0
       }
       sigma_beta0 <- abs(rnorm(1, 0, 0.5))
-      sigma_y <- abs(rnorm(1, 0, 0.75))
         
       beta0 <- rnorm(n = J, mean = alpha0 + gamma0*logMj_c, sd = sigma_beta0)
       beta0_rep <- rep(beta0, Mj)
@@ -165,8 +159,7 @@ print(summary(Mj))
       truepars <- data.frame(alpha0, gamma0, alpha1, gamma1, sigma_beta0,
                              sigma_beta1, sigma_y, ybar_true)
     } else {
-      truepars <- data.frame(alpha0, gamma0,sigma_beta0,
-                             sigma_y, ybar_true)
+      truepars <- data.frame(alpha0, gamma0, sigma_beta0, ybar_true)
       beta1 = NA
     }
     popdata <- list(pop.data = pop.data, J = J, Mj = Mj, logMj_c = logMj_c,

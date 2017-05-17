@@ -1,7 +1,8 @@
 # Author: Susanna Makela
 # Date: Jan 28, 2016
 # Purpose: use the survey package to estimate ybar from the sampled data
-svy_ests <- function(J, num.clusters, num.units, use.sizes, outcome.type, rootdir, sim) {
+svy_ests <- function(J, num.clusters, num.units, use.sizes, outcome.type,
+                     rootdir, simno) {
   # Inputs:
   #   J -- number of clusters in pop
   #   num.clusters -- number of sampled clusters
@@ -9,111 +10,13 @@ svy_ests <- function(J, num.clusters, num.units, use.sizes, outcome.type, rootdi
   #   use.sizes -- whether cluster sizes are related to outcome values (0/1)
   #   outcome.type -- whether outcomes are continuous or binary
   #   rootdir -- directory where everything is stored
-  #   sim -- which simulation this is
+  #   simno -- which simulation this is
 
-  # load pop data -- use this to get the total sample size so we can calculate the sampling probs (here we are assuming we know M_j in all clusters, so obviously we can calculate the sampling probs
-    if (num.units <= 1) {
-      nunits <- paste(num.units*100, "pct", sep = "")
-    } else {
-      nunits <- num.units
-    }
-    popdata <- readRDS(paste0(rootdir, "/output/simulation/popdata_usesizes_",
-                       use.sizes, "_", outcome.type, ".rds"))
-    pop.data <- popdata[["pop.data"]]
-    sizetot <- sum(pop.data$Mj)
-    ybar.true <- mean(pop.data$y)
-    truepars <- popdata[["truepars"]]
-    print(truepars)
-    rm(popdata)
-
-  # load sim data
-    simdata <- readRDS(paste0(rootdir, "output/simulation/simdata_usesizes_",
-                              use.sizes, "_", outcome.type, "_nclusters_",
-                              num.clusters, "_nunits_", nunits, "_simno_", sim,
-                              ".rds"))
-    # pull out of list and assign
-    for (j in names(simdata)) {
-      assign(j, simdata[[j]])
-    }
-    # for the PI's, rename so we can use PI_i etc for the sample values
-    PI_i_all <- PI_i
-    PI_i <- PI_i[1:num.clusters]
-    PI_ij_all <- PI_ij
-    PI_ij <- PI_ij[1:num.clusters, 1:num.clusters]
-  # inclusion and joint inclusion probabilities for units in clusters
-  # pi_kl_i and pi_kk_i are vectors of length num.clusters -- the matrix
-  # PI_kl_given_i gets made later
-    Nj_sample <- Mj[1:num.clusters]
-    if (num.units <= 1) { # sample size = num.units * Nj_sample
-      PI_k_given_i <- num.units
-      PI_k_given_i <- rep(num.units, num.clusters)
-      ns <- num.units * Nj_sample # vector of sample sizes
-      pi_kl_i <- (ns * (ns - 1)) / (Nj_sample * (Nj_sample - 1))
-    } else {
-      PI_k_given_i <- num.units / Nj_sample
-      pi_kl_i <- num.units * (num.units - 1) / (Nj_sample * (Nj_sample - 1))
-    }
-    pi_kk_i <- PI_k_given_i
-
-    sample.data$fpc <- J # fpc is the number of clusters in the pop
-    sample.data$prob <- num.clusters*sample.data$Mj/sizetot # prob of selecting the cluster
-    if (num.units > 1) {
-      sample.data$prob2 <- num.units/sample.data$Mj # prob of selecting each unit within the cluster
-    } else {
-      sample.data$prob2 <- num.units
-    }
-    sample.data$wt <- 1/sample.data$prob
-    rm(simdata)
-
-
-  # Hajek ESTIMATE
-    # use sampling package to manually calculate hajek estimator; variance est
-    # is same as for HT but with y_i - ybar_hat_as on p 5 of
-    # http://jkim.public.iastate.edu/teaching/book8.pdf
-    n.vec <- sample.data %>%
-      dplyr::group_by(cluster.id) %>%
-      dplyr::summarise(n=n())
-    PI_i_rep <- rep(PI_i * PI_k_given_i, times = n.vec$n)
-    PI_ij_rep <- matrix(NA, nrow = sum(n.vec$n), ncol = sum(n.vec$n),
-                        dimnames = list(rep(c(1:num.clusters), times = n.vec$n),
-                                        rep(c(1:num.clusters), times = n.vec$n)))
-    for (i in 1:num.clusters) {
-      for (j in i:num.clusters) {
-        rs <- which(rownames(PI_ij_rep) == i)
-        cs <- which(colnames(PI_ij_rep) == j)
-        PI_ij_rep[rs, cs] <- PI_ij[i, j]
-        rst <- which(rownames(PI_ij_rep) == j)
-        cst <- which(colnames(PI_ij_rep) == i)
-        PI_ij_rep[rst, cst] <- PI_ij[i, j]
-      }
-    }
-    ybar_hat_hajek <- Hajekestimator(sample.data$y, PI_i_rep, type = "mean")    
-    ybar_se_hajek <- sqrt(varHT(sample.data$y - ybar_hat_hajek,
-                                pikl = PI_ij_rep, method = 1))
-  # describe survey design
-    #des <- svydesign(id = ~new.cluster.id, fpc = ~fpc, weights = ~wt, data = sample.data)
-    des <- svydesign(id = ~cluster.id+unit.id, fpc = ~prob+prob2,
-                     data = sample.data, pps = "brewer")
-    #des2 <- svydesign(id = ~cluster.id+unit.id, fpc = ~prob+prob2,
-    #                  data = sample.data, pps = ppsmat(PI_ij), variance = "YG")
-
-  # estimate pop mean, pull out std err
-    tt <- svymean(~y, des)
-    old.ybar_hat_hajek <- as.numeric(tt[1])
-    old.ybar_se_hajek <- as.numeric(sqrt(attr(tt,"var")))
-    #print(svymean(~y, des2))
-  # if we got an estimate that's way off from the truth, record the info here
-    #if (abs((ybar_hat_- ybar_true)/ybar_true) > 2) {
-    #  write.table(sample, file = paste(rootdir, "/Results/Simplify/vary_K/svydesign_usesizes_", use.sizes, "_nclusters_", num.clusters,
-    #                         "_nunits_", nunits, "_sim_", sim, ".txt", sep = "")) 
-    #  save(des, file = paste(rootdir, "/Results/Simplify/vary_K/svydesign_usesizes_", use.sizes, "_nclusters_", num.clusters,
-    #                         "_nunits_", nunits, "_sim_", sim, ".txt", sep = "")) 
-    #}
-
-  # Sarndal estimators
-  # some functions and constants to make our lives easier
-    # covariance of cluster inclusion probabilities
-    delta_check_ij <- (PI_ij - outer(PI_i, PI_i)) / PI_ij
+  #############################################################################
+  # Useful functions
+  #############################################################################
+  # y_mat_sum calculates the summand in V_i_hat in equation 8.6.4 (p 314 of
+  # Sarndal et al)
     y_mat_sum <- function(i) {
       y_k <- sample.data$y[sample.data$cluster.id == i]
       y_l <- y_k
@@ -121,10 +24,14 @@ svy_ests <- function(J, num.clusters, num.units, use.sizes, outcome.type, rootdi
       pi_l <- pi_k
       delta_check_kl_given_i <- matrix((pi_kl_i[i] - PI_k_given_i[i]^2) / pi_kl_i[i],
                                        nrow = n.vec$n[i], ncol = n.vec$n[i])
-      diag(delta_check_kl_given_i) <- (pi_kk_i[i] - PI_k_given_i[i]^2) / pi_kk_i[i]
-      res <- sum(delta_check_kl_given_i * outer(y_k / pi_k, y_l / pi_l))
+      diag(delta_check_kl_given_i) <- 1 - PI_k_given_i[i]
+      res_mat <- delta_check_kl_given_i * outer(y_k / pi_k, y_l / pi_l)
+      res <- sum(res_mat)
       return(res)
     }
+
+  # ge_mat_sum calculates the summand in V_CEi_hat in result 8.9.2 for a given
+  # cluster i (p 326 of Sarndal et al)
     ge_mat_sum <- function(i) {
       # e_ks defined in equation 8.9.4
       e_ks <- sample.data$y[sample.data$cluster.id == i] -
@@ -158,11 +65,86 @@ svy_ests <- function(J, num.clusters, num.units, use.sizes, outcome.type, rootdi
       pi_l <- pi_k
       delta_check_kl_given_i <- matrix((pi_kl_i[i] - PI_k_given_i[i]^2) / pi_kl_i[i],
                                        nrow = n.vec$n[i], ncol = n.vec$n[i])
-      diag(delta_check_kl_given_i) <- (pi_kk_i[i] - PI_k_given_i[i]^2) / pi_kk_i[i]
+      #diag(delta_check_kl_given_i) <- (pi_kk_i[i] - PI_k_given_i[i]^2) / pi_kk_i[i]
+      diag(delta_check_kl_given_i) <- 1 - PI_k_given_i[i]
       omat <- outer(g_ks * e_ks / pi_k, g_ls * e_ls / pi_l)
       res <- sum(delta_check_kl_given_i * outer(g_ks * e_ks / pi_k, g_ls * e_ls / pi_l))
       return(res)
     }
+
+  #############################################################################
+  # Load pop and simno data
+  #############################################################################
+  # load pop data -- use this to get the total sample size so we can calculate
+  # the sampling probs (here we are assuming we know M_j in all clusters, so
+  # obviously we can calculate the sampling probs
+    if (num.units <= 1) {
+      nunits <- paste(num.units*100, "pct", sep = "")
+    } else {
+      nunits <- num.units
+    }
+    popdata <- readRDS(paste0(rootdir, "/output/simulation/popdata_usesizes_",
+                       use.sizes, "_", outcome.type, ".rds"))
+    pop.data <- popdata[["pop.data"]]
+    sizetot <- sum(pop.data$Mj)
+    ybar.true <- mean(pop.data$y)
+    truepars <- popdata[["truepars"]]
+    print(truepars)
+    rm(popdata)
+
+  # load simno data
+    simdata <- readRDS(paste0(rootdir, "output/simulation/simdata_usesizes_",
+                              use.sizes, "_", outcome.type, "_nclusters_",
+                              num.clusters, "_nunits_", nunits, "_simno_", simno,
+                              ".rds"))
+    # pull out of list and assign
+    for (j in names(simdata)) {
+      assign(j, simdata[[j]])
+    }
+    Nj_sample <- Mj[1:num.clusters]
+
+    # fpc is the number of clusters in the pop
+    sample.data$fpc <- J 
+    # prob of selecting the cluster
+    sample.data$prob <- num.clusters*sample.data$Mj/sizetot 
+    # prob of selecting each unit within the cluster
+    if (num.units > 1) {
+      sample.data$prob2 <- num.units/sample.data$Mj 
+    } else {
+      sample.data$prob2 <- num.units
+    }
+    sample.data$wt <- 1/sample.data$prob
+    rm(simdata)
+
+  #############################################################################
+  # Make vectors/matrices of inclusion probabilities that we'll need later,
+  # and other useful quantities
+  #############################################################################
+  # for the PI's, rename so we can use PI_i etc for the sample values
+    PI_i_all <- PI_i
+    PI_i <- PI_i[1:num.clusters]
+print("PI_i")
+print(PI_i)
+    PI_ij_all <- PI_ij
+    PI_ij <- PI_ij[1:num.clusters, 1:num.clusters]
+  # make vectors of unit/joint inclusion probabilities for units in clusters
+  # pi_kl_i and pi_kk_i are vectors of length num.clusters    Nj_sample <- Mj[1:num.clusters]
+    if (num.units <= 1) { # sample size = num.units * Nj_sample
+      PI_k_given_i <- num.units
+      PI_k_given_i <- rep(num.units, num.clusters)
+      ns <- num.units * Nj_sample # vector of sample sizes
+      pi_kl_i <- (ns * (ns - 1)) / (Nj_sample * (Nj_sample - 1))
+    } else {
+      PI_k_given_i <- num.units / Nj_sample
+      pi_kl_i <- num.units * (num.units - 1) / (Nj_sample * (Nj_sample - 1))
+    }
+    pi_kk_i <- PI_k_given_i
+
+  # covariance of cluster inclusion probabilities
+    delta_check_ij <- (PI_ij - outer(PI_i, PI_i)) / PI_ij
+    diag(delta_check_ij) <- 1 - PI_i
+
+  # cluster-level data for sample and pop
     cluster.data <- sample.data %>%
       dplyr::group_by(cluster.id) %>%
       dplyr::summarise(sum_y_i = sum(y), sum_x_i = sum(x))
@@ -170,15 +152,24 @@ svy_ests <- function(J, num.clusters, num.units, use.sizes, outcome.type, rootdi
       dplyr::group_by(cluster.id) %>%
       dplyr::summarise(sum_y_i = sum(y), sum_x_i = sum(x), Nj_pop = mean(Mj))
     sigma2_k <- var(sample.data$y)
-  # 8.6.1 -- I think this is actually the Hajek estimator??? they just don't
-  #   call it that... but the mean estimate is the same as with the
-  #   Hajekestimator function above
-    # estimate
+
+  # number of sampled units in each sampled column
+    n.vec <- sample.data %>%
+      dplyr::group_by(cluster.id) %>%
+      dplyr::summarise(n=n())
+
+  #############################################################################
+  # HAJEK ESTIMATE -- result 8.6.1, p314 of Sarndal et al
+  #############################################################################
+  # Sarndal doesn't actually call this the Hajek estimator,
+  # but the mean estimate is the same as with the Hajekestimator function... 
+  # Mean estimate
     t_yi_star <- cluster.data$sum_y_i / PI_k_given_i
     num <- sum(t_yi_star / PI_i[1:num.clusters])
     den <- sum(Nj_sample / PI_i[1:num.clusters])
     ybar_hat_8.6.1 <- num / den
-    # variance
+
+  # Variance estimate
     d_i <- t_yi_star - Nj_sample * ybar_hat_8.6.1
     d_j <- d_i
     pi_i <- PI_i
@@ -188,13 +179,72 @@ svy_ests <- function(J, num.clusters, num.units, use.sizes, outcome.type, rootdi
     denom <- sum(Nj_sample / PI_i)^2
     var_8.6.1 <- (1 / denom) * (term1 + term2)
     ybar_se_8.6.1 <- sqrt(var_8.6.1)
-    
-  # 8.9.8 -- the formulas here are for estimating the total, but we can just
-  #   divide the estimator by sum(1 / PI_i) and the variance estimator by
-  #   sum(N_i / PI_i)^2 to estimate the mean
-  # NOTE: this only makes sense for the continuous outcome where we use x
+
+  # Using Hajekestimator function -- variance estimate here is WRONG but
+  # I haven't fixed it
+  # variance est is same as for HT but with y_i - ybar_hat, according to p 5 of
+  # http://jkim.public.iastate.edu/teaching/book8.pdf
+    PI_i_rep <- rep(PI_i * PI_k_given_i, times = n.vec$n)
+    PI_kl <- matrix(NA, nrow = sum(n.vec$n), ncol = sum(n.vec$n),
+                        dimnames = list(rep(c(1:num.clusters), times = n.vec$n),
+                                        rep(c(1:num.clusters), times = n.vec$n)))
+    for (i in 1:num.clusters) {
+      rs <- which(rownames(PI_kl) == i)
+      cs <- which(colnames(PI_kl) == i)
+      PI_kl[rs, cs] <- pi_kl_i[i]
+      diag(PI_kl[rs, cs]) <- pi_kk_i[i]
+      for (j in i:num.clusters) {
+        rs <- which(rownames(PI_kl) == i)
+        cs <- which(colnames(PI_kl) == j)
+        PI_kl[rs, cs] <- PI_k_given_i[i] * PI_k_given_i[j]
+        rst <- which(rownames(PI_kl) == j)
+        cst <- which(colnames(PI_kl) == i)
+        PI_kl[rst, cst] <- PI_kl[rs, cs]
+      }
+    }
+
+    #PI_ij_rep <- matrix(NA, nrow = sum(n.vec$n), ncol = sum(n.vec$n),
+    #                    dimnames = list(rep(c(1:num.clusters), times = n.vec$n),
+    #                                    rep(c(1:num.clusters), times = n.vec$n)))
+    #for (i in 1:num.clusters) {
+    #  for (j in i:num.clusters) {
+    #    rs <- which(rownames(PI_ij_rep) == i)
+    #    cs <- which(colnames(PI_ij_rep) == j)
+    #    PI_ij_rep[rs, cs] <- PI_ij[i, j]
+    #    rst <- which(rownames(PI_ij_rep) == j)
+    #    cst <- which(colnames(PI_ij_rep) == i)
+    #    PI_ij_rep[rst, cst] <- PI_ij[i, j]
+    #  }
+    #}
+    ybar_hat_hajek <- Hajekestimator(sample.data$y, PI_i_rep, type = "mean")
+    # note this SE is wrong but I'm not sure why -- probably something with the
+    # pikl's    
+    ybar_se_hajek <- sqrt(varHT(sample.data$y - ybar_hat_hajek,
+                                pikl = PI_kl, method = 1))
+
+  # Use the survey package -- this is the old way and gives the same answers
+  # as the method from result 8.6.1
+    #des <- svydesign(id = ~new.cluster.id, fpc = ~fpc, weights = ~wt, data = sample.data)
+    des <- svydesign(id = ~cluster.id+unit.id, fpc = ~prob+prob2,
+                     data = sample.data, pps = "brewer")
+    #des2 <- svydesign(id = ~cluster.id+unit.id, fpc = ~prob+prob2,
+    #                  data = sample.data, pps = ppsmat(PI_ij), variance = "YG")
+
+    # estimate pop mean, pull out std err
+    tt <- svymean(~y, des)
+    old.ybar_hat_hajek <- as.numeric(tt[1])
+    old.ybar_se_hajek <- as.numeric(sqrt(attr(tt,"var")))
+
+  #############################################################################
+  # GREG ESTIMATE -- section 8.9, p322 of Sarndal et al
+  #############################################################################
+  # Equation 8.9.30 -- this is a generalization of Result 8.6.1, which we used
+  # above. The variance estimator is still given by 8.9.27, but we use the
+  # formula given in 8.9.30
+  # NOTE: this only makes sense for the continuous outcome where we use x as a
+  # covariate! Otherwise 
   if (outcome.type == "continuous") {
-    # estimate
+    # Mean estimate
     m1 <- lm(y ~ x, data = sample.data)
     sigma2_est <- summary(m1)$sigma^2 # estimate of sigma^2
     PI_k <- PI_i * PI_k_given_i
@@ -202,9 +252,11 @@ svy_ests <- function(J, num.clusters, num.units, use.sizes, outcome.type, rootdi
     W <- diag(1 / (sigma2_est * PI_k_rep))
     X <- cbind(rep(1, nrow(sample.data)), sample.data$x)
     T_hat <- t(X) %*% W %*% X
-    Beta_hat <- solve(T_hat) %*% t(X) %*% W %*% sample.data$y # basic weighted estimator
+    # basic weighted regression estimator
+    Beta_hat <- solve(T_hat) %*% t(X) %*% W %*% sample.data$y 
     y_k_hat <- X %*% Beta_hat
     sample.data$y_k_hat <- as.vector(y_k_hat)
+    # 
     # note that in 8.9.8, t_yhat_i is the sum of y_hat for ALL units in the
     # sampled clusters
     t_yhat_i <- pop.data %>%
@@ -217,21 +269,39 @@ svy_ests <- function(J, num.clusters, num.units, use.sizes, outcome.type, rootdi
                        sum((sample.data$y - sample.data$y_k_hat) / PI_k_rep)) /
                        denom
 
-    # variance
+    # Variance estimate
     V_CEi_hat <- sapply(c(1:num.clusters), ge_mat_sum)
-    V_i_hat <- sapply(c(1:num.clusters), y_mat_sum)
     V_CSSU_hat <- sum(V_CEi_hat / PI_i^2)
     t_yi_hat <- cluster.data$sum_y_i / PI_k_given_i
     t_yj_hat <- t_yi_hat
     pi_i <- PI_i
     pi_j <- pi_i
-    res <- sum(delta_check_ij * outer(t_yi_hat / pi_i, t_yj_hat / pi_j))
+    res_mat <- delta_check_ij * outer(t_yi_hat / pi_i, t_yj_hat / pi_j)
+print("res_mat")
+print(res_mat)
+print("delta_check_ij")
+print(delta_check_ij)
+print("sum(diag(res_mat))")
+print(sum(diag(res_mat)))
+print("sum(notdiag(res_mat))")
+print(sum(res_mat) - sum(diag(res_mat)))
+print("sum((res_mat))")
+print(sum(res_mat))
+    res <- sum(res_mat)
+    V_i_hat <- sapply(c(1:num.clusters), y_mat_sum)
     V_CPSU_hat <- res - sum((1/PI_i) * ((1/PI_i) - 1) * V_i_hat)
     denom <- sum(Nj_sample / PI_i)^2
     var_8.9.8 <- (V_CPSU_hat + V_CSSU_hat) / denom # 8.9.27
     ybar_se_8.9.8 <- sqrt(var_8.9.8)
-
-  # old way
+print("PRINTING VARS:")
+print(V_CEi_hat)
+print(V_CSSU_hat)
+print(V_i_hat)
+print(V_CPSU_hat)
+print(res)
+print(sum((1/PI_i) * ((1/PI_i) - 1) * V_i_hat))
+print((1/PI_i) * ((1/PI_i) - 1) * V_i_hat)
+  # Using the survey package
     ptot <- sum(pop.data$x)
     pop.totals <- c(`(Intercept)`=nrow(sample.data), x = ptot)
     if (num.units > 1) { # self-weighting
@@ -243,25 +313,21 @@ svy_ests <- function(J, num.clusters, num.units, use.sizes, outcome.type, rootdi
     old.ybar_hat_greg <- as.numeric(tt2[1])
     old.ybar_se_greg <- as.numeric(sqrt(attr(tt2,"var")))
   } else { # end if outcome.type == "continuous"
+    # for binary outcome, no greg estimator
     ybar_hat_8.9.8 <- NA
     ybar_se_8.9.8 <- NA
     old.ybar_hat_greg <- NA
     old.ybar_se_greg <- NA
   }
-  # if we got an estimate that's way off from the truth, record the info here
-    #d1 <- abs((ybar_hat_- ybar_true)/ybar_true)
-    #d2 <- abs((ybar_hat_ - ybar_true)/ybar_true)
-    #if ((d1 > 2) | (d2 > 2)) {
-    #  write.csv(sample.data, file = paste(rootdir, "/Results/Simplify/vary_K/sampdat_weird_svy_usesizes_", use.sizes,
-    #                                      "_nclusters_", num.clusters, "_nunits_", nunits, "_sim_", sim, ".txt", sep = ""))
-    #}
 
-  # print
+  #############################################################################
+  # Print and save results
+  #############################################################################
     print("**************************************************")
     print(paste0("ybar true: ", round(ybar.true, digits = 2)))
     print(paste0("HT estimate (se): ", round(ybar_hat_hajek, digits = 2),
                  " (", round(ybar_se_hajek, digits = 2), ")"))
-    print(paste0("GREG 8.6.1 estimate (se): ",
+    print(paste0("HT 8.6.1 estimate (se): ",
                  round(ybar_hat_8.6.1, digits = 2),
                  " (", round(ybar_se_8.6.1, digits = 2), ")"))
     print(paste0("GREG 8.9.8 estimate (se): ",
@@ -279,11 +345,6 @@ svy_ests <- function(J, num.clusters, num.units, use.sizes, outcome.type, rootdi
                       ybar_se_hajek = ybar_se_8.6.1,
                       ybar_hat_greg = ybar_hat_8.9.8,
                       ybar_se_greg = ybar_se_8.9.8)
-    #res <- data.frame(ybar.true,
-    #                  ybar_hat_hajek = old.ybar_hat_hajek,
-    #                  ybar_se_hajek = old.ybar_se_hajek,
-    #                  ybar_hat_greg = old.ybar_hat_greg,
-    #                  ybar_se_greg = old.ybar_se_greg)
     res %>%
       tidyr::gather(key = tmpname, value = value, -ybar.true) %>%
       tidyr::extract(col = tmpname, into = c("stat.name", "model.name"),
@@ -294,11 +355,11 @@ svy_ests <- function(J, num.clusters, num.units, use.sizes, outcome.type, rootdi
     res$ybar_hat_uci50 <- res$ybar_hat + res$ybar_se
     res$ybar_hat_lci95 <- res$ybar_hat - 1.96*res$ybar_se
     res$ybar_hat_uci95 <- res$ybar_hat + 1.96*res$ybar_se
-    res$ybar_se <- NULL
-  saveRDS(results.list,
-          paste0(rootdir, "output/simulation/results_usesizes_",
-                 use.sizes, "_", outcome.type, "_", sn, 
-                 "_nclusters_", num.clusters,
-                 "_nunits_", nunits, "_sim_", simno, ".rds"))
-    return(res)
+
+    saveRDS(res,
+            paste0(rootdir, "output/simulation/svy_ests_usesizes_",
+                   use.sizes, "_", outcome.type, "_nclusters_", num.clusters,
+                   "_nunits_", nunits, "_simno_", simno, ".rds"))
+    return(NULL)
 }
+

@@ -23,7 +23,7 @@ R_OPTS         = --no-save --no-restore --no-init-file --no-site-file
 
 # Hard-code highest-level simulation parameters
 NUM_POP_CLUSTERS = 100
-NUM_SIMS         = 1
+NUM_SIMS         = 100
 USE_SIZE_VALS    = 0 1
 
 # Variables that store filenames of population data
