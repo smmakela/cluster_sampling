@@ -2,14 +2,13 @@
 # Date: Jan 28, 2016
 # Purpose: use the survey package to estimate ybar from the sampled data
 svy_ests <- function(J, num.clusters, num.units, use.sizes, outcome.type,
-                     sim.data, rootdir, simno) {
+                     rootdir, simno) {
   # Inputs:
   #   J -- number of clusters in pop
   #   num.clusters -- number of sampled clusters
   #   num.units -- number of sampled units
   #   use.sizes -- whether cluster sizes are related to outcome values (0/1)
   #   outcome.type -- whether outcomes are continuous or binary
-  #   sim.data -- list output from sampledata function, has pop and sampled data
   #   rootdir -- directory where everything is stored
   #   simno -- which simulation this is
 
@@ -88,19 +87,24 @@ svy_ests <- function(J, num.clusters, num.units, use.sizes, outcome.type,
     } else {
       nunits <- num.units
     }
-    # pull everything out of sim.data and assign to its name
-    for (j in names(sim.data)) {
-      assign(j, sim.data[[j]])
-    }
     popdata <- readRDS(paste0(rootdir, "/output/simulation/popdata_usesizes_",
-                              use.sizes, "_", outcome.type, ".rds"))
-    sizetot <- sum(popdata[["Mj"]])
-    ybar.true <- mean(popdata[["pop.data"]]$y)
+                       use.sizes, "_", outcome.type, ".rds"))
+    pop.data <- popdata[["pop.data"]]
+    sizetot <- sum(pop.data$Mj)
+    ybar.true <- mean(pop.data$y)
     truepars <- popdata[["truepars"]]
     print(truepars)
     rm(popdata)
-    rm(sim.data)
 
+  # load simno data
+    simdata <- readRDS(paste0(rootdir, "output/simulation/simdata_usesizes_",
+                              use.sizes, "_", outcome.type, "_nclusters_",
+                              num.clusters, "_nunits_", nunits, "_simno_", simno,
+                              ".rds"))
+    # pull out of list and assign
+    for (j in names(simdata)) {
+      assign(j, simdata[[j]])
+    }
     Nj_sample <- Mj[1:num.clusters]
 
     # fpc is the number of clusters in the pop
@@ -114,7 +118,7 @@ svy_ests <- function(J, num.clusters, num.units, use.sizes, outcome.type,
       sample.data$prob2 <- num.units
     }
     sample.data$wt <- 1/sample.data$prob
-    rm(sim.data)
+    rm(simdata)
 
   #############################################################################
   # Make vectors/matrices of inclusion probabilities that we'll need later,

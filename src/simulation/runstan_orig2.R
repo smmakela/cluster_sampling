@@ -3,15 +3,14 @@
 # Purpose: run stan
 
 runstan <- function(num.clusters, num.units, use.sizes, outcome.type, rootdir,
-                    simno, stanmod, stanmod_name, sim.data, num.iter, num.chains) {
+                    sim, stanmod, stanmod_name, num.iter, num.chains) {
   # num.clusters -- number of clusters to sample
   # num.units -- number of units to sample
   # use.sizes -- 0/1 for whether cluster sizes used in pop data
   # rootdir -- root directory where Code, Data folders are
-  # simno -- current iteration; used so that multiple instances aren't trying to write to the same file
+  # sim -- current iteration; used so that multiple instances aren't trying to write to the same file
   # stanmod -- compiled stan model
   # stanmod_name -- string for name of stan model so we know which parts of the code to run
-  # sim.data -- data to use for simulation
   # num.iter -- number of iterations stan should run for
   # num.chains -- number of chains to run in stan
 
@@ -26,13 +25,15 @@ runstan <- function(num.clusters, num.units, use.sizes, outcome.type, rootdir,
   } else {
     nunits <- num.units
   }
-  for (j in names(sim.data)) {
-    assign(j, sim.data[[j]])
+  simdata <- readRDS(paste0(rootdir, "output/simulation/simdata_usesizes_",
+                            use.sizes, "_", outcome.type, "_nclusters_",
+                            num.clusters, "_nunits_", nunits, "_simno_", sim,
+                            ".rds"))
+  for (j in names(simdata)) {
+    assign(j, simdata[[j]])
   }
-  rm(sim.data)
+  rm(simdata)
   ybar.true <- mean(pop.data$y)
-
-  model_name <- gsub("_binary", "", stanmod_name)
 
   ##########################################
   ### Make data for stan
@@ -152,6 +153,10 @@ runstan <- function(num.clusters, num.units, use.sizes, outcome.type, rootdir,
   ##########################################
   ### Run stan
   ##########################################
+  print("***********************************************************************")
+  print(paste0("********** about to run stan for num.clusters = ",
+              num.clusters, ", num.units = ", nunits,
+              ", model ", stanmod_name))
   print(Sys.time())
 
   fit <- sampling(stanmod, data = standata,
@@ -159,99 +164,31 @@ runstan <- function(num.clusters, num.units, use.sizes, outcome.type, rootdir,
                   control = list(stepsize = 0.001, adapt_delta = 0.999))
   print("done fitting stan model")
   print(Sys.time())
-  print(warnings())
+
+  if (sim == 1) {
+    save(fit, file = paste0(rootdir, "/output/simulation/stanfit_usesizes_",
+                            use.sizes, "_nclusters_", num.clusters,
+                            "_nunits_", nunits, "_simno_", sim, "_",
+                            stanmod_name, ".RData"))
+    print("done saving stanfit object")
+    print(Sys.time())
+  }
   ##########################################
-  ### See if there are any divergent transitions -- if so need to rerun 
+  ### See if there are any divergent transitions -- if so need to exit 
   ##########################################
+    sn <- gsub("_binary", "", stanmod_name)
     samp_params <- get_sampler_params(fit)
     num_div_trans <- 0
     for (s in 1:length(samp_params)) {                                
       num_div_trans <- num_div_trans + sum(samp_params[[s]][((num.iter/2)+1):num.iter, "divergent__"])
     }
-    ad_val <- 0.999
     if (num_div_trans > 0) {
-      counter <- 1
-      while (counter <= 3 & num_div_trans > 0) {
-        ad_val <- ad_val + 9 * (10^(-1*(counter + 3)))
-        cat("----------------------------------------------------------------\n")
-        cat("Divergent transitions happened, rerunning with adapt_delta =", ad_val, "\n")
-        cat("num.clusters =", num.clusters, "num.units=", num.units, "\n")
-        fit <- sampling(stanmod, data = standata,
-                        iter = num.iter, chains = num.chains,
-                        control = list(stepsize = 0.001, adapt_delta = ad_val))
-        print("done fitting stan model")
-        print(Sys.time())
-        print(warnings())
-        samp_params <- get_sampler_params(fit)
-        num_div_trans <- 0
-        for (s in 1:length(samp_params)) {                                
-          num_div_trans <- num_div_trans + sum(samp_params[[s]][((num.iter/2)+1):num.iter, "divergent__"])
-        }
-        counter <- counter + 1
-      } # end while
-      # if we still have divergent transitions, try the ncp version (only for continuous)
-      if (num_div_trans > 0) {
-        cat("----------------------------------------------------------------\n")
-        cat("Divergent transitions remain, running NCP version\n")
-        cat("num.clusters =", num.clusters, "num.units=", num.units, "\n")
-        stanmod <- readRDS(paste0(rootdir, "/src/analysis/", stanmod_name, "_ncp.rds"))
-        expose_stan_functions(stanmod)
-        fit <- sampling(stanmod, data = standata,
-                      iter = num.iter, chains = num.chains,
-                      control = list(stepsize = 0.001, adapt_delta = 0.999))
-        print("done fitting stan model")
-        print(Sys.time())
-        print(warnings())
-        samp_params <- get_sampler_params(fit)
-        num_div_trans <- 0
-        for (s in 1:length(samp_params)) {                                
-          num_div_trans <- num_div_trans + sum(samp_params[[s]][((num.iter/2)+1):num.iter, "divergent__"])
-        }
-        # try raising adapt_delta if necessary
-        ad_val <- 0.999
-        if (num_div_trans > 0) {
-          counter <- 1
-          while (counter <= 3 & num_div_trans > 0) {
-            ad_val <- ad_val + 9 * (10^(-1*(counter + 3)))
-            cat("----------------------------------------------------------------\n")
-            cat("Divergent transitions happened for NCP, rerunning with adapt_delta =", ad_val, "\n")
-            cat("num.clusters =", num.clusters, "num.units=", num.units, "\n")
-            fit <- sampling(stanmod, data = standata,
-                            iter = num.iter, chains = num.chains,
-                            control = list(stepsize = 0.001, adapt_delta = ad_val))
-            print("done fitting stan model")
-            print(Sys.time())
-            print(warnings())
-            samp_params <- get_sampler_params(fit)
-            num_div_trans <- 0
-            for (s in 1:length(samp_params)) {                                
-              num_div_trans <- num_div_trans + sum(samp_params[[s]][((num.iter/2)+1):num.iter, "divergent__"])
-            }
-            counter <- counter + 1
-          } # end while
-          # if we *still* have divergent transitions, give up
-          if (num_div_trans > 0) {
-            cat("Unable to get rid of divergent transitions :( \n")
-            cat("num.clusters =", num.clusters, "num.units=", num.units, "\n")
-            out_msg <- paste0("There were ", num_div_trans, " divergent transitions.")
-            saveRDS(out_msg,
-                    paste0(rootdir, "output/simulation/stan_results_usesizes_",
-                           use.sizes, "_", outcome.type, "_", model_name, 
-                           "_nclusters_", num.clusters,
-                           "_nunits_", nunits, "_sim_", simno, ".rds"))
-            return(NULL)
-          } # end if for num_div_trans > 0 after ncp
-        } # end if for raising adapt_delta in ncp
-      } # end if for doing ncp
-    } # end if for initial num_div_trans > 0
-
-    if (simno == 1) {
-      saveRDS(fit, file = paste0(rootdir, "/output/simulation/stanfit_usesizes_",
-                              use.sizes, "_nclusters_", num.clusters,
-                              "_nunits_", nunits, "_simno_", simno, "_",
-                              model_name, ".rds"))
-      print("done saving stanfit object")
-      print(Sys.time())
+      out_msg <- paste0("There were ", num_div_trans, " divergent transitions.")
+      saveRDS(out_msg, paste0(rootdir, "output/simulation/results_usesizes_",
+                              use.sizes, "_", outcome.type, "_", sn, 
+                              "_nclusters_", num.clusters,
+                              "_nunits_", nunits, "_sim_", simno, ".rds"))
+      return(NULL)
     }
 
   ##########################################
@@ -492,7 +429,7 @@ runstan <- function(num.clusters, num.units, use.sizes, outcome.type, rootdir,
       ggtitle(paste0("Model: ", stanmod_name)) +
       theme_bw()
     ggsave(plt, file = paste0(rootdir, "/output/figures/Nj_draws_",
-                              model_name, "_",
+                              stanmod_name, "_",
                               use.sizes, "_", outcome.type,
                               "_nclusters_", num.clusters,
                               "_nunits_", nunits, "_sim_", simno, ".pdf"),
@@ -512,7 +449,7 @@ runstan <- function(num.clusters, num.units, use.sizes, outcome.type, rootdir,
       ggtitle(paste0("Model: ", stanmod_name)) +
       theme_bw()
     ggsave(plt, file = paste0(rootdir, "/output/figures/ybar_new_draws_",
-                              model_name, "_",
+                              stanmod_name, "_",
                               use.sizes, "_", outcome.type,
                               "_nclusters_", num.clusters,
                               "_nunits_", nunits, "_sim_", simno, ".pdf"),
@@ -557,12 +494,13 @@ runstan <- function(num.clusters, num.units, use.sizes, outcome.type, rootdir,
       dplyr::left_join(., true_vals, by = "param") -> draw_summ
   }
   print(draw_summ)
-  print(warnings())
+
+  sn <- gsub("_binary", "", stanmod_name)
   results.list <- list(par_ests = par_ests, Nj_new_means = Nj_new_means,
                        draw_summ = draw_summ)
   saveRDS(results.list,
-          paste0(rootdir, "output/simulation/stan_results_usesizes_",
-                 use.sizes, "_", outcome.type, "_", model_name, 
+          paste0(rootdir, "output/simulation/results_usesizes_",
+                 use.sizes, "_", outcome.type, "_", sn, 
                  "_nclusters_", num.clusters,
                  "_nunits_", nunits, "_sim_", simno, ".rds"))
 

@@ -1,7 +1,7 @@
 #!/bin/sh
 #Torque directives
 #PBS -W group_list=yetistats
-#PBS -l nodes=1,walltime=24:00:00,mem=24gb
+#PBS -l nodes=1,walltime=11:00:00,mem=8gb
 #PBS -V
 #PBS -M smm2253@columbia.edu
 #PBS -m a
@@ -10,7 +10,7 @@
 #PBS -e localhost:/vega/stats/users/smm2253/cluster_sampling/output/simulation/outfiles
 export CCACHE_DISABLE=1
 OUTDIR="/vega/stats/users/smm2253/cluster_sampling/output/simulation/outfiles"
-JOB_NAME="usz_${US_VAL}_${OT_VAL}"
-Rscript --no-save --vanilla ${PBS_O_WORKDIR}/sim_master.R\
+JOB_NAME="${MOD_NAM}_usz_${US_VAL}_${OT_VAL}"
+Rscript --no-save --vanilla ${PBS_O_WORKDIR}/sim_master_stan.R\
  --simno=${PBS_ARRAYID} --use_sizes=${US_VAL}\
- --outcome_type=${OT_VAL} --numclusters=${J} > ${OUTDIR}/${JOB_NAME}.routput 2>&1
+ --numclusters=${J} --outcome_type=${OT_VAL} --model_name=${MOD_NAM} > ${OUTDIR}/${JOB_NAME}-${PBS_ARRAYID}.routput 2>&1

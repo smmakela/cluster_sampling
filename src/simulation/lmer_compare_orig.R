@@ -1,9 +1,8 @@
 lmer_compare <- function(num.clusters, num.units, use.sizes, outcome.type,
-                         sim.data, rootdir, simno) {
+                         rootdir, simno) {
   # num.clusters -- number of clusters to sample
   # num.units -- number of units to sample
   # use.sizes -- whether y depends on cluster sizes or not
-  # sim.data -- list of data for simulation - pop data, sampled data, etc
   # rootdir -- root directory where Code, Data folders are
   # simno -- current iteration; used so that multiple instances aren't trying to write to the same file
 
@@ -15,11 +14,16 @@ lmer_compare <- function(num.clusters, num.units, use.sizes, outcome.type,
     } else {
       nunits <- num.units
     }
-    for (j in names(sim.data)) {
-      assign(j, sim.data[[j]])
+    simdata <- readRDS(paste0(rootdir, "output/simulation/simdata_usesizes_",
+                              use.sizes, "_", outcome.type, "_nclusters_",
+                              num.clusters, "_nunits_", nunits, "_simno_", simno,
+                              ".rds"))
+    for (j in names(simdata)) {
+      assign(j, simdata[[j]])
     }
+    rm(simdata)
     popdata <- readRDS(paste0(rootdir, "/output/simulation/popdata_usesizes_",
-                              use.sizes, "_", outcome.type, ".rds"))
+                       use.sizes, "_", outcome.type, ".rds"))
     truepars <- popdata[["truepars"]]
     print(truepars)
     rm(popdata)

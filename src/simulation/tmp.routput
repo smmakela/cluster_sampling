@@ -1,0 +1,842 @@
+Loading required package: docopt
+Loading required package: methods
+Loading required package: plyr
+Loading required package: dplyr
+
+Attaching package: ‘dplyr’
+
+The following objects are masked from ‘package:plyr’:
+
+    arrange, count, desc, failwith, id, mutate, rename, summarise,
+    summarize
+
+The following objects are masked from ‘package:stats’:
+
+    filter, lag
+
+The following objects are masked from ‘package:base’:
+
+    intersect, setdiff, setequal, union
+
+Loading required package: tidyr
+Loading required package: rstan
+Loading required package: ggplot2
+Loading required package: StanHeaders
+rstan (Version 2.12.1, packaged: 2016-09-11 13:07:50 UTC, GitRev: 85f7a56811da)
+For execution on a local, multicore CPU with excess RAM we recommend calling
+rstan_options(auto_write = TRUE)
+options(mc.cores = parallel::detectCores())
+
+Attaching package: ‘rstan’
+
+The following object is masked from ‘package:tidyr’:
+
+    extract
+
+Loading required package: sampling
+ [1] "--simno"        "--use_sizes"    "--outcome_type" "--numclusters" 
+ [5] "--model_name"   "simno"          "use_sizes"      "outcome_type"  
+ [9] "numclusters"    "model_name"    
+List of 5
+ $ simno       : chr "1"
+ $ use_sizes   : chr "0"
+ $ outcome_type: chr "continuous"
+ $ numclusters : chr "100"
+ $ model_name  : chr "bb"
+NULL
+[1] "simno"        "use_sizes"    "outcome_type" "numclusters"  "model_name"  
+[1] "Assigning 1 to simno"
+[1] "Assigning 0 to use_sizes"
+[1] "Assigning continuous to outcome_type"
+[1] "Assigning 100 to numclusters"
+[1] "Assigning bb to model_name"
+##################################################################################
+##################################################################################
+THIS FILE: use.sizes = 0 , stanmod = bb 
+[1] "2017-05-18 14:34:01 EDT"
+CURRENTLY ON: num.clusters = 5 , num.units = 0.05 use.sizes = 0 , stanmod = bb 
+Sampling data
+[1] "2017-05-18 14:34:01 EDT"
+DONE sampling
+Running stan
+[1] "2017-05-18 14:34:02 EDT"
+[1] "2017-05-18 14:34:02 EDT"
+[1] "making stan data"
+[1] "2017-05-18 14:34:02 EDT"
+/vega/stats/users/smm2253/rpackages/StanHeaders/include/stan/math/rev/core/set_zero_all_adjoints.hpp:14: warning: ‘void stan::math::set_zero_all_adjoints()’ defined but not used
+List of 12
+ $ J            : num 100
+ $ K            : num 5
+ $ n            : num 163
+ $ N            : num 52577
+ $ M            : int 5
+ $ x            : num [1:163] -3.48 9.52 -4.48 10.52 1.52 ...
+ $ y            : num [1:163] 2.0735 -5.3966 0.0742 -5.8009 -1.639 ...
+ $ cluster_id   : int [1:163] 1 1 1 1 1 1 1 1 1 1 ...
+ $ Nj_sample    : num [1:5] 702 1153 563 206 648
+ $ log_Nj_sample: num [1:5] 0.466 0.962 0.245 -0.76 0.386
+ $ Nj_unique    : num [1:5] 206 563 648 702 1153
+ $ M_counts     : int [1:5] 1 1 1 1 1
+NULL
+[1] "2017-05-18 14:34:28 EDT"
+starting worker pid=32776 on localhost:11398 at 14:34:28.815
+starting worker pid=32785 on localhost:11398 at 14:34:29.100
+starting worker pid=32794 on localhost:11398 at 14:34:29.376
+starting worker pid=32803 on localhost:11398 at 14:34:29.664
+
+SAMPLING FOR MODEL 'bb' NOW (CHAIN 1).
+
+Chain 1, Iteration:   1 / 1000 [  0%]  (Warmup)
+SAMPLING FOR MODEL 'bb' NOW (CHAIN 2).
+
+Chain 2, Iteration:   1 / 1000 [  0%]  (Warmup)
+SAMPLING FOR MODEL 'bb' NOW (CHAIN 3).
+
+Chain 3, Iteration:   1 / 1000 [  0%]  (Warmup)
+SAMPLING FOR MODEL 'bb' NOW (CHAIN 4).
+
+Chain 4, Iteration:   1 / 1000 [  0%]  (Warmup)
+Chain 1, Iteration: 100 / 1000 [ 10%]  (Warmup)
+Chain 1, Iteration: 200 / 1000 [ 20%]  (Warmup)
+Chain 1, Iteration: 300 / 1000 [ 30%]  (Warmup)
+Chain 1, Iteration: 400 / 1000 [ 40%]  (Warmup)
+Chain 2, Iteration: 100 / 1000 [ 10%]  (Warmup)
+Chain 1, Iteration: 500 / 1000 [ 50%]  (Warmup)
+Chain 1, Iteration: 501 / 1000 [ 50%]  (Sampling)
+Chain 2, Iteration: 200 / 1000 [ 20%]  (Warmup)
+Chain 1, Iteration: 600 / 1000 [ 60%]  (Sampling)
+Chain 2, Iteration: 300 / 1000 [ 30%]  (Warmup)
+Chain 1, Iteration: 700 / 1000 [ 70%]  (Sampling)
+Chain 2, Iteration: 400 / 1000 [ 40%]  (Warmup)
+Chain 3, Iteration: 100 / 1000 [ 10%]  (Warmup)
+Chain 1, Iteration: 800 / 1000 [ 80%]  (Sampling)
+Chain 3, Iteration: 200 / 1000 [ 20%]  (Warmup)
+Chain 1, Iteration: 900 / 1000 [ 90%]  (Sampling)
+Chain 4, Iteration: 100 / 1000 [ 10%]  (Warmup)
+Chain 2, Iteration: 500 / 1000 [ 50%]  (Warmup)
+Chain 2, Iteration: 501 / 1000 [ 50%]  (Sampling)
+Chain 3, Iteration: 300 / 1000 [ 30%]  (Warmup)
+Chain 1, Iteration: 1000 / 1000 [100%]  (Sampling)
+ Elapsed Time: 2.74 seconds (Warm-up)
+               0.53 seconds (Sampling)
+               3.27 seconds (Total)
+
+
+Chain 3, Iteration: 400 / 1000 [ 40%]  (Warmup)
+Chain 4, Iteration: 200 / 1000 [ 20%]  (Warmup)
+Chain 2, Iteration: 600 / 1000 [ 60%]  (Sampling)
+Chain 4, Iteration: 300 / 1000 [ 30%]  (Warmup)
+Chain 3, Iteration: 500 / 1000 [ 50%]  (Warmup)
+Chain 3, Iteration: 501 / 1000 [ 50%]  (Sampling)
+Chain 4, Iteration: 400 / 1000 [ 40%]  (Warmup)
+Chain 3, Iteration: 600 / 1000 [ 60%]  (Sampling)
+Chain 4, Iteration: 500 / 1000 [ 50%]  (Warmup)
+Chain 4, Iteration: 501 / 1000 [ 50%]  (Sampling)
+Chain 2, Iteration: 700 / 1000 [ 70%]  (Sampling)
+Chain 4, Iteration: 600 / 1000 [ 60%]  (Sampling)
+Chain 3, Iteration: 700 / 1000 [ 70%]  (Sampling)
+Chain 4, Iteration: 700 / 1000 [ 70%]  (Sampling)
+Chain 2, Iteration: 800 / 1000 [ 80%]  (Sampling)
+Chain 3, Iteration: 800 / 1000 [ 80%]  (Sampling)
+Chain 4, Iteration: 800 / 1000 [ 80%]  (Sampling)
+Chain 3, Iteration: 900 / 1000 [ 90%]  (Sampling)
+Chain 4, Iteration: 900 / 1000 [ 90%]  (Sampling)
+Chain 2, Iteration: 900 / 1000 [ 90%]  (Sampling)
+Chain 3, Iteration: 1000 / 1000 [100%]  (Sampling)
+ Elapsed Time: 2.57 seconds (Warm-up)
+               0.86 seconds (Sampling)
+               3.43 seconds (Total)
+
+
+Chain 4, Iteration: 1000 / 1000 [100%]  (Sampling)
+ Elapsed Time: 2.24 seconds (Warm-up)
+               0.74 seconds (Sampling)
+               2.98 seconds (Total)
+
+
+Chain 2, Iteration: 1000 / 1000 [100%]  (Sampling)
+ Elapsed Time: 2.7 seconds (Warm-up)
+               1.44 seconds (Sampling)
+               4.14 seconds (Total)
+
+[1] "done fitting stan model"
+[1] "2017-05-18 14:34:36 EDT"
+[1] "done saving stanfit object"
+[1] "2017-05-18 14:34:37 EDT"
+'data.frame':	2000 obs. of  5 variables:
+ $ phi_star.1: num  0.568 0.628 0.458 0.403 0.394 ...
+ $ phi_star.2: num  0.111 0.1455 0.0914 0.1117 0.2074 ...
+ $ phi_star.3: num  0.11 0.115 0.188 0.402 0.19 ...
+ $ phi_star.4: num  0.0658 0.1046 0.1159 0.0724 0.158 ...
+ $ phi_star.5: num  0.14515 0.00697 0.14677 0.01004 0.05121 ...
+NULL
+Classes ‘grouped_df’, ‘tbl_df’, ‘tbl’ and 'data.frame':	10000 obs. of  3 variables:
+ $ cluster_id: num  1 1 1 1 1 1 1 1 1 1 ...
+ $ draw_num  : int  1 2 3 4 5 6 7 8 9 10 ...
+ $ phi_star  : num  0.568 0.628 0.458 0.403 0.394 ...
+ - attr(*, "vars")=List of 1
+  ..$ : symbol cluster_id
+ - attr(*, "drop")= logi TRUE
+ - attr(*, "indices")=List of 5
+  ..$ : int  0 1 2 3 4 5 6 7 8 9 ...
+  ..$ : int  2000 2001 2002 2003 2004 2005 2006 2007 2008 2009 ...
+  ..$ : int  4000 4001 4002 4003 4004 4005 4006 4007 4008 4009 ...
+  ..$ : int  6000 6001 6002 6003 6004 6005 6006 6007 6008 6009 ...
+  ..$ : int  8000 8001 8002 8003 8004 8005 8006 8007 8008 8009 ...
+ - attr(*, "group_sizes")= int  2000 2000 2000 2000 2000
+ - attr(*, "biggest_group_size")= int 2000
+ - attr(*, "labels")='data.frame':	5 obs. of  1 variable:
+  ..$ cluster_id: num  1 2 3 4 5
+  ..- attr(*, "vars")=List of 1
+  .. ..$ : symbol cluster_id
+  ..- attr(*, "drop")= logi TRUE
+NULL
+[1] "done making samps"
+[1] "2017-05-18 14:34:37 EDT"
+[1] "done making par_ests"
+[1] "2017-05-18 14:34:37 EDT"
+[1] "making par_ests"
+[1] "2017-05-18 14:34:37 EDT"
+[1] "printing par_ests"
+[1] "2017-05-18 14:34:37 EDT"
+'data.frame':	7 obs. of  10 variables:
+ $ mean   : num  -1.0537 0.5687 -0.4039 0.0174 0.4464 ...
+ $ se_mean: num  0.01119 0.0133 0.00252 0.00539 0.01321 ...
+ $ sd     : num  0.2769 0.3874 0.0637 0.1025 0.3371 ...
+ $ 2.5%   : num  -1.524 -0.295 -0.521 -0.197 0.114 ...
+ $ 25%    : num  -1.2037 0.3768 -0.4292 -0.0143 0.236 ...
+ $ 50%    : num  -1.0724 0.5826 -0.4045 0.0231 0.3584 ...
+ $ 75%    : num  -0.9356 0.7911 -0.3801 0.0618 0.5455 ...
+ $ 97.5%  : num  -0.431 1.303 -0.284 0.196 1.315 ...
+ $ n_eff  : num  612 848 640 362 651 ...
+ $ Rhat   : num  1 1 1 1.01 1 ...
+NULL
+[1] "summarizing draws"
+# A tibble: 2 x 9
+     param          mean           sd         p025          p25           p50
+     <chr>         <dbl>        <dbl>        <dbl>        <dbl>         <dbl>
+1    N_new 49752.1040000 9854.7572995 32300.625000 42415.750000 49130.5000000
+2 ybar_new    -0.8853053    0.2399329    -1.344019    -1.010562    -0.9000004
+# ... with 3 more variables: p75 <dbl>, p975 <dbl>, truth <dbl>
+##################################################################################
+NULL
+CURRENTLY ON: num.clusters = 10 , num.units = 0.05 use.sizes = 0 , stanmod = bb 
+Sampling data
+[1] "2017-05-18 14:35:27 EDT"
+DONE sampling
+Running stan
+[1] "2017-05-18 14:35:27 EDT"
+[1] "2017-05-18 14:35:27 EDT"
+[1] "making stan data"
+[1] "2017-05-18 14:35:27 EDT"
+List of 12
+ $ J            : num 100
+ $ K            : num 10
+ $ n            : num 391
+ $ N            : num 52577
+ $ M            : int 10
+ $ x            : num [1:391] 6.52 -1.48 3.52 6.52 9.52 ...
+ $ y            : num [1:391] -2.935 0.664 -2.016 -2.558 -3.074 ...
+ $ cluster_id   : int [1:391] 1 1 1 1 1 1 1 1 1 1 ...
+ $ Nj_sample    : num [1:10] 561 412 839 550 560 ...
+ $ log_Nj_sample: num [1:10] 0.2418 -0.0669 0.6443 0.222 0.24 ...
+ $ Nj_unique    : num [1:10] 412 501 550 560 561 ...
+ $ M_counts     : int [1:10] 1 1 1 1 1 1 1 1 1 1
+NULL
+[1] "2017-05-18 14:35:27 EDT"
+starting worker pid=32930 on localhost:11398 at 14:35:28.320
+starting worker pid=32940 on localhost:11398 at 14:35:28.635
+starting worker pid=32949 on localhost:11398 at 14:35:28.942
+starting worker pid=32958 on localhost:11398 at 14:35:29.265
+
+SAMPLING FOR MODEL 'bb' NOW (CHAIN 1).
+
+Chain 1, Iteration:   1 / 1000 [  0%]  (Warmup)
+SAMPLING FOR MODEL 'bb' NOW (CHAIN 2).
+
+Chain 2, Iteration:   1 / 1000 [  0%]  (Warmup)
+SAMPLING FOR MODEL 'bb' NOW (CHAIN 3).
+
+Chain 3, Iteration:   1 / 1000 [  0%]  (Warmup)
+SAMPLING FOR MODEL 'bb' NOW (CHAIN 4).
+
+Chain 4, Iteration:   1 / 1000 [  0%]  (Warmup)
+Chain 1, Iteration: 100 / 1000 [ 10%]  (Warmup)
+Chain 1, Iteration: 200 / 1000 [ 20%]  (Warmup)
+Chain 2, Iteration: 100 / 1000 [ 10%]  (Warmup)
+Chain 1, Iteration: 300 / 1000 [ 30%]  (Warmup)
+Chain 2, Iteration: 200 / 1000 [ 20%]  (Warmup)
+Chain 1, Iteration: 400 / 1000 [ 40%]  (Warmup)
+Chain 2, Iteration: 300 / 1000 [ 30%]  (Warmup)
+Chain 3, Iteration: 100 / 1000 [ 10%]  (Warmup)
+Chain 1, Iteration: 500 / 1000 [ 50%]  (Warmup)
+Chain 1, Iteration: 501 / 1000 [ 50%]  (Sampling)
+Chain 4, Iteration: 100 / 1000 [ 10%]  (Warmup)
+Chain 2, Iteration: 400 / 1000 [ 40%]  (Warmup)
+Chain 1, Iteration: 600 / 1000 [ 60%]  (Sampling)
+Chain 1, Iteration: 700 / 1000 [ 70%]  (Sampling)
+Chain 2, Iteration: 500 / 1000 [ 50%]  (Warmup)
+Chain 2, Iteration: 501 / 1000 [ 50%]  (Sampling)
+Chain 3, Iteration: 200 / 1000 [ 20%]  (Warmup)
+Chain 4, Iteration: 200 / 1000 [ 20%]  (Warmup)
+Chain 1, Iteration: 800 / 1000 [ 80%]  (Sampling)
+Chain 4, Iteration: 300 / 1000 [ 30%]  (Warmup)
+Chain 3, Iteration: 300 / 1000 [ 30%]  (Warmup)
+Chain 2, Iteration: 600 / 1000 [ 60%]  (Sampling)
+Chain 1, Iteration: 900 / 1000 [ 90%]  (Sampling)
+Chain 4, Iteration: 400 / 1000 [ 40%]  (Warmup)
+Chain 3, Iteration: 400 / 1000 [ 40%]  (Warmup)
+Chain 2, Iteration: 700 / 1000 [ 70%]  (Sampling)
+Chain 1, Iteration: 1000 / 1000 [100%]  (Sampling)
+ Elapsed Time: 5 seconds (Warm-up)
+               0.78 seconds (Sampling)
+               5.78 seconds (Total)
+
+
+Chain 4, Iteration: 500 / 1000 [ 50%]  (Warmup)
+Chain 4, Iteration: 501 / 1000 [ 50%]  (Sampling)
+Chain 3, Iteration: 500 / 1000 [ 50%]  (Warmup)
+Chain 3, Iteration: 501 / 1000 [ 50%]  (Sampling)
+Chain 2, Iteration: 800 / 1000 [ 80%]  (Sampling)
+Chain 4, Iteration: 600 / 1000 [ 60%]  (Sampling)
+Chain 3, Iteration: 600 / 1000 [ 60%]  (Sampling)
+Chain 4, Iteration: 700 / 1000 [ 70%]  (Sampling)
+Chain 3, Iteration: 700 / 1000 [ 70%]  (Sampling)
+Chain 2, Iteration: 900 / 1000 [ 90%]  (Sampling)
+Chain 4, Iteration: 800 / 1000 [ 80%]  (Sampling)
+Chain 3, Iteration: 800 / 1000 [ 80%]  (Sampling)
+Chain 2, Iteration: 1000 / 1000 [100%]  (Sampling)
+ Elapsed Time: 4.83 seconds (Warm-up)
+               1.14 seconds (Sampling)
+               5.97 seconds (Total)
+
+
+Chain 4, Iteration: 900 / 1000 [ 90%]  (Sampling)
+Chain 3, Iteration: 900 / 1000 [ 90%]  (Sampling)
+Chain 4, Iteration: 1000 / 1000 [100%]  (Sampling)
+ Elapsed Time: 4.41 seconds (Warm-up)
+               0.78 seconds (Sampling)
+               5.19 seconds (Total)
+
+
+Chain 3, Iteration: 1000 / 1000 [100%]  (Sampling)
+ Elapsed Time: 4.9 seconds (Warm-up)
+               0.77 seconds (Sampling)
+               5.67 seconds (Total)
+
+[1] "done fitting stan model"
+[1] "2017-05-18 14:35:38 EDT"
+[1] "done saving stanfit object"
+[1] "2017-05-18 14:35:39 EDT"
+'data.frame':	2000 obs. of  10 variables:
+ $ phi_star.1 : num  0.2157 0.1638 0.1759 0.0695 0.2 ...
+ $ phi_star.2 : num  0.1126 0.1317 0.1396 0.0737 0.2642 ...
+ $ phi_star.3 : num  0.0784 0.0785 0.0694 0.3317 0.0725 ...
+ $ phi_star.4 : num  0.06942 0.11288 0.20927 0.00803 0.0115 ...
+ $ phi_star.5 : num  0.176 0.1106 0.2316 0.3058 0.0988 ...
+ $ phi_star.6 : num  0.09364 0.18377 0.0679 0.00503 0.29268 ...
+ $ phi_star.7 : num  0.0967 0.0816 0.0458 0.033 0.014 ...
+ $ phi_star.8 : num  0.05274 0.02922 0.01129 0.05071 0.00182 ...
+ $ phi_star.9 : num  0.04674 0.04249 0.01736 0.06647 0.00649 ...
+ $ phi_star.10: num  0.058 0.0653 0.0318 0.0561 0.038 ...
+NULL
+Classes ‘grouped_df’, ‘tbl_df’, ‘tbl’ and 'data.frame':	20000 obs. of  3 variables:
+ $ cluster_id: num  1 1 1 1 1 1 1 1 1 1 ...
+ $ draw_num  : int  1 2 3 4 5 6 7 8 9 10 ...
+ $ phi_star  : num  0.2157 0.1638 0.1759 0.0695 0.2 ...
+ - attr(*, "vars")=List of 1
+  ..$ : symbol cluster_id
+ - attr(*, "drop")= logi TRUE
+ - attr(*, "indices")=List of 10
+  ..$ : int  0 1 2 3 4 5 6 7 8 9 ...
+  ..$ : int  2000 2001 2002 2003 2004 2005 2006 2007 2008 2009 ...
+  ..$ : int  4000 4001 4002 4003 4004 4005 4006 4007 4008 4009 ...
+  ..$ : int  6000 6001 6002 6003 6004 6005 6006 6007 6008 6009 ...
+  ..$ : int  8000 8001 8002 8003 8004 8005 8006 8007 8008 8009 ...
+  ..$ : int  10000 10001 10002 10003 10004 10005 10006 10007 10008 10009 ...
+  ..$ : int  12000 12001 12002 12003 12004 12005 12006 12007 12008 12009 ...
+  ..$ : int  14000 14001 14002 14003 14004 14005 14006 14007 14008 14009 ...
+  ..$ : int  16000 16001 16002 16003 16004 16005 16006 16007 16008 16009 ...
+  ..$ : int  18000 18001 18002 18003 18004 18005 18006 18007 18008 18009 ...
+ - attr(*, "group_sizes")= int  2000 2000 2000 2000 2000 2000 2000 2000 2000 2000
+ - attr(*, "biggest_group_size")= int 2000
+ - attr(*, "labels")='data.frame':	10 obs. of  1 variable:
+  ..$ cluster_id: num  1 2 3 4 5 6 7 8 9 10
+  ..- attr(*, "vars")=List of 1
+  .. ..$ : symbol cluster_id
+  ..- attr(*, "drop")= logi TRUE
+NULL
+[1] "done making samps"
+[1] "2017-05-18 14:35:39 EDT"
+[1] "done making par_ests"
+[1] "2017-05-18 14:35:41 EDT"
+[1] "making par_ests"
+[1] "2017-05-18 14:35:41 EDT"
+[1] "printing par_ests"
+[1] "2017-05-18 14:35:41 EDT"
+'data.frame':	7 obs. of  10 variables:
+ $ mean   : num  -0.4581 -0.3559 -0.4818 0.0751 0.76 ...
+ $ se_mean: num  0.00834 0.01322 0.00123 0.0019 0.00635 ...
+ $ sd     : num  0.3304 0.4835 0.0392 0.061 0.2257 ...
+ $ 2.5%   : num  -1.1117 -1.3315 -0.5537 -0.0526 0.4469 ...
+ $ 25%    : num  -0.6682 -0.671 -0.5061 0.0398 0.603 ...
+ $ 50%    : num  -0.461 -0.351 -0.483 0.077 0.716 ...
+ $ 75%    : num  -0.242 -0.0452 -0.4589 0.1102 0.8657 ...
+ $ 97.5%  : num  0.21 0.593 -0.394 0.191 1.311 ...
+ $ n_eff  : num  1570 1337 1009 1028 1264 ...
+ $ Rhat   : num  1 1 1 1 1 ...
+NULL
+[1] "summarizing draws"
+# A tibble: 2 x 9
+     param          mean           sd         p025           p25           p50
+     <chr>         <dbl>        <dbl>        <dbl>         <dbl>         <dbl>
+1    N_new 64773.8610000 4789.6668356 56936.575000 61311.5000000 64213.5000000
+2 ybar_new    -0.5396925    0.2723528    -1.086596    -0.7097348    -0.5461456
+# ... with 3 more variables: p75 <dbl>, p975 <dbl>, truth <dbl>
+##################################################################################
+NULL
+CURRENTLY ON: num.clusters = 20 , num.units = 0.05 use.sizes = 0 , stanmod = bb 
+Sampling data
+[1] "2017-05-18 14:36:23 EDT"
+DONE sampling
+Running stan
+[1] "2017-05-18 14:36:23 EDT"
+[1] "2017-05-18 14:36:23 EDT"
+[1] "making stan data"
+[1] "2017-05-18 14:36:23 EDT"
+List of 12
+ $ J            : num 100
+ $ K            : num 20
+ $ n            : num 771
+ $ N            : num 52577
+ $ M            : int 20
+ $ x            : num [1:771] 5.52 7.52 9.52 11.52 2.52 ...
+ $ y            : num [1:771] -3.34 -2.91 -3.8 -4.26 -3.05 ...
+ $ cluster_id   : int [1:771] 1 1 1 1 1 1 1 1 1 1 ...
+ $ Nj_sample    : num [1:20] 1292 483 412 384 839 ...
+ $ log_Nj_sample: num [1:20] 1.0761 0.0921 -0.0669 -0.1373 0.6443 ...
+ $ Nj_unique    : num [1:20] 215 295 384 412 483 495 556 562 563 584 ...
+ $ M_counts     : int [1:20] 1 1 1 1 1 1 1 1 1 1 ...
+NULL
+[1] "2017-05-18 14:36:23 EDT"
+starting worker pid=33064 on localhost:11398 at 14:36:24.359
+starting worker pid=33073 on localhost:11398 at 14:36:24.668
+starting worker pid=33082 on localhost:11398 at 14:36:24.970
+starting worker pid=33091 on localhost:11398 at 14:36:25.358
+
+SAMPLING FOR MODEL 'bb' NOW (CHAIN 1).
+
+Chain 1, Iteration:   1 / 1000 [  0%]  (Warmup)
+SAMPLING FOR MODEL 'bb' NOW (CHAIN 2).
+
+Chain 2, Iteration:   1 / 1000 [  0%]  (Warmup)
+SAMPLING FOR MODEL 'bb' NOW (CHAIN 3).
+
+Chain 3, Iteration:   1 / 1000 [  0%]  (Warmup)
+SAMPLING FOR MODEL 'bb' NOW (CHAIN 4).
+
+Chain 4, Iteration:   1 / 1000 [  0%]  (Warmup)
+Chain 3, Iteration: 100 / 1000 [ 10%]  (Warmup)
+Chain 2, Iteration: 100 / 1000 [ 10%]  (Warmup)
+Chain 1, Iteration: 100 / 1000 [ 10%]  (Warmup)
+Chain 3, Iteration: 200 / 1000 [ 20%]  (Warmup)
+Chain 2, Iteration: 200 / 1000 [ 20%]  (Warmup)
+Chain 3, Iteration: 300 / 1000 [ 30%]  (Warmup)
+Chain 2, Iteration: 300 / 1000 [ 30%]  (Warmup)
+Chain 3, Iteration: 400 / 1000 [ 40%]  (Warmup)
+Chain 4, Iteration: 100 / 1000 [ 10%]  (Warmup)
+Chain 1, Iteration: 200 / 1000 [ 20%]  (Warmup)
+Chain 2, Iteration: 400 / 1000 [ 40%]  (Warmup)
+Chain 3, Iteration: 500 / 1000 [ 50%]  (Warmup)
+Chain 3, Iteration: 501 / 1000 [ 50%]  (Sampling)
+Chain 1, Iteration: 300 / 1000 [ 30%]  (Warmup)
+Chain 2, Iteration: 500 / 1000 [ 50%]  (Warmup)
+Chain 2, Iteration: 501 / 1000 [ 50%]  (Sampling)
+Chain 4, Iteration: 200 / 1000 [ 20%]  (Warmup)
+Chain 3, Iteration: 600 / 1000 [ 60%]  (Sampling)
+Chain 1, Iteration: 400 / 1000 [ 40%]  (Warmup)
+Chain 2, Iteration: 600 / 1000 [ 60%]  (Sampling)
+Chain 4, Iteration: 300 / 1000 [ 30%]  (Warmup)
+Chain 1, Iteration: 500 / 1000 [ 50%]  (Warmup)
+Chain 1, Iteration: 501 / 1000 [ 50%]  (Sampling)
+Chain 2, Iteration: 700 / 1000 [ 70%]  (Sampling)
+Chain 3, Iteration: 700 / 1000 [ 70%]  (Sampling)
+Chain 4, Iteration: 400 / 1000 [ 40%]  (Warmup)
+Chain 1, Iteration: 600 / 1000 [ 60%]  (Sampling)
+Chain 2, Iteration: 800 / 1000 [ 80%]  (Sampling)
+Chain 3, Iteration: 800 / 1000 [ 80%]  (Sampling)
+Chain 4, Iteration: 500 / 1000 [ 50%]  (Warmup)
+Chain 4, Iteration: 501 / 1000 [ 50%]  (Sampling)
+Chain 1, Iteration: 700 / 1000 [ 70%]  (Sampling)
+Chain 2, Iteration: 900 / 1000 [ 90%]  (Sampling)
+Chain 3, Iteration: 900 / 1000 [ 90%]  (Sampling)
+Chain 2, Iteration: 1000 / 1000 [100%]  (Sampling)
+Chain 1, Iteration: 800 / 1000 [ 80%]  (Sampling)
+ Elapsed Time: 9.07 seconds (Warm-up)
+               1.42 seconds (Sampling)
+               10.49 seconds (Total)
+
+
+Chain 4, Iteration: 600 / 1000 [ 60%]  (Sampling)
+Chain 1, Iteration: 900 / 1000 [ 90%]  (Sampling)
+Chain 3, Iteration: 1000 / 1000 [100%]  (Sampling)
+ Elapsed Time: 8.36 seconds (Warm-up)
+               1.99 seconds (Sampling)
+               10.35 seconds (Total)
+
+
+Chain 4, Iteration: 700 / 1000 [ 70%]  (Sampling)
+Chain 1, Iteration: 1000 / 1000 [100%]  (Sampling)
+ Elapsed Time: 10.09 seconds (Warm-up)
+               1.47 seconds (Sampling)
+               11.56 seconds (Total)
+
+
+Chain 4, Iteration: 800 / 1000 [ 80%]  (Sampling)
+Chain 4, Iteration: 900 / 1000 [ 90%]  (Sampling)
+Chain 4, Iteration: 1000 / 1000 [100%]  (Sampling)
+ Elapsed Time: 9.12 seconds (Warm-up)
+               1.9 seconds (Sampling)
+               11.02 seconds (Total)
+
+[1] "done fitting stan model"
+[1] "2017-05-18 14:36:40 EDT"
+[1] "done saving stanfit object"
+[1] "2017-05-18 14:36:42 EDT"
+'data.frame':	2000 obs. of  20 variables:
+ $ phi_star.1 : num  0.0651 0.1349 0.1125 0.0339 0.1885 ...
+ $ phi_star.2 : num  0.0584 0.0275 0.147 0.0955 0.0947 ...
+ $ phi_star.3 : num  0.1064 0.0556 0.1358 0.0421 0.2047 ...
+ $ phi_star.4 : num  0.1981 0.1609 0.0643 0.0794 0.1116 ...
+ $ phi_star.5 : num  0.0221 0.1075 0.1105 0.0402 0.0264 ...
+ $ phi_star.6 : num  0.0307 0.0313 0.0613 0.1869 0.0851 ...
+ $ phi_star.7 : num  0.028 0.02939 0.00939 0.09852 0.02036 ...
+ $ phi_star.8 : num  0.1165 0.0513 0.0707 0.0341 0.0284 ...
+ $ phi_star.9 : num  0.03849 0.08757 0.03174 0.07289 0.00653 ...
+ $ phi_star.10: num  0.0125 0.0647 0.0576 0.0458 0.0577 ...
+ $ phi_star.11: num  0.0841 0.0596 0.017 0.0533 0.0375 ...
+ $ phi_star.12: num  0.0278 0.0437 0.0519 0.0612 0.0141 ...
+ $ phi_star.13: num  0.0827 0.0288 0.0415 0.0238 0.049 ...
+ $ phi_star.14: num  0.0085 0.043 0.0461 0.0147 0.0397 ...
+ $ phi_star.15: num  0.00863 0.03006 0.00487 0.03284 0.00306 ...
+ $ phi_star.16: num  0.01684 0.01913 0.01128 0.02829 0.00861 ...
+ $ phi_star.17: num  0.04653 0.00307 0.00883 0.00516 0.00912 ...
+ $ phi_star.18: num  0.00605 0.0098 0.0125 0.03757 0.00691 ...
+ $ phi_star.19: num  0.02353 0.00706 0.00326 0.01103 0.00362 ...
+ $ phi_star.20: num  0.019 0.00514 0.00207 0.00273 0.0043 ...
+NULL
+Classes ‘grouped_df’, ‘tbl_df’, ‘tbl’ and 'data.frame':	40000 obs. of  3 variables:
+ $ cluster_id: num  1 1 1 1 1 1 1 1 1 1 ...
+ $ draw_num  : int  1 2 3 4 5 6 7 8 9 10 ...
+ $ phi_star  : num  0.0651 0.1349 0.1125 0.0339 0.1885 ...
+ - attr(*, "vars")=List of 1
+  ..$ : symbol cluster_id
+ - attr(*, "drop")= logi TRUE
+ - attr(*, "indices")=List of 20
+  ..$ : int  0 1 2 3 4 5 6 7 8 9 ...
+  ..$ : int  2000 2001 2002 2003 2004 2005 2006 2007 2008 2009 ...
+  ..$ : int  4000 4001 4002 4003 4004 4005 4006 4007 4008 4009 ...
+  ..$ : int  6000 6001 6002 6003 6004 6005 6006 6007 6008 6009 ...
+  ..$ : int  8000 8001 8002 8003 8004 8005 8006 8007 8008 8009 ...
+  ..$ : int  10000 10001 10002 10003 10004 10005 10006 10007 10008 10009 ...
+  ..$ : int  12000 12001 12002 12003 12004 12005 12006 12007 12008 12009 ...
+  ..$ : int  14000 14001 14002 14003 14004 14005 14006 14007 14008 14009 ...
+  ..$ : int  16000 16001 16002 16003 16004 16005 16006 16007 16008 16009 ...
+  ..$ : int  18000 18001 18002 18003 18004 18005 18006 18007 18008 18009 ...
+  ..$ : int  20000 20001 20002 20003 20004 20005 20006 20007 20008 20009 ...
+  ..$ : int  22000 22001 22002 22003 22004 22005 22006 22007 22008 22009 ...
+  ..$ : int  24000 24001 24002 24003 24004 24005 24006 24007 24008 24009 ...
+  ..$ : int  26000 26001 26002 26003 26004 26005 26006 26007 26008 26009 ...
+  ..$ : int  28000 28001 28002 28003 28004 28005 28006 28007 28008 28009 ...
+  ..$ : int  30000 30001 30002 30003 30004 30005 30006 30007 30008 30009 ...
+  ..$ : int  32000 32001 32002 32003 32004 32005 32006 32007 32008 32009 ...
+  ..$ : int  34000 34001 34002 34003 34004 34005 34006 34007 34008 34009 ...
+  ..$ : int  36000 36001 36002 36003 36004 36005 36006 36007 36008 36009 ...
+  ..$ : int  38000 38001 38002 38003 38004 38005 38006 38007 38008 38009 ...
+ - attr(*, "group_sizes")= int  2000 2000 2000 2000 2000 2000 2000 2000 2000 2000 ...
+ - attr(*, "biggest_group_size")= int 2000
+ - attr(*, "labels")='data.frame':	20 obs. of  1 variable:
+  ..$ cluster_id: num  1 2 3 4 5 6 7 8 9 10 ...
+  ..- attr(*, "vars")=List of 1
+  .. ..$ : symbol cluster_id
+  ..- attr(*, "drop")= logi TRUE
+NULL
+[1] "done making samps"
+[1] "2017-05-18 14:36:42 EDT"
+[1] "done making par_ests"
+[1] "2017-05-18 14:36:45 EDT"
+[1] "making par_ests"
+[1] "2017-05-18 14:36:45 EDT"
+[1] "printing par_ests"
+[1] "2017-05-18 14:36:45 EDT"
+'data.frame':	7 obs. of  10 variables:
+ $ mean   : num  -0.44483 -0.0544 -0.43751 0.00407 0.52066 ...
+ $ se_mean: num  0.004065 0.00577 0.000521 0.000748 0.002482 ...
+ $ sd     : num  0.1572 0.2296 0.0182 0.0258 0.0992 ...
+ $ 2.5%   : num  -0.7569 -0.5043 -0.471 -0.0486 0.3658 ...
+ $ 25%    : num  -0.5467 -0.2107 -0.4494 -0.0127 0.4488 ...
+ $ 50%    : num  -0.44381 -0.05588 -0.43757 0.00491 0.50895 ...
+ $ 75%    : num  -0.34 0.101 -0.426 0.021 0.578 ...
+ $ 97.5%  : num  -0.1468 0.3873 -0.4003 0.0542 0.7508 ...
+ $ n_eff  : num  1496 1583 1215 1187 1598 ...
+ $ Rhat   : num  1 1.001 0.999 1.001 0.999 ...
+NULL
+[1] "summarizing draws"
+# A tibble: 2 x 9
+     param         mean           sd          p025           p25           p50
+     <chr>        <dbl>        <dbl>         <dbl>         <dbl>         <dbl>
+1    N_new 57991.070500 4437.6660372 49531.9250000 54964.5000000 58011.0000000
+2 ybar_new    -0.480476    0.1137041    -0.7091283    -0.5534498    -0.4814652
+# ... with 3 more variables: p75 <dbl>, p975 <dbl>, truth <dbl>
+##################################################################################
+NULL
+CURRENTLY ON: num.clusters = 30 , num.units = 0.05 use.sizes = 0 , stanmod = bb 
+Sampling data
+[1] "2017-05-18 14:37:29 EDT"
+DONE sampling
+Running stan
+[1] "2017-05-18 14:37:29 EDT"
+[1] "2017-05-18 14:37:29 EDT"
+[1] "making stan data"
+[1] "2017-05-18 14:37:29 EDT"
+List of 12
+ $ J            : num 100
+ $ K            : num 30
+ $ n            : num 1047
+ $ N            : num 52577
+ $ M            : int 30
+ $ x            : num [1:1047] 12.52 -8.48 -7.48 2.52 4.52 ...
+ $ y            : num [1:1047] -6.111 4.213 2.789 -0.896 -2.26 ...
+ $ cluster_id   : int [1:1047] 1 1 1 1 1 1 1 1 1 1 ...
+ $ Nj_sample    : num [1:30] 702 589 1292 392 923 ...
+ $ log_Nj_sample: num [1:30] 0.466 0.291 1.076 -0.117 0.74 ...
+ $ Nj_unique    : num [1:30] 191 242 261 295 315 342 375 384 392 424 ...
+ $ M_counts     : int [1:30] 1 1 1 1 1 1 1 1 1 1 ...
+NULL
+[1] "2017-05-18 14:37:29 EDT"
+starting worker pid=33157 on localhost:11398 at 14:37:30.361
+starting worker pid=33166 on localhost:11398 at 14:37:30.666
+starting worker pid=33175 on localhost:11398 at 14:37:30.974
+starting worker pid=33184 on localhost:11398 at 14:37:31.278
+
+SAMPLING FOR MODEL 'bb' NOW (CHAIN 1).
+
+Chain 1, Iteration:   1 / 1000 [  0%]  (Warmup)
+SAMPLING FOR MODEL 'bb' NOW (CHAIN 2).
+
+Chain 2, Iteration:   1 / 1000 [  0%]  (Warmup)
+SAMPLING FOR MODEL 'bb' NOW (CHAIN 3).
+
+Chain 3, Iteration:   1 / 1000 [  0%]  (Warmup)
+SAMPLING FOR MODEL 'bb' NOW (CHAIN 4).
+
+Chain 4, Iteration:   1 / 1000 [  0%]  (Warmup)
+Chain 3, Iteration: 100 / 1000 [ 10%]  (Warmup)
+Chain 1, Iteration: 100 / 1000 [ 10%]  (Warmup)
+Chain 3, Iteration: 200 / 1000 [ 20%]  (Warmup)
+Chain 2, Iteration: 100 / 1000 [ 10%]  (Warmup)
+Chain 1, Iteration: 200 / 1000 [ 20%]  (Warmup)
+Chain 3, Iteration: 300 / 1000 [ 30%]  (Warmup)
+Chain 2, Iteration: 200 / 1000 [ 20%]  (Warmup)
+Chain 4, Iteration: 100 / 1000 [ 10%]  (Warmup)
+Chain 1, Iteration: 300 / 1000 [ 30%]  (Warmup)
+Chain 3, Iteration: 400 / 1000 [ 40%]  (Warmup)
+Chain 1, Iteration: 400 / 1000 [ 40%]  (Warmup)
+Chain 3, Iteration: 500 / 1000 [ 50%]  (Warmup)
+Chain 3, Iteration: 501 / 1000 [ 50%]  (Sampling)
+Chain 2, Iteration: 300 / 1000 [ 30%]  (Warmup)
+Chain 3, Iteration: 600 / 1000 [ 60%]  (Sampling)
+Chain 1, Iteration: 500 / 1000 [ 50%]  (Warmup)
+Chain 1, Iteration: 501 / 1000 [ 50%]  (Sampling)
+Chain 2, Iteration: 400 / 1000 [ 40%]  (Warmup)
+Chain 4, Iteration: 200 / 1000 [ 20%]  (Warmup)
+Chain 3, Iteration: 700 / 1000 [ 70%]  (Sampling)
+Chain 1, Iteration: 600 / 1000 [ 60%]  (Sampling)
+Chain 2, Iteration: 500 / 1000 [ 50%]  (Warmup)
+Chain 2, Iteration: 501 / 1000 [ 50%]  (Sampling)
+Chain 1, Iteration: 700 / 1000 [ 70%]  (Sampling)
+Chain 3, Iteration: 800 / 1000 [ 80%]  (Sampling)
+Chain 4, Iteration: 300 / 1000 [ 30%]  (Warmup)
+Chain 2, Iteration: 600 / 1000 [ 60%]  (Sampling)
+Chain 1, Iteration: 800 / 1000 [ 80%]  (Sampling)
+Chain 4, Iteration: 400 / 1000 [ 40%]  (Warmup)
+Chain 3, Iteration: 900 / 1000 [ 90%]  (Sampling)
+Chain 2, Iteration: 700 / 1000 [ 70%]  (Sampling)
+Chain 1, Iteration: 900 / 1000 [ 90%]  (Sampling)
+Chain 3, Iteration: 1000 / 1000 [100%]  (Sampling)
+ Elapsed Time: 10.96 seconds (Warm-up)
+               2.19 seconds (Sampling)
+               13.15 seconds (Total)
+
+
+Chain 4, Iteration: 500 / 1000 [ 50%]  (Warmup)
+Chain 4, Iteration: 501 / 1000 [ 50%]  (Sampling)
+Chain 2, Iteration: 800 / 1000 [ 80%]  (Sampling)
+Chain 1, Iteration: 1000 / 1000 [100%]  (Sampling)
+ Elapsed Time: 12.38 seconds (Warm-up)
+               2.14 seconds (Sampling)
+               14.52 seconds (Total)
+
+
+Chain 2, Iteration: 900 / 1000 [ 90%]  (Sampling)
+Chain 4, Iteration: 600 / 1000 [ 60%]  (Sampling)
+Chain 2, Iteration: 1000 / 1000 [100%]  (Sampling)
+ Elapsed Time: 12.51 seconds (Warm-up)
+               1.99 seconds (Sampling)
+               14.5 seconds (Total)
+
+
+Chain 4, Iteration: 700 / 1000 [ 70%]  (Sampling)
+Chain 4, Iteration: 800 / 1000 [ 80%]  (Sampling)
+Chain 4, Iteration: 900 / 1000 [ 90%]  (Sampling)
+Chain 4, Iteration: 1000 / 1000 [100%]  (Sampling)
+ Elapsed Time: 12.66 seconds (Warm-up)
+               3.32 seconds (Sampling)
+               15.98 seconds (Total)
+
+[1] "done fitting stan model"
+[1] "2017-05-18 14:37:51 EDT"
+[1] "done saving stanfit object"
+[1] "2017-05-18 14:37:54 EDT"
+'data.frame':	2000 obs. of  30 variables:
+ $ phi_star.1 : num  0.1891 0.1938 0.167 0.0668 0.0919 ...
+ $ phi_star.2 : num  0.2807 0.0299 0.1415 0.0424 0.093 ...
+ $ phi_star.3 : num  0.0501 0.0914 0.0625 0.094 0.0112 ...
+ $ phi_star.4 : num  0.05128 0.00674 0.00191 0.07616 0.24514 ...
+ $ phi_star.5 : num  0.0394 0.0665 0.0242 0.0653 0.0161 ...
+ $ phi_star.6 : num  0.013 0.0307 0.0291 0.0765 0.0532 ...
+ $ phi_star.7 : num  0.0376 0.0513 0.0145 0.0334 0.0683 ...
+ $ phi_star.8 : num  0.00667 0.06456 0.05561 0.05936 0.05617 ...
+ $ phi_star.9 : num  0.0475 0.0595 0.0682 0.0589 0.0609 ...
+ $ phi_star.10: num  0.04124 0.12708 0.06095 0.03996 0.00859 ...
+ $ phi_star.11: num  0.0567 0.0522 0.0709 0.0016 0.0405 ...
+ $ phi_star.12: num  0.00341 0.02319 0.04547 0.01757 0.00653 ...
+ $ phi_star.13: num  0.00157 0.0039 0.01502 0.10045 0.01421 ...
+ $ phi_star.14: num  0.0106 0.0211 0.0215 0.0116 0.031 ...
+ $ phi_star.15: num  0.00408 0.0106 0.02074 0.05857 0.05101 ...
+ $ phi_star.16: num  0.03708 0.0132 0.00876 0.02469 0.01857 ...
+ $ phi_star.17: num  0.01035 0.01142 0.00322 0.03366 0.01956 ...
+ $ phi_star.18: num  0.00915 0.02262 0.0463 0.04908 0.02586 ...
+ $ phi_star.19: num  0.00681 0.00684 0.04032 0.0155 0.01075 ...
+ $ phi_star.20: num  0.0131 0.0086 0.03949 0.00841 0.00861 ...
+ $ phi_star.21: num  0.03256 0.01409 0.00619 0.01687 0.00769 ...
+ $ phi_star.22: num  0.02183 0.02241 0.01044 0.00725 0.01444 ...
+ $ phi_star.23: num  0.00596 0.00706 0.01731 0.00615 0.00552 ...
+ $ phi_star.24: num  0.0099 0.01029 0.01432 0.00725 0.01269 ...
+ $ phi_star.25: num  0.01259 0.01355 0.00381 0.00899 0.01261 ...
+ $ phi_star.26: num  0.00362 0.01453 0.00153 0.00948 0.00458 ...
+ $ phi_star.27: num  0.00191 0.01623 0.0061 0.00289 0.00182 ...
+ $ phi_star.28: num  0.000611 0.004403 0.001477 0.002832 0.00779 ...
+ $ phi_star.29: num  0.001 0.001337 0.000632 0.003098 0.001147 ...
+ $ phi_star.30: num  0.00046 0.000991 0.000845 0.001157 0.000657 ...
+NULL
+Classes ‘grouped_df’, ‘tbl_df’, ‘tbl’ and 'data.frame':	60000 obs. of  3 variables:
+ $ cluster_id: num  1 1 1 1 1 1 1 1 1 1 ...
+ $ draw_num  : int  1 2 3 4 5 6 7 8 9 10 ...
+ $ phi_star  : num  0.1891 0.1938 0.167 0.0668 0.0919 ...
+ - attr(*, "vars")=List of 1
+  ..$ : symbol cluster_id
+ - attr(*, "drop")= logi TRUE
+ - attr(*, "indices")=List of 30
+  ..$ : int  0 1 2 3 4 5 6 7 8 9 ...
+  ..$ : int  2000 2001 2002 2003 2004 2005 2006 2007 2008 2009 ...
+  ..$ : int  4000 4001 4002 4003 4004 4005 4006 4007 4008 4009 ...
+  ..$ : int  6000 6001 6002 6003 6004 6005 6006 6007 6008 6009 ...
+  ..$ : int  8000 8001 8002 8003 8004 8005 8006 8007 8008 8009 ...
+  ..$ : int  10000 10001 10002 10003 10004 10005 10006 10007 10008 10009 ...
+  ..$ : int  12000 12001 12002 12003 12004 12005 12006 12007 12008 12009 ...
+  ..$ : int  14000 14001 14002 14003 14004 14005 14006 14007 14008 14009 ...
+  ..$ : int  16000 16001 16002 16003 16004 16005 16006 16007 16008 16009 ...
+  ..$ : int  18000 18001 18002 18003 18004 18005 18006 18007 18008 18009 ...
+  ..$ : int  20000 20001 20002 20003 20004 20005 20006 20007 20008 20009 ...
+  ..$ : int  22000 22001 22002 22003 22004 22005 22006 22007 22008 22009 ...
+  ..$ : int  24000 24001 24002 24003 24004 24005 24006 24007 24008 24009 ...
+  ..$ : int  26000 26001 26002 26003 26004 26005 26006 26007 26008 26009 ...
+  ..$ : int  28000 28001 28002 28003 28004 28005 28006 28007 28008 28009 ...
+  ..$ : int  30000 30001 30002 30003 30004 30005 30006 30007 30008 30009 ...
+  ..$ : int  32000 32001 32002 32003 32004 32005 32006 32007 32008 32009 ...
+  ..$ : int  34000 34001 34002 34003 34004 34005 34006 34007 34008 34009 ...
+  ..$ : int  36000 36001 36002 36003 36004 36005 36006 36007 36008 36009 ...
+  ..$ : int  38000 38001 38002 38003 38004 38005 38006 38007 38008 38009 ...
+  ..$ : int  40000 40001 40002 40003 40004 40005 40006 40007 40008 40009 ...
+  ..$ : int  42000 42001 42002 42003 42004 42005 42006 42007 42008 42009 ...
+  ..$ : int  44000 44001 44002 44003 44004 44005 44006 44007 44008 44009 ...
+  ..$ : int  46000 46001 46002 46003 46004 46005 46006 46007 46008 46009 ...
+  ..$ : int  48000 48001 48002 48003 48004 48005 48006 48007 48008 48009 ...
+  ..$ : int  50000 50001 50002 50003 50004 50005 50006 50007 50008 50009 ...
+  ..$ : int  52000 52001 52002 52003 52004 52005 52006 52007 52008 52009 ...
+  ..$ : int  54000 54001 54002 54003 54004 54005 54006 54007 54008 54009 ...
+  ..$ : int  56000 56001 56002 56003 56004 56005 56006 56007 56008 56009 ...
+  ..$ : int  58000 58001 58002 58003 58004 58005 58006 58007 58008 58009 ...
+ - attr(*, "group_sizes")= int  2000 2000 2000 2000 2000 2000 2000 2000 2000 2000 ...
+ - attr(*, "biggest_group_size")= int 2000
+ - attr(*, "labels")='data.frame':	30 obs. of  1 variable:
+  ..$ cluster_id: num  1 2 3 4 5 6 7 8 9 10 ...
+  ..- attr(*, "vars")=List of 1
+  .. ..$ : symbol cluster_id
+  ..- attr(*, "drop")= logi TRUE
+NULL
+[1] "done making samps"
+[1] "2017-05-18 14:37:54 EDT"
+[1] "done making par_ests"
+[1] "2017-05-18 14:37:58 EDT"
+[1] "making par_ests"
+[1] "2017-05-18 14:37:58 EDT"
+[1] "printing par_ests"
+[1] "2017-05-18 14:37:58 EDT"
+'data.frame':	7 obs. of  10 variables:
+ $ mean   : num  -0.3232 -0.3317 -0.4452 -0.0129 0.5699 ...
+ $ se_mean: num  0.002804 0.004333 0.00031 0.000485 0.001911 ...
+ $ sd     : num  0.1254 0.1938 0.0139 0.0217 0.0855 ...
+ $ 2.5%   : num  -0.5663 -0.7149 -0.4723 -0.0546 0.4291 ...
+ $ 25%    : num  -0.4068 -0.4597 -0.4545 -0.0265 0.5102 ...
+ $ 50%    : num  -0.326 -0.3303 -0.4448 -0.0131 0.5585 ...
+ $ 75%    : num  -0.24097 -0.20312 -0.43583 0.00107 0.62165 ...
+ $ 97.5%  : num  -0.0689 0.0645 -0.4173 0.0301 0.7635 ...
+ $ n_eff  : num  2000 2000 2000 2000 2000 2000 2000
+ $ Rhat   : num  1.001 1.001 0.999 1.002 1 ...
+NULL
+[1] "summarizing draws"
+# A tibble: 2 x 9
+     param          mean           sd          p025           p25           p50
+     <chr>         <dbl>        <dbl>         <dbl>         <dbl>         <dbl>
+1    N_new 51923.5095000 2.905041e+03 46522.4500000 49940.5000000 51846.0000000
+2 ybar_new    -0.4264194 8.562157e-02    -0.5881417    -0.4831585    -0.4257588
+# ... with 3 more variables: p75 <dbl>, p975 <dbl>, truth <dbl>
+##################################################################################
+NULL
+CURRENTLY ON: num.clusters = 5 , num.units = 0.1 use.sizes = 0 , stanmod = bb 
+Sampling data
+[1] "2017-05-18 14:38:45 EDT"
+DONE sampling
+Running stan
+[1] "2017-05-18 14:38:45 EDT"
+[1] "2017-05-18 14:38:45 EDT"
+[1] "making stan data"
+[1] "2017-05-18 14:38:45 EDT"
+List of 12
+ $ J            : num 100
+ $ K            : num 5
+ $ n            : num 385
+ $ N            : num 52577
+ $ M            : int 5
+ $ x            : num [1:385] -4.485 -1.485 0.515 2.515 -6.485 ...
+ $ y            : num [1:385] 1.233 -0.417 -1.328 -3.583 3.282 ...
+ $ cluster_id   : int [1:385] 1 1 1 1 1 1 1 1 1 1 ...
+ $ Nj_sample    : num [1:5] 589 1031 556 1343 331
+ $ log_Nj_sample: num [1:5] 0.291 0.85 0.233 1.115 -0.286
+ $ Nj_unique    : num [1:5] 331 556 589 1031 1343
+ $ M_counts     : int [1:5] 1 1 1 1 1
+NULL
+[1] "2017-05-18 14:38:45 EDT"
+
+Warning messages:
+1: In left_join_impl(x, y, by$x, by$y, suffix$x, suffix$y) :
+  joining factor and character vector, coercing into character vector
+2: In left_join_impl(x, y, by$x, by$y, suffix$x, suffix$y) :
+  joining factor and character vector, coercing into character vector
+3: In left_join_impl(x, y, by$x, by$y, suffix$x, suffix$y) :
+  joining factor and character vector, coercing into character vector
+4: In left_join_impl(x, y, by$x, by$y, suffix$x, suffix$y) :
+  joining factor and character vector, coercing into character vector
+Execution halted

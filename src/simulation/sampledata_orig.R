@@ -2,11 +2,14 @@
 # Date: 21 Apr 2014
 # Purpose: sample data from population
 
-sampledata <- function(num.clusters, num.units, use.sizes, outcome.type) {
+sampledata <- function(num.clusters, num.units, use.sizes,
+                       outcome.type, rootdir, sim) {
   # num.clusters -- number of clusters to sample
   # num.units -- number of units to sample
   # use.sizes -- 0/1 for whether cluster sizes were used to generate pop data
   # outcome.type -- whether outcome is normal or binary
+  # rootdir -- root directory where Code, Data folders are
+  # sim -- current simulation; used so that multiple instances aren't trying to write to the same file
 
   #############################################################################
   ### Source functions
@@ -106,5 +109,9 @@ if (num.units == 999) {
     }
     simdata <- list(pop.data = pop.data, sample.data = sample.data, J = J,
                     Mj = Mj, logMj_c = logMj_c, PI_i = PI_i, PI_ij = PI_ij)
-    return(simdata)
+    saveRDS(simdata,
+            file = paste0(rootdir, "output/simulation/simdata_usesizes_",
+                          use.sizes, "_", outcome.type,
+                          "_nclusters_", num.clusters, "_nunits_", nunits,
+                          "_simno_", sim, ".rds"))
 }

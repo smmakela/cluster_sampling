@@ -2,12 +2,13 @@
 
 
 '
-Usage: count_sim_res_check_files.R --use_sizes=<us_val> --outcome_type=<ot_val> --num_sims=<nsims> [options]
+Usage: count_stan_check_files.R --use_sizes=<us_val> --outcome_type=<ot_val> --num_sims=<nsims> --model_name<mod_name>
 
 Options:
   -u --use_sizes <us_val>     Whether outcomes depend on cluster sizes
   -o --outcome_type <ot_val>  Whether outcomes are continuous or binary
   -n --num_sims <nsims>       Total number of simulations
+  -m --model_name <mod_name>  Name of stan model
 
 ' -> doc
 
@@ -53,29 +54,13 @@ Options:
   ### Count the number of sim check files for the current option values
   #############################################################################
     fil.list <- list.files(path = paste0(rootdir, "output/simulation"),
-                           pattern = paste0("sim_res_check_usesizes_",
+                           pattern = paste0("stan_check_usesizes_",
                                             use.sizes, "_", outcome.type,
-                                            "_simno_.*.txt"))
+                                            model_name, "_sim_.*.txt"))
     if (length(fil.list) == num.sims) {
-      sink(paste0(rootdir, "output/simulation/total_sim_res_check_usesizes_",
-                  use.sizes, "_", outcome.type, ".txt"))
+      sink(paste0(rootdir, "output/simulation/total_stan_check_usesizes_",
+                  use.sizes, "_", outcome.type, "_", model_name, ".txt"))
       cat("All", num.sims, "simulations finished with results files.")
       sink()
     }
 
-  #############################################################################
-  ### Check whether all files were successfully created
-  #############################################################################
-  # Count the number of results files created by this file
-    res.path <- paste0(rootdir, "output/simulation/")
-    res.pattern <- paste0("stan_results_usesizes_", use.sizes, "_", outcome.type,
-                          "_", model_name, ".*_sim_", simno, ".rds")
-    sim.files <- list.files(path = res.path, pattern = res.pattern)
-    if (length(sim.files) == nrow(sim.params)) {
-      sink(paste0(rootdir, "output/simulation/sim_res_stan_check_usesizes_",
-                  use.sizes, "_", outcome.type, "_", model_name,
-                  "_sim_", simno, ".txt"), split = FALSE)
-      cat("Success! All", length(sim.files), "files cleared successfully!\n")
-      print(sim.files)
-      sink()
-    }

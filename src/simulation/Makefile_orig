@@ -23,9 +23,8 @@ R_OPTS         = --no-save --no-restore --no-init-file --no-site-file
 
 # Hard-code highest-level simulation parameters
 NUM_POP_CLUSTERS = 100
-NUM_SIMS         = 100
+NUM_SIMS         = 1
 USE_SIZE_VALS    = 0 1
-STAN_MODEL_NAMES = bb cluster_inds_only knowsizes lognormal negbin
 
 # Variables that store filenames of population data
 # e.g. <file path>/popdata_usesizes_<0,1>_<continuous, binary>.<rds, Rout>
@@ -53,47 +52,52 @@ POP_FILES_ALL  := $(POP_DATA_FILES) $(POP_ROUT_FILES) draw_
 SAMPLE_SRC_FILE := $(SIM_SRC_DIR)/sampledata.R
 STAN_SRC_FILES  := $(wildcard $(MODEL_SRC_DIR)/*.stan)
 STAN_MOD_FILES  := $(patsubst %.stan, %.rds, $(STAN_SRC_FILES))
+#STAN_MOD_FILES  := $(wildcard $(MODEL_SRC_DIR)/*.rda)
 MODEL_SRC_FILES := $(STAN_SRC_FILES) $(MODEL_SRC_DIR)/lmer_compare.R \
                    $(MODEL_SRC_DIR)/svy_ests.R
-DB_SRC_FILES    := $(MODEL_SRC_DIR)/lmer_compare.R $(MODEL_SRC_DIR)/svy_ests.R
+
+# Computational coherence check files
+#CCC_MODELS := knowsizes cluster_inds_only lmer
+#CCC_FILES := $(addprefix $(SIM_OUT_DIR)/ccc_usesizes_, $(USE_SIZE_VALS))
+#for mname in $(CCC_MODELS)
+#do
+#  CCC_FILES := $(addsuffix $mname, $(CCC_FILES))
+#done
 
 # Files used to check whether all simulations completed 
-STAN_CHECK_STEMS := $(addprefix $(SIM_OUT_DIR)/total_stan_check_usesizes_, $(USE_SIZE_VALS))
-#STAN_CHECK_FILES := $(foreach v1, $(STAN_MODEL_NAMES), 
-#                      $(foreach v2, continuous binary, 
-#                        $(foreach v3, $(STAN_CHECK_STEMS), 
-#                          $(v3)_$(v2)_$(v1).txt)))
-STAN_CHECK_FILES := $(foreach v1, $(STAN_MODEL_NAMES), $(foreach v2, continuous binary, $(foreach v3, $(STAN_CHECK_STEMS), $(v3)_$(v2)_$(v1).txt)))
-#STAN_CHECK_FILES1 := $(foreach v2, continuous binary, $(foreach v3, $(STAN_CHECK_STEMS), $(addsuffix _$(v2), $(v3))))
+SIM_RES_CHECK_STEMS  := $(addprefix $(SIM_OUT_DIR)/total_sim_res_check_usesizes_, $(USE_SIZE_VALS))
+SIM_RES_CHECK_FILES1 := $(addsuffix _binary.txt, $(SIM_RES_CHECK_STEMS))
+SIM_RES_CHECK_FILES2 := $(addsuffix _continuous.txt, $(SIM_RES_CHECK_STEMS))
+SIM_RES_CHECK_FILES  := $(SIM_RES_CHECK_FILES1) $(SIM_RES_CHECK_FILES2)
+#SIM_RES_CHECK_FILES := $(wildcard $(SIM_RES_CHECK_FILES)_*.txt)
 
-DB_CHECK_STEMS  := $(addprefix $(SIM_OUT_DIR)/total_db_check_usesizes_, $(USE_SIZE_VALS))
-DB_CHECK_FILES := $(foreach v1, continuous binary, $(foreach v2, $(DB_CHECK_STEMS), $(v2)_$(v1).txt))
+# Prerequisites for $(SIM_RES_CHECK_FILES), also know as
+# $(SIM_OUT_DIR)/sim_res_check_usesizes_*_sim_*.txt
+# - population files
+# - model code (stan files plus lmer/svy code)
+# If any of the above are newer than $(SIM_OUT_DIR)/sim_res_check_*.txt, rerun
+# the simulation
+#SIM_RES_CHECK_PREREQS := $(POP_ROUT_FILES) \
+#                         $(MODEL_SRC_FILES) \
+#                         $(SIM_SRC_DIR)/sampledata.R \
+#                         $(SIM_SRC_DIR)/sim_master.R
+SIM_RES_CHECK_PREREQS := $(POP_ROUT_FILES) \
+                         $(MODEL_SRC_FILES) \
+                         $(SIM_SRC_DIR)/sampledata.R \
+                         $(SIM_SRC_DIR)/sim_master.R \
+                         $(SIM_SRC_DIR)/runstan.R
 
-STAN_PREREQS := $(STAN_MOD_FILES) \
-                $(SIM_SRC_DIR)/sampledata.R \
-                $(SIM_SRC_DIR)/sim_master_stan.R \
-                $(SIM_SRC_DIR)/runstan.R
-DB_PREREQS   := $(DB_SRC_FILES) \
-                $(SIM_SRC_DIR)/sampledata.R \
-                $(SIM_SRC_DIR)/sim_master_db.R
 # Prerequisites for $(SIM_OUT_DIR)/compiled_simulation_results.rds:
 # - check file to make sure that all simulations finished successfully
 # - code to compile simulation results
-COMPILED_PREREQS := $(STAN_CHECK_FILES) \
-                    $(DB_CHECK_FILES) \
-                    $(SIM_SRC_DIR)/compile_simulation_results.R 
+SIM_RES_COMPILED_PREREQS := $(SIM_RES_CHECK_FILES) \
+                            $(SIM_SRC_DIR)/compile_simulation_results.R 
 
 # Define substring extracting functions -- these are used to pull out various
-# parts of strings like 0_continuous_bb
-get_firstword  = $(firstword $(subst _, ,$1))      # pulls out 0
-get_secondword = $(word 2, $(subst _, ,$1))        # pulls out continuous
-#space :=
-#space +=
-empty :=
-space := $(empty) $(empty)
-get_thirdword  = $(subst $(space),_,$(wordlist 3, 5, $(subst _, ,$1)))  # pulls out bb
-#get_thirdword  = $(wordlist 3, 5, $(subst _, ,$1))  # pulls out bb
-# get_thirdword uses wordlist so we get all of cluster_inds_only
+# parts of strings like 0_continuous_lmer
+get_firstword  = $(firstword $(subst _, ,$1)) # pulls out 0
+get_secondword = $(word 2, $(subst _, ,$1))   # pulls out continuous
+get_thirdword = $(word 3, $(subst _, ,$1))    # pulls out lmer
 
 # *****************************************************************************
 # Commands to build targets
@@ -103,9 +107,7 @@ get_thirdword  = $(subst $(space),_,$(wordlist 3, 5, $(subst _, ,$1)))  # pulls 
 .SECONDARY:
 #all: $(POP_ROUT_FILES)
 #all: $(SIM_OUT_DIR)/sim_res_check.txt
-all: $(STAN_CHECK_FILES) $(DB_CHECK_FILES)
-stan: $(STAN_CHECK_FILES)
-db: $(DB_CHECK_FILES)
+all: $(SIM_RES_CHECK_FILES)
 stanmodels: $(STAN_MOD_FILES)
 ccc: $(CCC_FILES)
 #all: $(SIM_RES_CHECK_FILES) $(SIM_OUT_DIR)/compiled_simulation_results.rds
@@ -122,13 +124,12 @@ ccc: $(CCC_FILES)
 # name of the target as the R output file filename (this is how the target
 # gets created).
 $(SIM_OUT_DIR)/popdata_usesizes_%.Rout: $(SIM_SRC_DIR)/makepopdata.R $(SIM_SRC_DIR)/draw_pop_cluster_sizes_for_sim.R
-	@echo $@
-	#@echo ----------------------- making pop data --------------------------
-	#Rscript $(R_OPTS) $<\
-	# --numclusters $(NUM_POP_CLUSTERS)\
-	# --use_sizes $(call get_firstword, $*)\
-	# --outcome_type $(call get_secondword, $*)\
-	# > $@ 2>&1 
+	@echo ----------------------- making pop data --------------------------
+	Rscript $(R_OPTS) $<\
+	 --numclusters $(NUM_POP_CLUSTERS)\
+	 --use_sizes $(call get_firstword, $*)\
+	 --outcome_type $(call get_secondword, $*)\
+	 > $@ 2>&1 
 
 # COMPILE STAN MODELS
 $(MODEL_SRC_DIR)/%.rds: $(MODEL_SRC_DIR)/%.stan
@@ -142,26 +143,31 @@ $(MODEL_SRC_DIR)/%.rds: $(MODEL_SRC_DIR)/%.stan
 # values of $US_VAL) and y is either "continuous" or "discrete", the two
 # possible values of $OT_VAL
 # FIRST RUN STAN
-$(SIM_OUT_DIR)/total_stan_check_usesizes_%.txt: $(SIM_OUT_DIR)/popdata_usesizes_*.Rout $(STAN_PREREQS)
-	@echo ---------------------- doing run_sim_stan.sh -------------------------
-	echo $@
+$(SIM_OUT_DIR)/total_sim_res_check_usesizes_%.txt: $(SIM_OUT_DIR)/popdata_usesizes_%.Rout $(SIM_RES_CHECK_PREREQS)
+	@echo ---------------------- doing run_sim.sh -------------------------
 	USV=$(call get_firstword, $*);\
 	OTV=$(call get_secondword, $*);\
-	MN=$(call get_thirdword, $*);\
-	JN="$${MN}_usz_"; JN+=$${USV}; JN+="_"; JN+=$${OTV};\
-	$(SIM_SRC_DIR)/run_sim_stan.sh $(NUM_POP_CLUSTERS) $${USV} $${OTV} $${MN} $(NUM_SIMS) $${JN};\
-	#Rscript $(R_OPTS) count_stan_check_files.R --use_sizes ${USV} \
-	#--outcome_type ${OTV} --num_sims ${NUM_SIMS} --model_name ${MN};
+	JN="usz_"; JN+=$${USV}; JN+="_"; JN+=$${OTV};\
+	JN2="count_"; JN2+=$${USV}; JN2+="_"; JN2+=$${OTV};\
+	$(SIM_SRC_DIR)/run_sim.sh $(NUM_POP_CLUSTERS) $${JN} $${JN2} $${USV} $${OTV} $(NUM_SIMS)
+#	FIRST=$(qsub -v J=$(NUM_POP_CLUSTERS),US_VAL=$${USV},OT_VAL=$${OTV}\
+#	 -t 1-$(NUM_SIMS) -N "$${JN}" $(SIM_SRC_DIR)/do_sim_master.sh);
+#	SECOND=$(qsub -v US_VAL=$${USV},OT_VAL=$${OTV},NUM_SIMS=$(NUM_SIMS)\
+#	 -W depend=afterokarray:$FIRST -N "$${JN2}" $(SIM_SRC_DIR)/do_count_results_files.sh)
+#	echo $${JN};\
+#	echo $${JN2};\
+#	echo $${USV};\
+#	echo $${OTV};\
+#	Rscript $(R_OPTS) count_sim_res_check_files.R --use_sizes=$${USV} --outcome_type=$${OT} --num_sims=$(NUM_SIMS)
 
 # THEN RUN SVY, LMER
-$(SIM_OUT_DIR)/total_db_check_usesizes_%.txt: $(SIM_OUT_DIR)/popdata_usesizes_*.Rout $(DB_PREREQS)
-	@echo ---------------------- doing run_sim_db.sh -------------------------
+$(SIM_OUT_DIR)/total_sim_res_check_usesizes_%.txt: $(SIM_OUT_DIR)/popdata_usesizes_%.Rout $(SIM_RES_CHECK_PREREQS)
+	@echo ---------------------- doing run_sim.sh -------------------------
 	USV=$(call get_firstword, $*);\
 	OTV=$(call get_secondword, $*);\
-	JN="db_usz_"; JN+=$${USV}; JN+="_"; JN+=$${OTV};\
-	$(SIM_SRC_DIR)/run_sim_db.sh $(NUM_POP_CLUSTERS) $${USV} $${OTV} $(NUM_SIMS) $${JN};\
-	#Rscript $(R_OPTS) count_db_check_files.R --use_sizes ${USV} \
-	#--outcome_type ${OTV} --num_sims ${NUM_SIMS};
+	JN="usz_"; JN+=$${USV}; JN+="_"; JN+=$${OTV};\
+	JN2="count_"; JN2+=$${USV}; JN2+="_"; JN2+=$${OTV};\
+	$(SIM_SRC_DIR)/run_sim.sh $(NUM_POP_CLUSTERS) $${JN} $${JN2} $${USV} $${OTV} $(NUM_SIMS)
 
 # only remove simulation results (not pop data)
 #simclean:
