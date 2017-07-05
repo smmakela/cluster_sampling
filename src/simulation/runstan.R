@@ -247,9 +247,10 @@ runstan <- function(num.clusters, num.units, use.sizes, outcome.type, rootdir,
 
     if (simno == 1) {
       saveRDS(fit, file = paste0(rootdir, "/output/simulation/stanfit_usesizes_",
-                              use.sizes, "_nclusters_", num.clusters,
-                              "_nunits_", nunits, "_simno_", simno, "_",
-                              model_name, ".rds"))
+                                 use.sizes, "_", outcome.type,
+                                 "_nclusters_", num.clusters,
+                                 "_nunits_", nunits, "_simno_", simno, "_",
+                                 model_name, ".rds"))
       print("done saving stanfit object")
       print(Sys.time())
     }

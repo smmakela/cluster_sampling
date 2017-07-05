@@ -23,9 +23,9 @@ R_OPTS         = --no-save --no-restore --no-init-file --no-site-file
 
 # Hard-code highest-level simulation parameters
 NUM_POP_CLUSTERS = 100
-NUM_SIMS         = 100
-USE_SIZE_VALS    = 0 1
-STAN_MODEL_NAMES = bb cluster_inds_only knowsizes lognormal negbin
+NUM_SIMS         = 1
+USE_SIZE_VALS    = 1
+STAN_MODEL_NAMES = bb lognormal negbin
 
 # Variables that store filenames of population data
 # e.g. <file path>/popdata_usesizes_<0,1>_<continuous, binary>.<rds, Rout>

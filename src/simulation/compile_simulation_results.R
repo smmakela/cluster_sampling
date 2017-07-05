@@ -33,7 +33,7 @@
   Mj.true.summ <- data.frame()
   ybar.true <- data.frame()
   for (usz in c(0, 1)) {
-    for (ot in c("continuous")) {
+    for (ot in c("continuous", "binary")) {
       popdata <- readRDS(paste0(resdir, "/popdata_usesizes_",
                                 usz, "_", ot, ".rds"))
       Mj <- popdata[["Mj"]]
@@ -74,129 +74,129 @@
 ################################################################################
 ### Loop through STAN result files
 ################################################################################
-  cat("#####################################################################\n")
-  cat("#####################################################################\n")
-  cat(" Now doing STAN files\n")
-  fil.list <- list.files(resdir, "stan_results_.*.rds")
-  ybar.ests <- data.frame()
-  param.ests <- data.frame()
-  Nj.ests <- data.frame()
-  div.trans <- expand.grid(use.sizes = c(0, 1),
-                           outcome.type = c("binary", "continuous"),
-                           model.name = c("bb", "cluster_inds_only",
-                                          "knowsizes", "lognormal", "negbin"),
-                           num.clusters = c(5, 10, 20, 30),
-                           num.units = c(0.05, 0.1, 0.25, 0.5, 1, 10, 30, 60))
-  for (i in 1:length(fil.list)) {
-    # read in current file
-    curr.name <- fil.list[i]
-    curr.fil <- readRDS(curr.name)
-     if ((i %% 500) == 0) {
-       cat("Currently on: ", i, " of ", length(fil.list), " stan files.\n")
-       cat(curr.name, "\n")
-    }
-    # parse the filename to extract number of clusters, units, etc
-    curr.name <- gsub(".rds", "", curr.name) 
-    curr.name <- gsub("cluster_inds_only", "cluster.inds.only", curr.name) 
-    name.parts <- unlist(strsplit(curr.name, split = "_"))
-    usz <- as.numeric(name.parts[4])
-    out.tp <- name.parts[5]
-    model.name <- name.parts[6]
-    num.clusters <- as.numeric(name.parts[8])
-    num.units <- name.parts[10]
-    simno <- as.numeric(name.parts[12])
-
-    # see if this was a case of divergent transitions we couldn't get rid of
-    if (length(curr.fil) == 1) {
-      ind <- div.trans$use.sizes    == usz &
-             div.trans$outcome.type == out.tp &
-             div.trans$model.name   == model.name &
-             div.trans$num.clusters == num.clusters &
-             div.trans$num.units    == num.units
-      div.trans$counter[ind] <- div.trans$counter[ind] + 1
-      next
-    }
-
-    # pull out parameter estimates, make so that statistics are long
-    tmp <- curr.fil[["par_ests"]]
-    tmp$param.name <- rownames(tmp)
-    tmp <- tmp %>%
-      tidyr::gather(key = stat, value = value, -param.name)
-    params.true.tmp <- dplyr::filter(params.true,
-                                     use.sizes == usz & outcome.type == out.tp)
-    tmp <- left_join(tmp, params.true.tmp, by = "param.name")
-    tmp$use.sizes <- usz
-    tmp$outcome.type <- out.tp
-    tmp$model.name <- model.name
-    tmp$num.clusters <- num.clusters
-    tmp$num.units <- num.units
-    tmp$simno <- simno
-    param.ests <- bind_rows(param.ests, tmp)
-
-    # pull out summaries of ybar_new
-    draw.summ <- curr.fil[["draw_summ"]]
-    if (nrow(draw.summ) == 1) {
-      tmp <- draw.summ
-    } else {
-      tmp <- draw.summ[draw.summ$param == "ybar_new", ]
-    }
-    tmp$use.sizes <- usz
-    tmp$outcome.type <- out.tp
-    tmp$model.name <- model.name
-    tmp$num.clusters <- num.clusters
-    tmp$num.units <- num.units
-    tmp$simno <- simno
-    tmp$ybar_true <- ybar.true$ybar_true[ybar.true$use.sizes == usz &
-                                         ybar.true$outcome.type == out.tp]
-    ybar.ests <- bind_rows(ybar.ests, tmp)
-
-    # pull out summaries of Nj_new
-    if (model.name %in% c("bb", "lognormal", "negbin")) {
-      tmp <- curr.fil[["Nj_new_means"]]
-      tmp <- tmp %>%
-        dplyr::select(Nj_new) %>%
-        dplyr::summarise(sum  = sum(Nj_new),
-                         mean = mean(Nj_new),
-                         sd   = sd(Nj_new),
-                         p025 = quantile(Nj_new, 0.025),
-                         p25  = quantile(Nj_new, 0.25),
-                         p50  = quantile(Nj_new, 0.50),
-                         p75  = quantile(Nj_new, 0.75),
-                         p975 = quantile(Nj_new, 0.975))
-      tmp <- tmp %>%
-        tidyr::gather(key = stat, value = est)
-      tmp$use.sizes <- usz
-      tmp$outcome.type <- out.tp
-      tmp$model.name <- model.name
-      tmp$num.clusters <- num.clusters
-      tmp$num.units <- num.units
-      tmp$simno <- simno
-      tmp <- left_join(tmp, Mj.true.summ, by = c("use.sizes", "outcome.type"))
-      Nj.ests <- bind_rows(Nj.ests, tmp)
-    }
-
-  } # end file for loop
-  print(warnings())
-  print(Sys.time())
-
-  res <- list(param.ests = param.ests, ybar.ests = ybar.ests,
-              Nj.ests = Nj.ests, div.trans = div.trans)
-  saveRDS(res, file = paste0(resdir, "/compiled_stan_results_", today, ".rds"))
-  rm(res)
-
-  # summarise how many sims we got for everything
-  param.ests.nobs <- param.ests %>%
-    dplyr::(param.name, model.name, use.sizes, outcome.type,
-            num.clusters, num.units) %>%
-    dplyr::summarise(num.obs = n())
-  print("str(param.ests):")
-  print(str(param.ests))
-  print(param.ests.nobs)
-  print("num obs:")
-  print(param.ests.nobs$num.obs)
-  print("div trans:")
-  print(div.trans$count)
-                       
+#  cat("#####################################################################\n")
+#  cat("#####################################################################\n")
+#  cat(" Now doing STAN files\n")
+#  fil.list <- list.files(resdir, "stan_results_.*.rds")
+#  ybar.ests <- data.frame()
+#  param.ests <- data.frame()
+#  Nj.ests <- data.frame()
+#  div.trans <- expand.grid(use.sizes = c(0, 1),
+#                           outcome.type = c("binary", "continuous"),
+#                           model.name = c("bb", "cluster_inds_only",
+#                                          "knowsizes", "lognormal", "negbin"),
+#                           num.clusters = c(5, 10, 20, 30),
+#                           num.units = c(0.05, 0.1, 0.25, 0.5, 1, 10, 30, 60))
+#  for (i in 1:length(fil.list)) {
+#    # read in current file
+#    curr.name <- fil.list[i]
+#    curr.fil <- readRDS(curr.name)
+#     if ((i %% 500) == 0) {
+#       cat("Currently on: ", i, " of ", length(fil.list), " stan files.\n")
+#       cat(curr.name, "\n")
+#    }
+#    # parse the filename to extract number of clusters, units, etc
+#    curr.name <- gsub(".rds", "", curr.name) 
+#    curr.name <- gsub("cluster_inds_only", "cluster.inds.only", curr.name) 
+#    name.parts <- unlist(strsplit(curr.name, split = "_"))
+#    usz <- as.numeric(name.parts[4])
+#    out.tp <- name.parts[5]
+#    model.name <- name.parts[6]
+#    num.clusters <- as.numeric(name.parts[8])
+#    num.units <- name.parts[10]
+#    simno <- as.numeric(name.parts[12])
+#
+#    # see if this was a case of divergent transitions we couldn't get rid of
+#    if (length(curr.fil) == 1) {
+#      ind <- div.trans$use.sizes    == usz &
+#             div.trans$outcome.type == out.tp &
+#             div.trans$model.name   == model.name &
+#             div.trans$num.clusters == num.clusters &
+#             div.trans$num.units    == num.units
+#      div.trans$counter[ind] <- div.trans$counter[ind] + 1
+#      next
+#    }
+#
+#    # pull out parameter estimates, make so that statistics are long
+#    tmp <- curr.fil[["par_ests"]]
+#    tmp$param.name <- rownames(tmp)
+#    tmp <- tmp %>%
+#      tidyr::gather(key = stat, value = value, -param.name)
+#    params.true.tmp <- dplyr::filter(params.true,
+#                                     use.sizes == usz & outcome.type == out.tp)
+#    tmp <- left_join(tmp, params.true.tmp, by = "param.name")
+#    tmp$use.sizes <- usz
+#    tmp$outcome.type <- out.tp
+#    tmp$model.name <- model.name
+#    tmp$num.clusters <- num.clusters
+#    tmp$num.units <- num.units
+#    tmp$simno <- simno
+#    param.ests <- bind_rows(param.ests, tmp)
+#
+#    # pull out summaries of ybar_new
+#    draw.summ <- curr.fil[["draw_summ"]]
+#    if (nrow(draw.summ) == 1) {
+#      tmp <- draw.summ
+#    } else {
+#      tmp <- draw.summ[draw.summ$param == "ybar_new", ]
+#    }
+#    tmp$use.sizes <- usz
+#    tmp$outcome.type <- out.tp
+#    tmp$model.name <- model.name
+#    tmp$num.clusters <- num.clusters
+#    tmp$num.units <- num.units
+#    tmp$simno <- simno
+#    tmp$ybar_true <- ybar.true$ybar_true[ybar.true$use.sizes == usz &
+#                                         ybar.true$outcome.type == out.tp]
+#    ybar.ests <- bind_rows(ybar.ests, tmp)
+#
+#    # pull out summaries of Nj_new
+#    if (model.name %in% c("bb", "lognormal", "negbin")) {
+#      tmp <- curr.fil[["Nj_new_means"]]
+#      tmp <- tmp %>%
+#        dplyr::select(Nj_new) %>%
+#        dplyr::summarise(sum  = sum(Nj_new),
+#                         mean = mean(Nj_new),
+#                         sd   = sd(Nj_new),
+#                         p025 = quantile(Nj_new, 0.025),
+#                         p25  = quantile(Nj_new, 0.25),
+#                         p50  = quantile(Nj_new, 0.50),
+#                         p75  = quantile(Nj_new, 0.75),
+#                         p975 = quantile(Nj_new, 0.975))
+#      tmp <- tmp %>%
+#        tidyr::gather(key = stat, value = est)
+#      tmp$use.sizes <- usz
+#      tmp$outcome.type <- out.tp
+#      tmp$model.name <- model.name
+#      tmp$num.clusters <- num.clusters
+#      tmp$num.units <- num.units
+#      tmp$simno <- simno
+#      tmp <- left_join(tmp, Mj.true.summ, by = c("use.sizes", "outcome.type"))
+#      Nj.ests <- bind_rows(Nj.ests, tmp)
+#    }
+#
+#  } # end file for loop
+#  print(warnings())
+#  print(Sys.time())
+#
+#  res <- list(param.ests = param.ests, ybar.ests = ybar.ests,
+#              Nj.ests = Nj.ests, div.trans = div.trans)
+#  saveRDS(res, file = paste0(resdir, "/compiled_stan_results_", today, ".rds"))
+#  rm(res)
+#
+#  # summarise how many sims we got for everything
+#  param.ests.nobs <- param.ests %>%
+#    dplyr::(param.name, model.name, use.sizes, outcome.type,
+#            num.clusters, num.units) %>%
+#    dplyr::summarise(num.obs = n())
+#  print("str(param.ests):")
+#  print(str(param.ests))
+#  print(param.ests.nobs)
+#  print("num obs:")
+#  print(param.ests.nobs$num.obs)
+#  print("div trans:")
+#  print(div.trans$count)
+#                       
 ################################################################################
 ### Loop through LMER result files
 ################################################################################

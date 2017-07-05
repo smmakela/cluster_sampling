@@ -10,6 +10,7 @@
   -u --unitcovar_range <x_range>           Min, max values for unit covariate [default: 20,45]
   -z --use_sizes <usz>                     Whether outcomes are related to cluster sizes [default: 0]
   -o --outcome_type <y_type>               Whether outcomes are continuous or binary [default: continuous]
+  -m --size_model <sz_model>               Model for how the population cluster szies are generated [default: multinomial]
   -r --rootdir <dirname>                   Root project directory [default: /vega/stats/users/smm2253/cluster_sampling]
 ' -> doc
 
@@ -26,9 +27,6 @@
     require(docopt)
     require(methods)
 
-    codedir <- "/vega/stats/users/smm2253/cluster_sampling/src/simulation"
-    source(paste0(codedir, "/draw_pop_cluster_sizes_for_sim.R"))
-  
     # Store the docopt options as variables we can use in the code
     opts <- docopt(doc) 
     opts.names <- names(opts)
@@ -86,11 +84,32 @@
     }
   
   #############################################################################
-  ### Generate data
+  ### Generate data -- pop cluster sizes are generated from:
+  ### 1. FF observed city sizes
+  ### 2. 500 * multinomial draw
+  ### 3. Poisson
   #############################################################################
     # Set the seed for the random number generator to reproduce the results
     if (!is.null(seed)) {
       set.seed(seed) 
+    }
+
+    # Draw cluster sizes using the specified size_model
+    if (size_model == "multinomial") {
+      alpha_vec <- rep(2, times = J) # alpha for dirichlet distribution
+      # take dirichlet draws by scaling gamma draws
+      gamma_draws <- sort(rgamma(alpha_vec, shape = alpha_vec, scale = 1))
+      dir_draws <- gamma_draws / sum(gamma_draws)
+      # use multinomial to draw which gamma sizes we'll use
+      mn_draws <- rmultinom(n = 1, size = J, prob = dir_draws)
+      # round gamma draws and add 1 (to avoid zero), pick the ones specified
+      # by mn_draws
+      Mj <- rep(round(gamma_draws) + 1, times = mn_draws)
+    } else if (size_model == "poisson") {
+      Mj <- rpois(J, 200)
+    else { # size_model == "ff"
+      pop_dat <- read.csv(paste0(codedir, "/observed_city_pops.csv"), header = TRUE)
+      Mj <- pop_dat$population/1000
     }
     
     # Draw number of clusters, cluster size, unit-level covariate
@@ -98,10 +117,12 @@
     # fitting a gamma distribution to the observed sizes, drawing from the
     # fitted gamma, and then exponentiating; note we have to ROUND here so we
     # get integer sizes
-    print("ENTERING DRAW_POP_CLUSTER_SIZES_FOR_SIM.R")
-    Mj <- round(draw_pop_cluster_sizes_for_sim(J))
-    print("str(Mj):")
-    print(str(Mj))
+    #codedir <- "/vega/stats/users/smm2253/cluster_sampling/src/simulation"
+    #source(paste0(codedir, "/draw_pop_cluster_sizes_for_sim.R"))
+    #print("ENTERING DRAW_POP_CLUSTER_SIZES_FOR_SIM.R")
+    #Mj <- round(draw_pop_cluster_sizes_for_sim(J))
+    #print("str(Mj):")
+    #print(str(Mj))
     #Mj <- sample(c(clustersize.range[1]:clustersize.range[2]), J,
     #             replace = TRUE)
     logMj_c <- log(Mj) - mean(log(Mj))
@@ -167,5 +188,5 @@
     print(str(popdata))
     saveRDS(popdata,
             file = paste0(rootdir, "/output/simulation/popdata_usesizes_",
-                          use.sizes, "_", outcome.type, ".rds"))
+                          use.sizes, "_", outcome.type, "_", size_model, ".rds"))
 

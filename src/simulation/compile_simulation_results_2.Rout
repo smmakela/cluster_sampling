@@ -1,0 +1,309 @@
+WARNING: unknown option '-1'
+
+
+R version 3.3.3 (2017-03-06) -- "Another Canoe"
+Copyright (C) 2017 The R Foundation for Statistical Computing
+Platform: x86_64-redhat-linux-gnu (64-bit)
+
+R is free software and comes with ABSOLUTELY NO WARRANTY.
+You are welcome to redistribute it under certain conditions.
+Type 'license()' or 'licence()' for distribution details.
+
+  Natural language support but running in an English locale
+
+R is a collaborative project with many contributors.
+Type 'contributors()' for more information and
+'citation()' on how to cite R or R packages in publications.
+
+Type 'demo()' for some demos, 'help()' for on-line help, or
+'help.start()' for an HTML browser interface to help.
+Type 'q()' to quit R.
+
+> # Author: Susanna Makela
+> # Date: 13 Jan 2016
+> # Purpose: process results from simulation
+> 
+> ################################################################################
+> ### Get the row of sim.params that we are on
+> ################################################################################
+>   args <- commandArgs(FALSE)
+>   cat("args:", args, "\n")
+args: /usr/lib64/R/bin/exec/R -f compile_simulation_results_2.R --restore --save --no-readline --no-save --vanilla -1 
+>   len <- length(args)
+>   rownum <- -1*as.numeric(args[len])
+>   cat("row no:", rownum, "\n")
+row no: 1 
+> 
+> ################################################################################
+> ### Setup of directories and libraries
+> ################################################################################
+>   libdir <- "/vega/stats/users/smm2253/rpackages"
+>   .libPaths(libdir)
+>   rootdir <- "/vega/stats/users/smm2253/cluster_sampling/"
+>   Sys.setenv(HOME = rootdir)
+> 
+>   # set working directory, figure directory
+>   resdir <- paste0(rootdir, "output/simulation/")
+>   setwd(resdir)
+> 
+>   # libraries
+>   library(dplyr)
+
+Attaching package: ‘dplyr’
+
+The following objects are masked from ‘package:stats’:
+
+    filter, lag
+
+The following objects are masked from ‘package:base’:
+
+    intersect, setdiff, setequal, union
+
+>   library(tidyr)
+> 
+>   # print time
+>   print(Sys.time())
+[1] "2017-05-23 17:04:59 EDT"
+>   today <- Sys.Date()
+>   today <- gsub("-", "_", today)
+> 
+> ################################################################################
+> # Get the values of the sim parameters for this iteration
+> ################################################################################
+>   sim.params <- expand.grid(use.sizes = c(0, 1),
++                             outcome.type = c("binary", "continuous"),
++                             model.name = c("bb", "cluster_inds_only",
++                                            "knowsizes", "lognormal", "negbin"),
++                             num.clusters = c(5, 10, 20, 30),
++                             num.units = c(0.05, 0.1, 0.25, 0.5, 1, 10, 30, 60))
+>   curr.params <- sim.params[rownum, ]
+>   use.sizes <- curr.params$use.sizes
+>   outcome.type <- curr.params$outcome.type
+>   model.name <- curr.params$model.name
+>   num.clusters <- curr.params$num.clusters
+>   num.units <- curr.params$num.units
+>   if (num.units <= 1) {
++     nunits <- paste(100*num.units, "pct", sep = "")
++   } else {
++     nunits <- num.units
++   }
+> 
+>   # Concatenate to get current stubs
+>   curr.stub <- paste0("usesizes_", use.sizes, "_", outcome.type, "_",
++                       model.name, "_nclusters_", num.clusters, "_nunits_",
++                       nunits, "_sim_.*.rds")
+>   stan.stub <- paste0("stan_results_", curr.stub)
+>   lmer.stub <- paste0("lmer_results_", curr.stub)
+>   svy.stub  <- paste0("svy_results_", curr.stub)
+> 
+>   cat("#####################################################################\n")
+#####################################################################
+>   cat("Currently on:", curr.stub, "\n")
+Currently on: usesizes_0_binary_bb_nclusters_5_nunits_5pct_sim_.*.rds 
+> 
+> ################################################################################
+> # Calculate true values
+> ################################################################################
+>   cat("#####################################################################\n")
+#####################################################################
+>   cat("Compiling true values\n")
+Compiling true values
+>   params.true <- data.frame()
+>   Mj.true.summ <- data.frame()
+>   ybar.true <- data.frame()
+>   popdata <- readRDS(paste0(resdir, "/popdata_usesizes_", use.sizes, "_",
++                             outcome.type, ".rds"))
+>   Mj <- popdata[["Mj"]]
+> 
+>   # true parameter values
+>   params.true <- gather(popdata[["truepars"]], key = param.name) 
+>   names(params.true) <- c("param.name", "true")
+>   params.true$param.name <- as.character(params.true$param.name)
+> 
+>   # true Mj statistics
+>   Mj.true.summ <- data.frame(sum  = sum(Mj),
++                              mean = mean(Mj),
++                              sd   = sd(Mj),
++                              p025 = quantile(Mj, 0.025),
++                              p25  = quantile(Mj, 0.25),
++                              p50  = quantile(Mj, 0.50),
++                              p75  = quantile(Mj, 0.75),
++                              p975 = quantile(Mj, 0.975))
+>   Mj.true.summ <- gather(Mj.true.summ, key = stat, value = true)
+> 
+>   # true ybar
+>   ybar.true <- mean(popdata[["pop.data"]]$y)
+> 
+>   print("params.true:") 
+[1] "params.true:"
+>   print(params.true) 
+   param.name      true
+1      alpha0 0.8428766
+2      gamma0 0.0000000
+3 sigma_beta0 1.1146350
+4   ybar_true 0.6601040
+>   print("Mj.true.summ:") 
+[1] "Mj.true.summ:"
+>   print(Mj.true.summ) 
+  stat       true
+1  sum 49827.0000
+2 mean   498.2700
+3   sd   279.6675
+4 p025   142.0250
+5  p25   291.7500
+6  p50   431.5000
+7  p75   670.7500
+8 p975  1083.0250
+>   print("ybar.true:") 
+[1] "ybar.true:"
+>   print(ybar.true) 
+[1] 0.660104
+>   print(Sys.time())
+[1] "2017-05-23 17:04:59 EDT"
+> 
+> ################################################################################
+> ### Preallocate space to hold all results
+> ################################################################################
+>   num.div.trans <- 0
+>   n.sims <- 100
+>   ybar.ests <- data.frame(true  = rep(ybar.true, n.sims),
++                           mean  = rep(NA, n.sims),
++                           sd    = rep(NA, n.sims),
++                           p025  = rep(NA, n.sims),
++                           p25   = rep(NA, n.sims),
++                           p50   = rep(NA, n.sims),
++                           p75   = rep(NA, n.sims),
++                           p975  = rep(NA, n.sims),
++                           simno = c(1:n.sims))
+>   Nj.ests <- expand.grid(stat  = Mj.true.summ$stat,
++                          simno = c(1:n.sims))
+>   Nj.ests <- left_join(Nj.ests, Mj.true.summ, by = "stat")
+Warning message:
+In left_join_impl(x, y, by$x, by$y, suffix$x, suffix$y) :
+  joining character vector and factor, coercing into character vector
+>   Nj.ests$est <- NA
+>   stat.list <- c("mean", "sd", "p025", "p25", "p50", "p75", "p975")
+>   param.ests <- expand.grid(param.name  = params.true$param.name,
++                             simno       = c(1:n.sims))
+>   param.ests <- left_join(param.ests, params.true, by = c("param.name"))
+Warning message:
+In left_join_impl(x, y, by$x, by$y, suffix$x, suffix$y) :
+  joining character vector and factor, coercing into character vector
+>   param.ests[, stat.list] <- NA
+>   print(head(param.ests))
+   param.name simno      true mean sd p025 p25 p50 p75 p975
+1      alpha0     1 0.8428766   NA NA   NA  NA  NA  NA   NA
+2      gamma0     1 0.0000000   NA NA   NA  NA  NA  NA   NA
+3 sigma_beta0     1 1.1146350   NA NA   NA  NA  NA  NA   NA
+4   ybar_true     1 0.6601040   NA NA   NA  NA  NA  NA   NA
+5      alpha0     2 0.8428766   NA NA   NA  NA  NA  NA   NA
+6      gamma0     2 0.0000000   NA NA   NA  NA  NA  NA   NA
+> 
+> ################################################################################
+> ### Loop through STAN result files
+> ################################################################################
+>   cat("#####################################################################\n")
+#####################################################################
+>   cat(" Now doing STAN files\n")
+ Now doing STAN files
+>   keep.param.stats <- c("mean", "sd", "2.5%", "25%", "50%", "75%", "97.5%")
+>   fil.list <- list.files(resdir, stan.stub)
+>   # loop through models, outcome type, usesizes and compile -- uses less
+>   # memory than trying to compile everything at once
+>   for (i in 1:length(fil.list)) {
++     # read in current file
++     curr.name <- fil.list[i]
++     curr.fil <- readRDS(curr.name)
++     cat("Currently on: ", i, " of ", length(fil.list), " stan files.\n")
++     cat(curr.name, "\n")
++ 
++     # parse the filename to extract sim number
++     simno <- regmatches(curr.name, regexpr("[0-9]{1,3}.rds", curr.name))
++     simno <- as.numeric(gsub(".rds", "", simno))
++   
++     # see if this was a case of divergent transitions we couldn't get rid of
++     if (length(curr.fil) == 1) {
++       num.div.trans <- num.div.trans + 1
++       next
++     }
++ print("ONE")  
++     ### PARAM ESTS
++     # pull out parameter estimates, make so that statistics are long
++     tmp <- curr.fil[["par_ests"]]
++ print(tmp)
++     tmp$param.name <- rownames(tmp)
++     tmp <- tmp[, keep.param.stats]
++     names(tmp) <- stat.list
++ print("TWO")
++     # replace the appropriate part of param.ests with tmp
++     inds <- param.ests$simno == simno
++ print(tmp)
++ print(param.ests[inds, stat.list])
++     param.ests[inds, stat.list] <- tmp
++ 
++     ### YBAR ESTS
++     # pull out summaries of ybar_new
++     draw.summ <- curr.fil[["draw_summ"]]
++     if (nrow(draw.summ) == 1) {
++       tmp <- draw.summ
++     } else {
++       tmp <- draw.summ[draw.summ$param == "ybar_new", ]
++     } 
++ 
++     # replace the appropriate part of ybar.ests with tmp
++     inds <- ybar.ests$simno == simno
++     ybar.ests[inds, stat.list] <- tmp[, stat.list]
++  
++     ### NJ NEW
++     # pull out summaries of Nj_new
++     if (model.name %in% c("cluster_inds_only", "knowsizes")) {
++       next # don't have Nj_new for these models
++     }
++     tmp <- curr.fil[["Nj_new_means"]]
++     tmp <- tmp %>%
++       dplyr::select(Nj_new) %>%
++       dplyr::summarise(sum  = sum(Nj_new),
++                        mean = mean(Nj_new),
++                        sd   = sd(Nj_new),
++                        p025 = quantile(Nj_new, 0.025),
++                        p25  = quantile(Nj_new, 0.25),
++                        p50  = quantile(Nj_new, 0.50),
++                        p75  = quantile(Nj_new, 0.75),
++                        p975 = quantile(Nj_new, 0.975))
++     tmp <- tmp %>%
++       tidyr::gather(key = stat, value = est)
++     
++     # replace the appropriate part of param.ests with tmp
++     inds <- Nj.ests$simno == simno
++     Nj.ests$stat[inds]       <- tmp$stat
++     Nj.ests$est[inds]        <- tmp$est
++   } # end file for loop
+Currently on:  1  of  100  stan files.
+stan_results_usesizes_0_binary_bb_nclusters_5_nunits_5pct_sim_1.rds 
+[1] "ONE"
+                 mean    se_mean        sd       2.5%        25%        50%
+alpha0       0.798161 0.02192151 0.7784157 -0.8359533  0.2946666  0.8770613
+gamma0      -0.534320 0.02301349 0.8660093 -2.1170043 -1.1250912 -0.5707308
+sigma_beta0  1.999437 0.03126695 0.9924431  0.8073154  1.3322396  1.7809417
+                   75%    97.5%    n_eff      Rhat
+alpha0      1.33279630 2.172715 1260.905 1.0000470
+gamma0      0.06389861 1.179968 1416.055 0.9993151
+sigma_beta0 2.43632282 4.499443 1007.489 1.0009204
+[1] "TWO"
+                 mean        sd       p025        p25        p50        p75
+alpha0       0.798161 0.7784157 -0.8359533  0.2946666  0.8770613 1.33279630
+gamma0      -0.534320 0.8660093 -2.1170043 -1.1250912 -0.5707308 0.06389861
+sigma_beta0  1.999437 0.9924431  0.8073154  1.3322396  1.7809417 2.43632282
+                p975
+alpha0      2.172715
+gamma0      1.179968
+sigma_beta0 4.499443
+  mean sd p025 p25 p50 p75 p975
+1   NA NA   NA  NA  NA  NA   NA
+2   NA NA   NA  NA  NA  NA   NA
+3   NA NA   NA  NA  NA  NA   NA
+4   NA NA   NA  NA  NA  NA   NA
+Error in `[<-.data.frame`(`*tmp*`, inds, stat.list, value = list(mean = c(0.798160965433688,  : 
+  replacement element 1 has 3 rows, need 4
+Calls: [<- -> [<-.data.frame
+Execution halted
