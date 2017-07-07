@@ -1,25 +1,27 @@
-lmer_compare <- function(num.clusters, num.units, use.sizes, outcome.type,
-                         sim.data, rootdir, simno) {
-  # num.clusters -- number of clusters to sample
-  # num.units -- number of units to sample
-  # use.sizes -- whether y depends on cluster sizes or not
-  # sim.data -- list of data for simulation - pop data, sampled data, etc
+lmer_compare <- function(num_clusters, num_units, use_sizes, outcome_type,
+                         size_model, sim_data, rootdir, simno) {
+  # num_clusters -- number of clusters to sample
+  # num_units -- number of units to sample
+  # use_sizes -- whether y depends on cluster sizes or not
+  # outcome_type -- whether y is continuous or binary
+  # size_model -- model used to generate pop cluster sizes
+  # sim_data -- list of data for simulation - pop data, sampled data, etc
   # rootdir -- root directory where Code, Data folders are
   # simno -- current iteration; used so that multiple instances aren't trying to write to the same file
 
   ##########################################
   ### Setup of libraries, load data
   ##########################################
-    if (num.units <= 1) {
-      nunits <- paste(num.units*100, "pct", sep = "")
+    if (num_units <= 1) {
+      nunits <- paste(num_units*100, "pct", sep = "")
     } else {
-      nunits <- num.units
+      nunits <- num_units
     }
-    for (j in names(sim.data)) {
-      assign(j, sim.data[[j]])
+    for (j in names(sim_data)) {
+      assign(j, sim_data[[j]])
     }
     popdata <- readRDS(paste0(rootdir, "/output/simulation/popdata_usesizes_",
-                              use.sizes, "_", outcome.type, ".rds"))
+                              use_sizes, "_", outcome_type, "_", size_model, ".rds"))
     truepars <- popdata[["truepars"]]
     print(truepars)
     rm(popdata)
@@ -27,26 +29,26 @@ lmer_compare <- function(num.clusters, num.units, use.sizes, outcome.type,
   ##########################################
   ### Run lmer/glmer
   ##########################################
-  if (outcome.type == "continuous") {
+  if (outcome_type == "continuous") {
     # model 1: uses cluster sizes
     lmer_with_cluster_sizes <- lmer(y ~ x + logMj_c + x:logMj_c +
-                                    (1 + x | cluster.id), data = sample.data)
+                                    (1 + x | cluster_id), data = sample_data)
     print(summary(lmer_with_cluster_sizes))
     # model 2: only uses cluster indicators
-    lmer_cluster_indicators_only <- lmer(y ~ x + (1 + x | cluster.id),
-                                         data = sample.data)
+    lmer_cluster_indicators_only <- lmer(y ~ x + (1 + x | cluster_id),
+                                         data = sample_data)
     print(summary(lmer_cluster_indicators_only))
     modlist <- c("lmer_with_cluster_sizes", "lmer_cluster_indicators_only")
   } else {
     # model 1: uses cluster sizes
-    glmer_with_cluster_sizes <- glmer(y ~ logMj_c + (1 | cluster.id),
+    glmer_with_cluster_sizes <- glmer(y ~ logMj_c + (1 | cluster_id),
                                       family = binomial(link = "logit"),
-                                      data = sample.data)
+                                      data = sample_data)
     print(summary(glmer_with_cluster_sizes))
     # model 2: only uses cluster indicators
-    glmer_cluster_indicators_only <- glmer(y ~ (1 | cluster.id),
+    glmer_cluster_indicators_only <- glmer(y ~ (1 | cluster_id),
                                            family = binomial(link = "logit"),
-                                           data = sample.data)
+                                           data = sample_data)
     print(summary(glmer_cluster_indicators_only))
     modlist <- c("glmer_with_cluster_sizes", "glmer_cluster_indicators_only")
   }
@@ -59,7 +61,7 @@ lmer_compare <- function(num.clusters, num.units, use.sizes, outcome.type,
       assign("currmod", get(modlist[j]))
       lmer_summ <- summary(currmod)
       coefmat <- data.frame(lmer_summ$coefficients)
-      if (outcome.type == "continuous") {
+      if (outcome_type == "continuous") {
         if (j == 1) {
           rownames(coefmat) <- c("alpha0", "alpha1", "gamma0", "gamma1")
         } else {
@@ -111,8 +113,8 @@ print(as.data.frame(VarCorr(currmod)))
     
     saveRDS(allres,
             paste0(rootdir, "output/simulation/lmer_ests_usesizes_",
-                   use.sizes, "_", outcome.type, "_nclusters_", num.clusters,
-                   "_nunits_", nunits, "_simno_", simno, ".rds"))
+                   use_sizes, "_", outcome_type, "_", size_model, "_nclusters_",
+                   num_clusters, "_nunits_", nunits, "_simno_", simno, ".rds"))
     return(NULL)
 }
 

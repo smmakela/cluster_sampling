@@ -29,14 +29,13 @@
 
     # Store the docopt options as variables we can use in the code
     opts <- docopt(doc) 
-    opts.names <- names(opts)
-    opts.names <- opts.names[-grep("--", opts.names)]
+    opts_names <- names(opts)
+    opts_names <- opts_names[-grep("--", opts_names)]
     print(str(opts))
-    print(opts.names)
-    for (j in 1:length(opts.names)) {
-      curr.name <- opts.names[j]
-      curr.name2 <- gsub("_", ".", curr.name)
-      print(curr.name2)
+    print(opts_names)
+    for (j in 1:length(opts_names)) {
+      curr_name <- opts_names[j]
+      cat("Currently on:", curr_name, "\n")
       # All arguments get read in as characters, so convert the numeric ones to numeric
       # First check if the argument contains a comma. If it does, the contents
       #   are of the form "i, j", where i and j are numbers, and we need to
@@ -44,19 +43,23 @@
       # Then check if the argument can be coerced to numeric -- if not, it's a
       #   string and we don't need to do anything
       # If the argument *can* be converted to numeric, do that
-      if (as.numeric(regexpr(",", opts[[curr.name]])) > 0) {
-        assign(curr.name2, as.numeric(unlist(strsplit(opts[[curr.name]], ","))))
-      } else if (is.na(as.numeric(opts[[curr.name]]))) {
-        assign(curr.name2, opts[[curr.name]])
-        if (curr.name2 == "seed" & opts[[curr.name]] == "NULL") {
+      if (as.numeric(regexpr(",", opts[[curr_name]])) > 0) {
+        assign(curr_name, as.numeric(unlist(strsplit(opts[[curr_name]], ","))))
+      } else if (is.na(as.numeric(opts[[curr_name]]))) {
+        assign(curr_name, opts[[curr_name]])
+        if (curr_name == "seed" & opts[[curr_name]] == "NULL") {
           seed <- NULL
         }
       } else {
-        assign(curr.name2, as.numeric(opts[[curr.name]]))
+        assign(curr_name, as.numeric(opts[[curr_name]]))
       }
-      print(str(get(curr.name2)))
+      print(str(get(curr_name)))
     }
-    J <- numclusters # since J is used in the rest of the code
+    if (size_model == "ff") {
+      J <- 77 # number of cities in FF data
+    } else {
+      J <- numclusters
+    }
 
   #############################################################################
   ### Useful function 
@@ -69,18 +72,18 @@
   #############################################################################
   ### Checks
   #############################################################################
-    #if (length(clustersize.range) != 2) {
-    #  stop("clustersize.range must be of length 2")
+    #if (length(clustersize_range) != 2) {
+    #  stop("clustersize_range must be of length 2")
     #}
-    #if (clustersize.range[1] >= clustersize.range[2]) {
-    #  stop(paste0("clustersize.range must be of the form
-    #               (min.clustersize, max.clustersize)"))
+    #if (clustersize_range[1] >= clustersize_range[2]) {
+    #  stop(paste0("clustersize_range must be of the form
+    #               (min_clustersize, max_clustersize)"))
     #}
-    if (length(unitcovar.range) != 2) {
-      stop("unitcovar.range must be of length 2")
+    if (length(unitcovar_range) != 2) {
+      stop("unitcovar_range must be of length 2")
     }
-    if (unitcovar.range[1] >= unitcovar.range[2]) {
-      stop("unitcovar.range must be of the form (min.unitcovar, max.unitcovar)")
+    if (unitcovar_range[1] >= unitcovar_range[2]) {
+      stop("unitcovar_range must be of the form (min_unitcovar, max_unitcovar)")
     }
   
   #############################################################################
@@ -96,7 +99,7 @@
 
     # Draw cluster sizes using the specified size_model
     if (size_model == "multinomial") {
-      alpha_vec <- rep(2, times = J) # alpha for dirichlet distribution
+      alpha_vec <- rep(1.5, times = J) # alpha for dirichlet distribution
       # take dirichlet draws by scaling gamma draws
       gamma_draws <- sort(rgamma(alpha_vec, shape = alpha_vec, scale = 1))
       dir_draws <- gamma_draws / sum(gamma_draws)
@@ -104,40 +107,39 @@
       mn_draws <- rmultinom(n = 1, size = J, prob = dir_draws)
       # round gamma draws and add 1 (to avoid zero), pick the ones specified
       # by mn_draws
-      Mj <- rep(round(gamma_draws) + 1, times = mn_draws)
+      Mj <- as.numeric(round(rep(100*gamma_draws, times = mn_draws)))
+      stratum_id <- rep(1, length(Mj)) # filler
     } else if (size_model == "poisson") {
       Mj <- rpois(J, 200)
-    else { # size_model == "ff"
+      stratum_id <- rep(1, length(Mj))
+    } else { # size_model == "ff"
+      codedir <- "/vega/stats/users/smm2253/cluster_sampling/src/simulation"
       pop_dat <- read.csv(paste0(codedir, "/observed_city_pops.csv"), header = TRUE)
-      Mj <- pop_dat$population/1000
+      Mj <- as.integer(round(pop_dat$population/1000))
+      stratum_id <- pop_dat$stratum # have their own numbering scheme
+      stratum_id <- as.integer(factor(stratum_id)) # renumber 1-num_strat
+      tot_births <- pop_dat$ubrth + pop_dat$mbrth
     }
-    
-    # Draw number of clusters, cluster size, unit-level covariate
-    # Here cluster sizes are taken from the observed pop cluster sizes by
-    # fitting a gamma distribution to the observed sizes, drawing from the
-    # fitted gamma, and then exponentiating; note we have to ROUND here so we
-    # get integer sizes
-    #codedir <- "/vega/stats/users/smm2253/cluster_sampling/src/simulation"
-    #source(paste0(codedir, "/draw_pop_cluster_sizes_for_sim.R"))
-    #print("ENTERING DRAW_POP_CLUSTER_SIZES_FOR_SIM.R")
-    #Mj <- round(draw_pop_cluster_sizes_for_sim(J))
-    #print("str(Mj):")
-    #print(str(Mj))
-    #Mj <- sample(c(clustersize.range[1]:clustersize.range[2]), J,
-    #             replace = TRUE)
+
+    # Calculate log cluster size, generate unit-level covariate
     logMj_c <- log(Mj) - mean(log(Mj))
-    x <- base::sample(c(unitcovar.range[1]:unitcovar.range[2]), sum(Mj),
-                      replace = TRUE)
+    if (size_model == "ff") {
+      x <- base::sample(c(unitcovar_range[1]:unitcovar_range[2]),
+                        sum(tot_births), replace = TRUE)
+    } else {
+      x <- base::sample(c(unitcovar_range[1]:unitcovar_range[2]), sum(Mj),
+                        replace = TRUE)
+    }
     x <- x - mean(x)
 
     # Draw hyperparameters, varying slopes and coefficients, and outcomes
-    if (outcome.type == "continuous") {
+    if (outcome_type == "continuous") {
       alpha0 <- rnorm(1)
       alpha1 <- rnorm(1)
-      if (use.sizes == 1) {
+      if (use_sizes == 1) {
         gamma0 <- rnorm(1)
         gamma1 <- rnorm(1)
-      }  else {
+      } else {
         gamma0 <- 0
         gamma1 <- 0
       }
@@ -146,22 +148,31 @@
       sigma_y <- abs(rnorm(1, 0, 0.75))
         
       beta0 <- rnorm(n = J, mean = alpha0 + gamma0 * logMj_c, sd = sigma_beta0)
-      beta0_rep <- rep(beta0, Mj)
       beta1 <- rnorm(n = J, mean = alpha1 + gamma1 * logMj_c, sd = sigma_beta1)
-      beta1_rep <- rep(beta1, Mj)
+      if (size_model == "ff") {
+        beta0_rep <- rep(beta0, tot_births)
+        beta1_rep <- rep(beta1, tot_births)
+      } else {
+        beta0_rep <- rep(beta0, Mj)
+        beta1_rep <- rep(beta1, Mj)
+      }
       ymean <- beta0_rep + beta1_rep * x 
       y <- rnorm(ymean, mean = ymean, sd = sigma_y)
     } else {
       alpha0 <- rnorm(1)
-      if (use.sizes == 1) {
+      if (use_sizes == 1) {
         gamma0 <- rnorm(1)
       }  else {
         gamma0 <- 0
       }
       sigma_beta0 <- abs(rnorm(1, 0, 0.5))
         
-      beta0 <- rnorm(n = J, mean = alpha0 + gamma0*logMj_c, sd = sigma_beta0)
-      beta0_rep <- rep(beta0, Mj)
+      beta0 <- rnorm(n = J, mean = alpha0 + gamma0 * logMj_c, sd = sigma_beta0)
+      if (size_model == "ff") {
+        beta0_rep <- rep(beta0, tot_births)
+      } else {
+        beta0_rep <- rep(beta0, Mj)
+      }
       y_prob <- inv_logit(beta0_rep) 
       y <- rbinom(y_prob, size = 1, prob = y_prob)
       # make x = 0 everywhere so we can still use svy_ests.R
@@ -170,23 +181,38 @@
     }
 
     # Make data frame of pop data
-    pop.data <- data.frame(y, x, Mj = rep(Mj, Mj), logMj_c = rep(logMj_c, Mj))
-    pop.data$cluster.id <- rep(c(1:J), times = Mj)
-    pop.data$unit.id <- unlist(lapply(Mj, seq_len))
+    if (size_model == "ff") {
+      pop_data <- data_frame(y, x, logMj_c = rep(logMj_c, tot_births),
+                             stratum_id = rep(stratum_id, tot_births),
+                             Mj = rep(Mj, tot_births),
+                             tot_births = rep(tot_births, tot_births))
+      pop_data$cluster_id <- rep(c(1:J), times = tot_births)
+      pop_data$unit_id <- unlist(lapply(tot_births, seq_len))
+    } else {
+      pop_data <- data_frame(y, x, logMj_c = rep(logMj_c, Mj), Mj = rep(Mj, Mj))
+      pop_data$cluster_id <- rep(c(1:J), times = Mj)
+      pop_data$unit_id <- unlist(lapply(Mj, seq_len))
+    }
 
     # Make list of things to save
-    ybar_true <- mean(pop.data$y)
-    if (outcome.type == "continuous") {
-      truepars <- data.frame(alpha0, gamma0, alpha1, gamma1, sigma_beta0,
+    ybar_true <- mean(pop_data$y)
+    if (outcome_type == "continuous") {
+      truepars <- data_frame(alpha0, gamma0, alpha1, gamma1, sigma_beta0,
                              sigma_beta1, sigma_y, ybar_true)
     } else {
-      truepars <- data.frame(alpha0, gamma0, sigma_beta0, ybar_true)
-      beta1 = NA
+      truepars <- data_frame(alpha0, gamma0, sigma_beta0, ybar_true)
+      beta1 <- NA
     }
-    popdata <- list(pop.data = pop.data, J = J, Mj = Mj, logMj_c = logMj_c,
-                    beta0 = beta0, beta1 = beta1, truepars = truepars)
+    if (size_model == "ff") {
+      popdata <- list(pop_data = pop_data, J = J, Mj = Mj, logMj_c = logMj_c,
+                      tot_births = tot_births, stratum_id = stratum_id,
+                      beta0 = beta0, beta1 = beta1, truepars = truepars)
+    } else {
+      popdata <- list(pop_data = pop_data, J = J, Mj = Mj, logMj_c = logMj_c,
+                      beta0 = beta0, beta1 = beta1, truepars = truepars)
+    }
     print(str(popdata))
     saveRDS(popdata,
             file = paste0(rootdir, "/output/simulation/popdata_usesizes_",
-                          use.sizes, "_", outcome.type, "_", size_model, ".rds"))
+                          use_sizes, "_", outcome_type, "_", size_model, ".rds"))
 

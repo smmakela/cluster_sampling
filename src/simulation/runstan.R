@@ -2,35 +2,36 @@
 # Date: 21 Apr 2014
 # Purpose: run stan
 
-runstan <- function(num.clusters, num.units, use.sizes, outcome.type, rootdir,
-                    simno, stanmod, stanmod_name, sim.data, num.iter, num.chains) {
-  # num.clusters -- number of clusters to sample
-  # num.units -- number of units to sample
-  # use.sizes -- 0/1 for whether cluster sizes used in pop data
-  # rootdir -- root directory where Code, Data folders are
+runstan <- function(num_clusters, num_units, use_sizes, outcome_type, size_model, rootdir,
+                    simno, stanmod, stanmod_name, sim_data, num_iter, num_chains) {
+  # num_clusters -- number of clusters to sample
+  # num_units -- number of units to sample
+  # use_sizes -- 0/1 for whether cluster sizes used in pop data
+  # outcome_type -- whether outcome is continuous or binary
+  # rootdir -- root directory where src, output, etc folders are
   # simno -- current iteration; used so that multiple instances aren't trying to write to the same file
   # stanmod -- compiled stan model
   # stanmod_name -- string for name of stan model so we know which parts of the code to run
-  # sim.data -- data to use for simulation
-  # num.iter -- number of iterations stan should run for
-  # num.chains -- number of chains to run in stan
+  # sim_data -- data to use for simulation
+  # num_iter -- number of iterations stan should run for
+  # num_chains -- number of chains to run in stan
 
   ##########################################
   ### Load pop and sample data
   ##########################################
   rstan_options(auto_write = TRUE)
-  options(mc.cores = parallel::detectCores())
+  options(mc_cores = parallel::detectCores())
 
-  if (num.units <= 1) {
-    nunits <- paste(100*num.units, "pct", sep = "")
+  if (num_units <= 1) {
+    nunits <- paste(100*num_units, "pct", sep = "")
   } else {
-    nunits <- num.units
+    nunits <- num_units
   }
-  for (j in names(sim.data)) {
-    assign(j, sim.data[[j]])
+  for (j in names(sim_data)) {
+    assign(j, sim_data[[j]])
   }
-  rm(sim.data)
-  ybar.true <- mean(pop.data$y)
+  rm(sim_data)
+  ybar_true <- mean(pop_data$y)
 
   model_name <- gsub("_binary", "", stanmod_name)
 
@@ -40,42 +41,42 @@ runstan <- function(num.clusters, num.units, use.sizes, outcome.type, rootdir,
   print("making stan data")
   print(Sys.time())
 
-  # SORT pop and sample data by cluster.id
-  pop.data <- dplyr::arrange(pop.data, cluster.id)
-  sample.data <- dplyr::arrange(sample.data, cluster.id)
+  # SORT pop and sample data by cluster_id
+  pop_data <- dplyr::arrange(pop_data, cluster_id)
+  sample_data <- dplyr::arrange(sample_data, cluster_id)
 
-  if (num.units != 999) {
-    K <- num.clusters
+  if (num_units != 999) {
+    K <- num_clusters
   } else {
     K <- J
   }
   Nj_pop <- Mj
   N <- sum(Nj_pop)
-  n <- sum(pop.data$insample)
-  tmp <- dplyr::summarise(group_by(pop.data, cluster.id),
+  n <- sum(pop_data$insample)
+  tmp <- dplyr::summarise(group_by(pop_data, cluster_id),
                           xbar_pop = mean(x))
-  tmp <- dplyr::arrange(tmp, cluster.id)
+  tmp <- dplyr::arrange(tmp, cluster_id)
   xbar_pop <- tmp$xbar_pop
-  x <- sample.data$x
-  y <- sample.data$y
-  cluster_id <- sample.data$cluster.id
+  x <- sample_data$x
+  y <- sample_data$y
+  cluster_id <- sample_data$cluster_id
 
   # get sample data at cluster level
-  sam.dat <- dplyr::filter(pop.data, insample == 1)
-  sam.dat <- dplyr::distinct(sam.dat, cluster.id, Mj, logMj_c)
-  Nj_sample <- sam.dat$Mj
-  log_Nj_sample <- sam.dat$logMj_c
+  sam_dat <- dplyr::filter(pop_data, insample == 1)
+  sam_dat <- dplyr::distinct(sam_dat, cluster_id, Mj, logMj_c)
+  Nj_sample <- sam_dat$Mj
+  log_Nj_sample <- sam_dat$logMj_c
 
   # special data for bb
-  n.dat <- summarise(group_by(sam.dat, Mj),
-                     n = n_distinct(cluster.id))
-  M <- nrow(n.dat)      # number of unique cluster sizes
-  M_counts <- n.dat$n   # counts of unique cluster sizes
-  Nj_unique <- n.dat$Mj # vector of unique cluster sizes
+  n_dat <- summarise(group_by(sam_dat, Mj),
+                     n = n_distinct(cluster_id))
+  M <- nrow(n_dat)      # number of unique cluster sizes
+  M_counts <- n_dat$n   # counts of unique cluster sizes
+  Nj_unique <- n_dat$Mj # vector of unique cluster sizes
 
   # delete pop and sample data to save memory
-  rm(pop.data)
-  rm(sample.data)
+  rm(pop_data)
+  rm(sample_data)
 
   ##########################################
   ### Make inputs to stan -- data list, parameters, functions
@@ -138,9 +139,9 @@ runstan <- function(num.clusters, num.units, use.sizes, outcome.type, rootdir,
     stop("Invalid stan model")
   }
 
-  # don't need x in standata when outcome.type is binary (for now), and also
+  # don't need x in standata when outcome_type is binary (for now), and also
   # don't need alpha1, gamma1, sigma_beta1, etc in parlist
-  if (outcome.type == "binary") {
+  if (outcome_type == "binary") {
     standata$x <- NULL
     betapars <- "beta0"
     plist <- c("alpha1", "gamma1", "sigma_beta1", "sigma_y")
@@ -155,18 +156,19 @@ runstan <- function(num.clusters, num.units, use.sizes, outcome.type, rootdir,
   print(Sys.time())
 
   fit <- sampling(stanmod, data = standata,
-                  iter = num.iter, chains = num.chains,
+                  iter = num_iter, chains = num_chains,
                   control = list(stepsize = 0.001, adapt_delta = 0.999))
   print("done fitting stan model")
   print(Sys.time())
   print(warnings())
+
   ##########################################
   ### See if there are any divergent transitions -- if so need to rerun 
   ##########################################
     samp_params <- get_sampler_params(fit)
     num_div_trans <- 0
     for (s in 1:length(samp_params)) {                                
-      num_div_trans <- num_div_trans + sum(samp_params[[s]][((num.iter/2)+1):num.iter, "divergent__"])
+      num_div_trans <- num_div_trans + sum(samp_params[[s]][((num_iter/2)+1):num_iter, "divergent__"])
     }
     ad_val <- 0.999
     if (num_div_trans > 0) {
@@ -175,9 +177,9 @@ runstan <- function(num.clusters, num.units, use.sizes, outcome.type, rootdir,
         ad_val <- ad_val + 9 * (10^(-1*(counter + 3)))
         cat("----------------------------------------------------------------\n")
         cat("Divergent transitions happened, rerunning with adapt_delta =", ad_val, "\n")
-        cat("num.clusters =", num.clusters, "num.units=", num.units, "\n")
+        cat("num_clusters =", num_clusters, "num_units=", num_units, "\n")
         fit <- sampling(stanmod, data = standata,
-                        iter = num.iter, chains = num.chains,
+                        iter = num_iter, chains = num_chains,
                         control = list(stepsize = 0.001, adapt_delta = ad_val))
         print("done fitting stan model")
         print(Sys.time())
@@ -185,7 +187,7 @@ runstan <- function(num.clusters, num.units, use.sizes, outcome.type, rootdir,
         samp_params <- get_sampler_params(fit)
         num_div_trans <- 0
         for (s in 1:length(samp_params)) {                                
-          num_div_trans <- num_div_trans + sum(samp_params[[s]][((num.iter/2)+1):num.iter, "divergent__"])
+          num_div_trans <- num_div_trans + sum(samp_params[[s]][((num_iter/2)+1):num_iter, "divergent__"])
         }
         counter <- counter + 1
       } # end while
@@ -193,11 +195,11 @@ runstan <- function(num.clusters, num.units, use.sizes, outcome.type, rootdir,
       if (num_div_trans > 0) {
         cat("----------------------------------------------------------------\n")
         cat("Divergent transitions remain, running NCP version\n")
-        cat("num.clusters =", num.clusters, "num.units=", num.units, "\n")
+        cat("num_clusters =", num_clusters, "num_units=", num_units, "\n")
         stanmod <- readRDS(paste0(rootdir, "/src/analysis/", stanmod_name, "_ncp.rds"))
         expose_stan_functions(stanmod)
         fit <- sampling(stanmod, data = standata,
-                      iter = num.iter, chains = num.chains,
+                      iter = num_iter, chains = num_chains,
                       control = list(stepsize = 0.001, adapt_delta = 0.999))
         print("done fitting stan model")
         print(Sys.time())
@@ -205,7 +207,7 @@ runstan <- function(num.clusters, num.units, use.sizes, outcome.type, rootdir,
         samp_params <- get_sampler_params(fit)
         num_div_trans <- 0
         for (s in 1:length(samp_params)) {                                
-          num_div_trans <- num_div_trans + sum(samp_params[[s]][((num.iter/2)+1):num.iter, "divergent__"])
+          num_div_trans <- num_div_trans + sum(samp_params[[s]][((num_iter/2)+1):num_iter, "divergent__"])
         }
         # try raising adapt_delta if necessary
         ad_val <- 0.999
@@ -215,9 +217,9 @@ runstan <- function(num.clusters, num.units, use.sizes, outcome.type, rootdir,
             ad_val <- ad_val + 9 * (10^(-1*(counter + 3)))
             cat("----------------------------------------------------------------\n")
             cat("Divergent transitions happened for NCP, rerunning with adapt_delta =", ad_val, "\n")
-            cat("num.clusters =", num.clusters, "num.units=", num.units, "\n")
+            cat("num_clusters =", num_clusters, "num_units=", num_units, "\n")
             fit <- sampling(stanmod, data = standata,
-                            iter = num.iter, chains = num.chains,
+                            iter = num_iter, chains = num_chains,
                             control = list(stepsize = 0.001, adapt_delta = ad_val))
             print("done fitting stan model")
             print(Sys.time())
@@ -225,19 +227,19 @@ runstan <- function(num.clusters, num.units, use.sizes, outcome.type, rootdir,
             samp_params <- get_sampler_params(fit)
             num_div_trans <- 0
             for (s in 1:length(samp_params)) {                                
-              num_div_trans <- num_div_trans + sum(samp_params[[s]][((num.iter/2)+1):num.iter, "divergent__"])
+              num_div_trans <- num_div_trans + sum(samp_params[[s]][((num_iter/2)+1):num_iter, "divergent__"])
             }
             counter <- counter + 1
           } # end while
           # if we *still* have divergent transitions, give up
           if (num_div_trans > 0) {
             cat("Unable to get rid of divergent transitions :( \n")
-            cat("num.clusters =", num.clusters, "num.units=", num.units, "\n")
-            out_msg <- paste0("There were ", num_div_trans, " divergent transitions.")
+            cat("num_clusters =", num_clusters, "num_units=", num_units, "\n")
+            out_msg <- paste0("There were ", num_div_trans, " divergent transitions_")
             saveRDS(out_msg,
                     paste0(rootdir, "output/simulation/stan_results_usesizes_",
-                           use.sizes, "_", outcome.type, "_", model_name, 
-                           "_nclusters_", num.clusters,
+                           use_sizes, "_", outcome_type, "_", size_model, "_",
+                           model_name, "_nclusters_", num_clusters,
                            "_nunits_", nunits, "_sim_", simno, ".rds"))
             return(NULL)
           } # end if for num_div_trans > 0 after ncp
@@ -247,10 +249,9 @@ runstan <- function(num.clusters, num.units, use.sizes, outcome.type, rootdir,
 
     if (simno == 1) {
       saveRDS(fit, file = paste0(rootdir, "/output/simulation/stanfit_usesizes_",
-                                 use.sizes, "_", outcome.type,
-                                 "_nclusters_", num.clusters,
-                                 "_nunits_", nunits, "_simno_", simno, "_",
-                                 model_name, ".rds"))
+                                 use_sizes, "_", outcome_type, "_", size_model,
+                                  "_", model_name, "_nclusters_", num_clusters,
+                                 "_nunits_", nunits, "_simno_", simno,".rds"))
       print("done saving stanfit object")
       print(Sys.time())
     }
@@ -299,12 +300,12 @@ runstan <- function(num.clusters, num.units, use.sizes, outcome.type, rootdir,
 
   print("making par_ests")
   print(Sys.time())
-  par_ests.rownames <- attr(par_ests, "dimnames")[[1]]
-  par_ests.rownames <- gsub("\\[", "", par_ests.rownames) 
-  par_ests.rownames <- gsub("\\]", "", par_ests.rownames) 
-  par_ests.colnames <- attr(par_ests, "dimnames")[[2]]
-  par_ests <- data.frame(par_ests, row.names = par_ests.rownames)
-  colnames(par_ests) <- par_ests.colnames
+  par_ests_rownames <- attr(par_ests, "dimnames")[[1]]
+  par_ests_rownames <- gsub("\\[", "", par_ests_rownames) 
+  par_ests_rownames <- gsub("\\]", "", par_ests_rownames) 
+  par_ests_colnames <- attr(par_ests, "dimnames")[[2]]
+  par_ests <- data.frame(par_ests, row_names = par_ests_rownames)
+  colnames(par_ests) <- par_ests_colnames
 
   print("printing par_ests")
   print(Sys.time())      
@@ -492,10 +493,9 @@ runstan <- function(num.clusters, num.units, use.sizes, outcome.type, rootdir,
       ylab("Density") +
       ggtitle(paste0("Model: ", stanmod_name)) +
       theme_bw()
-    ggsave(plt, file = paste0(rootdir, "/output/figures/Nj_draws_",
-                              model_name, "_",
-                              use.sizes, "_", outcome.type,
-                              "_nclusters_", num.clusters,
+    ggsave(plt, file = paste0(rootdir, "/output/figures/Nj_draws_usesizes_",
+                              use_sizes, "_", outcome_type, "_", size_model,
+                              model_name, "_", "_nclusters_", num_clusters,
                               "_nunits_", nunits, "_sim_", simno, ".pdf"),
            width = 10, height = 8)
   }
@@ -504,7 +504,7 @@ runstan <- function(num.clusters, num.units, use.sizes, outcome.type, rootdir,
   ### Plot draws of ybar_new
   ##########################################
   if (simno == 1) {
-    tmpdf <- data.frame(ybar_new, truth = ybar.true)
+    tmpdf <- data.frame(ybar_new, truth = ybar_true)
     plt <- ggplot(tmpdf, aes(x = ybar_new)) +
       geom_vline(aes(xintercept = truth), colour = "grey80") +
       geom_line(stat = "density") +
@@ -512,10 +512,9 @@ runstan <- function(num.clusters, num.units, use.sizes, outcome.type, rootdir,
       ylab("Density") +
       ggtitle(paste0("Model: ", stanmod_name)) +
       theme_bw()
-    ggsave(plt, file = paste0(rootdir, "/output/figures/ybar_new_draws_",
-                              model_name, "_",
-                              use.sizes, "_", outcome.type,
-                              "_nclusters_", num.clusters,
+    ggsave(plt, file = paste0(rootdir, "/output/figures/ybar_new_draws_usesizes_",
+                              use_sizes, "_", outcome_type, "_", size_model,
+                              model_name, "_", "_nclusters_", num_clusters,
                               "_nunits_", nunits, "_sim_", simno, ".pdf"),
            width = 10, height = 8)
   }
@@ -535,7 +534,7 @@ runstan <- function(num.clusters, num.units, use.sizes, outcome.type, rootdir,
                        p50 = quantile(ybar_new, 0.50),
                        p75 = quantile(ybar_new, 0.75),
                        p975 = quantile(ybar_new, 0.975)) -> draw_summ
-    draw_summ$truth <- ybar.true
+    draw_summ$truth <- ybar_true
   } else {
     Nj_new_df %>%
       dplyr::group_by(cluster_id) %>%
@@ -543,7 +542,7 @@ runstan <- function(num.clusters, num.units, use.sizes, outcome.type, rootdir,
     Nj_new_means$truth <- Nj_pop
 
     true_vals <- data.frame(param = c("N_new", "ybar_new"),
-                            truth = c(N, ybar.true))
+                            truth = c(N, ybar_true))
     tmp <- data.frame(N_new, ybar_new, draw_num = c(1:num_draws))
     tmp %>%
       tidyr::gather(key = param, value = value, -draw_num) %>%
@@ -559,13 +558,13 @@ runstan <- function(num.clusters, num.units, use.sizes, outcome.type, rootdir,
   }
   print(draw_summ)
   print(warnings())
-  results.list <- list(par_ests = par_ests, Nj_new_means = Nj_new_means,
+  results_list <- list(par_ests = par_ests, Nj_new_means = Nj_new_means,
                        draw_summ = draw_summ)
-  saveRDS(results.list,
+  saveRDS(results_list,
           paste0(rootdir, "output/simulation/stan_results_usesizes_",
-                 use.sizes, "_", outcome.type, "_", model_name, 
-                 "_nclusters_", num.clusters,
-                 "_nunits_", nunits, "_sim_", simno, ".rds"))
+                 use_sizes, "_", outcome_type, "_", size_model, "_", model_name,
+                 "_nclusters_", num_clusters, "_nunits_", nunits,
+                 "_sim_", simno, ".rds"))
 
   return(NULL)
 }

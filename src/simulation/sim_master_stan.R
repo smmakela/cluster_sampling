@@ -1,12 +1,13 @@
 #!/usr/bin/R Rscript
 
 '
-Usage: sim_master_stan.R  --simno=<simnumber> --use_sizes=<us_val> --outcome_type=<ot_val> --numclusters=<J> --model_name=<modname>
+Usage: sim_master_stan.R [options]
 
 Options:
   -s --simno <simnumber>      Current simulation number
   -u --use_sizes <us_val>     Whether outcomes depend on cluster sizes
   -o --outcome_type <ot_val>  Whether outcomes are continuous or binary
+  -z --size_model <sz_mod>    Model used in creating cluster sizes
   -n --numclusters <J>        Number of clusters in population [default: 100]
   -m --model_name <modname>   Name of stan model being run
 
@@ -31,6 +32,7 @@ Options:
     require(plyr)
     require(dplyr)
     require(tidyr)
+    require(pps)
     require(rstan)
     require(sampling)
 
@@ -60,61 +62,41 @@ Options:
   #############################################################################
   ### Create list of parameters to loop through for sim
   #############################################################################
-    num.clusters.list <- c(5, 10, 20, 30)
-    num.units.list <- c(0.05, 0.1, 0.25, 0.5, 1, 10, 30, 60)
+    num_clusters.list <- c(5, 10, 20, 30)
+    num_units.list <- c(0.05, 0.1, 0.25, 0.5, 1, 10, 30, 60)
     if (outcome_type == "binary") {
       stanmod_name <- paste0(model_name, "_binary")
     } else {
       stanmod_name <- model_name
     }
-    tmplist <- list(num.clusters.list = num.clusters.list,
-                    num.units.list    = num.units.list)
+    tmplist <- list(num_clusters.list = num_clusters.list,
+                    num_units.list    = num_units.list)
     sim.params <- expand.grid(tmplist)
 
   #############################################################################
   ### Loop through cluster/unit lists
   #############################################################################
-    outcome.type <- outcome_type
-    use.sizes <- use_sizes
     cat("##################################################################################\n")
     cat("##################################################################################\n")
-    cat("THIS FILE: use.sizes =", use.sizes, ", stanmod =", stanmod_name, "\n")
+    cat("THIS FILE: use_sizes =", use_sizes, ", outcome_type =", outcome_type,
+        ", size_model =", size_model, ", stanmod =", stanmod_name, "\n")
     print(Sys.time())
 
-    for (k in 1:nrow(sim.params)) {
-      # Set parameters for this simulation
-      num.clusters <- sim.params[k, "num.clusters.list"]
-      num.units    <- sim.params[k, "num.units.list"]
-
-      # If the file exists, skip it
-      if (num.units <= 1) {
-        nunits <- paste(100*num.units, "pct", sep = "")
-      } else {
-        nunits <- num.units
-      }
-      fil <- paste0(rootdir, "output/simulation/stan_results_usesizes_",
-                    use.sizes, "_", outcome.type, "_", model_name, 
-                    "_nclusters_", num.clusters,
-                    "_nunits_", nunits, "_sim_", simno, ".rds")
-      if (file.exists(fil)) {
-        cat("----------------------------------------------------\n")
-        cat("This file already exists, next!\n")
-        cat(fil, "\n")
-        cat("----------------------------------------------------\n")
-        next
-      }
+    if (size_model == "ff") {
+      num_clusters <- 16
+      num_units <- 99
 
       # Print a message about which parameters we're running now
       cat("CURRENTLY ON:", 
-          "num.clusters =", num.clusters,
-          ", num.units =", num.units,
-          "use.sizes =", use.sizes,
+          ", use_sizes =", use_sizes,
+          ", size_model =", size_model,
           ", stanmod =", stanmod_name, "\n")
   
       # Sample data using above parameters
       cat("Sampling data\n")
       print(Sys.time())
-      sim.data <- sampledata(num.clusters, num.units, use.sizes, outcome.type)
+      sim_data <- sampledata(num_clusters, num_units, use_sizes, outcome_type,
+                             size_model)
       cat("DONE sampling\n")
  
       # Run stan model
@@ -122,28 +104,80 @@ Options:
       print(Sys.time())
       stanmod <- readRDS(paste0(rootdir, "/src/analysis/", stanmod_name, ".rds"))
       print(Sys.time())
-      stan_res <- runstan(num.clusters, num.units, use.sizes, outcome.type,
-                          rootdir, simno, stanmod, stanmod_name, sim.data,
-                          num.iter = 1000, num.chains = 4)
+      stan_res <- runstan(num_clusters, num_units, use_sizes, outcome_type,
+                          size_model, rootdir, simno, stanmod, stanmod_name,
+                          sim_data, num_iter = 1000, num_chains = 4)
       cat("##################################################################################\n")
       print(warnings()) 
-    } # end sim parameters loop
+    } else {
+      for (k in 1:nrow(sim.params)) {
+        # Set parameters for this simulation
+        num_clusters <- sim.params[k, "num_clusters.list"]
+        num_units    <- sim.params[k, "num_units.list"]
 
+        # If the file exists, skip it
+        if (num_units <= 1) {
+          nunits <- paste(100*num_units, "pct", sep = "")
+        } else {
+          nunits <- num_units
+        }
+        fil <- paste0(rootdir, "output/simulation/stan_results_usesizes_",
+                      use_sizes, "_", outcome_type, "_", size_model, "_",
+                      model_name, "_nclusters_", num_clusters,
+                      "_nunits_", nunits, "_sim_", simno, ".rds")
+        if (file.exists(fil)) {
+          cat("----------------------------------------------------\n")
+          cat("This file already exists, next!\n")
+          cat(fil, "\n")
+          cat("----------------------------------------------------\n")
+          next
+        }
+
+        # Print a message about which parameters we're running now
+        cat("CURRENTLY ON:", 
+            "num_clusters =", num_clusters,
+            ", num_units =", num_units,
+            ", use_sizes =", use_sizes,
+            ", size_model =", size_model,
+            ", stanmod =", stanmod_name, "\n")
+  
+        # Sample data using above parameters
+        cat("Sampling data\n")
+        print(Sys.time())
+        sim_data <- sampledata(num_clusters, num_units, use_sizes, outcome_type,
+                               size_model)
+        cat("DONE sampling\n")
+ 
+        # Run stan model
+        cat("Running stan\n")
+        print(Sys.time())
+        stanmod <- readRDS(paste0(rootdir, "/src/analysis/", stanmod_name, ".rds"))
+        print(Sys.time())
+        stan_res <- runstan(num_clusters, num_units, use_sizes, outcome_type,
+                            size_model, rootdir, simno, stanmod, stanmod_name,
+                            sim_data, num_iter = 1000, num_chains = 4)
+        cat("##################################################################################\n")
+        print(warnings()) 
+      } # end sim parameters loop
+    } # end if size_model = "ff" statement
 
   #############################################################################
   ### Check whether all files were successfully created
   #############################################################################
   # Count the number of results files created by this file
     res.path <- paste0(rootdir, "output/simulation/")
-    res.pattern <- paste0("stan_results_usesizes_", use.sizes, "_", outcome.type,
-                          "_", model_name, ".*_sim_", simno, ".rds")
+    res.pattern <- paste0("stan_results_usesizes_", use_sizes, "_", outcome_type,
+                          "_", size_model, "_", model_name, ".*_sim_", simno, ".rds")
     sim.files <- list.files(path = res.path, pattern = res.pattern)
-    if (length(sim.files) == nrow(sim.params)) {
+    cat("length(sim.files)=", length(sim.files), "\n")
+    if ((size_model != "ff" & length(sim.files) == nrow(sim.params)) | 
+        (size_model == "ff" & length(sim.files) == 1)) {
       sink(paste0(rootdir, "output/simulation/stan_check_usesizes_",
-                  use.sizes, "_", outcome.type, "_", model_name,
+                  use_sizes, "_", outcome_type, "_", size_model, "_", model_name,
                   "_sim_", simno, ".txt"), split = FALSE)
       cat("Success! All", length(sim.files), "files cleared successfully!\n")
       print(sim.files)
       sink()
     }
+
 

@@ -1,5 +1,14 @@
+Loading required package: docopt
+Loading required package: methods
+Loading required package: plyr
+Loading required package: dplyr
 
 Attaching package: ‘dplyr’
+
+The following objects are masked from ‘package:plyr’:
+
+    arrange, count, desc, failwith, id, mutate, rename, summarise,
+    summarize
 
 The following objects are masked from ‘package:stats’:
 
@@ -9,191 +18,298 @@ The following objects are masked from ‘package:base’:
 
     intersect, setdiff, setequal, union
 
-[1] "2017-05-23 12:32:55 EDT"
-#####################################################################
-#####################################################################
-Compiling true values
-[1] "params.true:"
-   use.sizes outcome.type  param.name        true
-1          0   continuous      alpha0 -0.54070098
-2          0   continuous      gamma0  0.00000000
-3          0   continuous      alpha1 -0.46997296
-4          0   continuous      gamma1  0.00000000
-5          0   continuous sigma_beta0  0.48805033
-6          0   continuous sigma_beta1  0.06212587
-7          0   continuous     sigma_y  0.72801424
-8          0   continuous   ybar_true -0.57933189
-9          0       binary      alpha0  0.84287662
-10         0       binary      gamma0  0.00000000
-11         0       binary sigma_beta0  1.11463503
-12         0       binary   ybar_true  0.66010396
-13         1   continuous      alpha0 -1.16218547
-14         1   continuous      gamma0  1.66599141
-15         1   continuous      alpha1 -0.52139856
-16         1   continuous      gamma1  0.26877299
-17         1   continuous sigma_beta0  0.23847592
-18         1   continuous sigma_beta1  0.93446940
-19         1   continuous     sigma_y  0.75602475
-20         1   continuous   ybar_true -0.65676602
-21         1       binary      alpha0 -1.06095197
-22         1       binary      gamma0  1.52515808
-23         1       binary sigma_beta0  0.60951481
-24         1       binary   ybar_true  0.40367146
-[1] "Mj.true.summ:"
-   use.sizes outcome.type stat       true
-1          0   continuous  sum 52577.0000
-2          0       binary  sum 49827.0000
-3          1   continuous  sum 44302.0000
-4          1       binary  sum 52840.0000
-5          0   continuous mean   525.7700
-6          0       binary mean   498.2700
-7          1   continuous mean   443.0200
-8          1       binary mean   528.4000
-9          0   continuous   sd   332.6678
-10         0       binary   sd   279.6675
-11         1   continuous   sd   256.3386
-12         1       binary   sd   312.8210
-13         0   continuous p025   152.6500
-14         0       binary p025   142.0250
-15         1   continuous p025   139.3750
-16         1       binary p025   156.4750
-17         0   continuous  p25   267.5000
-18         0       binary  p25   291.7500
-19         1   continuous  p25   245.7500
-20         1       binary  p25   299.2500
-21         0   continuous  p50   419.0000
-22         0       binary  p50   431.5000
-23         1   continuous  p50   398.0000
-24         1       binary  p50   431.0000
-25         0   continuous  p75   644.2500
-26         0       binary  p75   670.7500
-27         1   continuous  p75   554.7500
-28         1       binary  p75   676.2500
-29         0   continuous p975  1442.7500
-30         0       binary p975  1083.0250
-31         1   continuous p975  1087.2750
-32         1       binary p975  1307.1000
-[1] "ybar.true:"
-  use.sizes outcome.type  ybar_true
-1         0   continuous -0.5793319
-2         0       binary  0.6601040
-3         1   continuous -0.6567660
-4         1       binary  0.4036715
-[1] "2017-05-23 12:32:55 EDT"
-#####################################################################
-#####################################################################
- Now doing STAN files
-Currently on:  500  of  63544  stan files.
-stan_results_usesizes_0_binary_bb_nclusters_10_nunits_30_sim_99.rds 
-Currently on:  1000  of  63544  stan files.
-stan_results_usesizes_0_binary_bb_nclusters_20_nunits_100pct_sim_99.rds 
-Currently on:  1500  of  63544  stan files.
-stan_results_usesizes_0_binary_bb_nclusters_20_nunits_5pct_sim_99.rds 
-Currently on:  2000  of  63544  stan files.
-stan_results_usesizes_0_binary_bb_nclusters_30_nunits_25pct_sim_99.rds 
-Currently on:  2500  of  63544  stan files.
-stan_results_usesizes_0_binary_bb_nclusters_5_nunits_10_sim_99.rds 
-Currently on:  3000  of  63544  stan files.
-stan_results_usesizes_0_binary_bb_nclusters_5_nunits_50pct_sim_99.rds 
-Currently on:  3500  of  63544  stan files.
-stan_results_usesizes_0_binary_cluster_inds_only_nclusters_10_nunits_10pct_sim_99.rds 
-Currently on:  4000  of  63544  stan files.
-stan_results_usesizes_0_binary_cluster_inds_only_nclusters_10_nunits_60_sim_99.rds 
-Currently on:  4500  of  63544  stan files.
-stan_results_usesizes_0_binary_cluster_inds_only_nclusters_20_nunits_30_sim_99.rds 
-Currently on:  5000  of  63544  stan files.
-stan_results_usesizes_0_binary_cluster_inds_only_nclusters_30_nunits_100pct_sim_99.rds 
-Currently on:  5500  of  63544  stan files.
-stan_results_usesizes_0_binary_cluster_inds_only_nclusters_30_nunits_5pct_sim_99.rds 
-Currently on:  6000  of  63544  stan files.
-stan_results_usesizes_0_binary_cluster_inds_only_nclusters_5_nunits_25pct_sim_99.rds 
-Currently on:  6500  of  63544  stan files.
-stan_results_usesizes_0_binary_knowsizes_nclusters_10_nunits_10_sim_99.rds 
-Currently on:  7000  of  63544  stan files.
-stan_results_usesizes_0_binary_knowsizes_nclusters_10_nunits_5pct_sim_100.rds 
-Currently on:  7500  of  63544  stan files.
-stan_results_usesizes_0_binary_knowsizes_nclusters_20_nunits_25pct_sim_14.rds 
-Currently on:  8000  of  63544  stan files.
-stan_results_usesizes_0_binary_knowsizes_nclusters_30_nunits_10_sim_21.rds 
-Currently on:  8500  of  63544  stan files.
-stan_results_usesizes_0_binary_knowsizes_nclusters_30_nunits_50pct_sim_24.rds 
-Currently on:  9000  of  63544  stan files.
-stan_results_usesizes_0_binary_knowsizes_nclusters_5_nunits_10pct_sim_28.rds 
-Currently on:  9500  of  63544  stan files.
-stan_results_usesizes_0_binary_knowsizes_nclusters_5_nunits_60_sim_3.rds 
-Currently on:  10000  of  63544  stan files.
-stan_results_usesizes_0_binary_lognormal_nclusters_10_nunits_30_sim_33.rds 
-Currently on:  10500  of  63544  stan files.
-stan_results_usesizes_0_binary_lognormal_nclusters_20_nunits_100pct_sim_35.rds 
-Currently on:  11000  of  63544  stan files.
-stan_results_usesizes_0_binary_lognormal_nclusters_20_nunits_5pct_sim_37.rds 
-Currently on:  11500  of  63544  stan files.
-stan_results_usesizes_0_binary_lognormal_nclusters_30_nunits_25pct_sim_39.rds 
-Currently on:  12000  of  63544  stan files.
-stan_results_usesizes_0_binary_lognormal_nclusters_5_nunits_10_sim_42.rds 
-Currently on:  12500  of  63544  stan files.
-stan_results_usesizes_0_binary_lognormal_nclusters_5_nunits_50pct_sim_43.rds 
-Currently on:  13000  of  63544  stan files.
-stan_results_usesizes_0_binary_negbin_nclusters_10_nunits_10pct_sim_45.rds 
-Currently on:  13500  of  63544  stan files.
-stan_results_usesizes_0_binary_negbin_nclusters_10_nunits_60_sim_47.rds 
-Currently on:  14000  of  63544  stan files.
-stan_results_usesizes_0_binary_negbin_nclusters_20_nunits_30_sim_49.rds 
-Currently on:  14500  of  63544  stan files.
-stan_results_usesizes_0_binary_negbin_nclusters_30_nunits_100pct_sim_51.rds 
-Currently on:  15000  of  63544  stan files.
-stan_results_usesizes_0_binary_negbin_nclusters_30_nunits_5pct_sim_53.rds 
-Currently on:  15500  of  63544  stan files.
-stan_results_usesizes_0_binary_negbin_nclusters_5_nunits_25pct_sim_55.rds 
-Currently on:  16000  of  63544  stan files.
-stan_results_usesizes_0_continuous_bb_nclusters_10_nunits_10_sim_58.rds 
-Currently on:  16500  of  63544  stan files.
-stan_results_usesizes_0_continuous_bb_nclusters_10_nunits_50pct_sim_58.rds 
-Currently on:  17000  of  63544  stan files.
-stan_results_usesizes_0_continuous_bb_nclusters_20_nunits_10pct_sim_58.rds 
-Currently on:  17500  of  63544  stan files.
-stan_results_usesizes_0_continuous_bb_nclusters_20_nunits_60_sim_58.rds 
-Currently on:  18000  of  63544  stan files.
-stan_results_usesizes_0_continuous_bb_nclusters_30_nunits_30_sim_58.rds 
-Currently on:  18500  of  63544  stan files.
-stan_results_usesizes_0_continuous_bb_nclusters_5_nunits_100pct_sim_58.rds 
-Currently on:  19000  of  63544  stan files.
-stan_results_usesizes_0_continuous_bb_nclusters_5_nunits_5pct_sim_58.rds 
-Currently on:  19500  of  63544  stan files.
-stan_results_usesizes_0_continuous_cluster_inds_only_nclusters_10_nunits_25pct_sim_58.rds 
-Currently on:  20000  of  63544  stan files.
-stan_results_usesizes_0_continuous_cluster_inds_only_nclusters_20_nunits_10_sim_58.rds 
-Currently on:  20500  of  63544  stan files.
-stan_results_usesizes_0_continuous_cluster_inds_only_nclusters_20_nunits_50pct_sim_58.rds 
-Currently on:  21000  of  63544  stan files.
-stan_results_usesizes_0_continuous_cluster_inds_only_nclusters_30_nunits_10pct_sim_58.rds 
-Currently on:  21500  of  63544  stan files.
-stan_results_usesizes_0_continuous_cluster_inds_only_nclusters_30_nunits_60_sim_58.rds 
-Currently on:  22000  of  63544  stan files.
-stan_results_usesizes_0_continuous_cluster_inds_only_nclusters_5_nunits_30_sim_58.rds 
-Currently on:  22500  of  63544  stan files.
-stan_results_usesizes_0_continuous_knowsizes_nclusters_10_nunits_100pct_sim_58.rds 
-Currently on:  23000  of  63544  stan files.
-stan_results_usesizes_0_continuous_knowsizes_nclusters_10_nunits_5pct_sim_58.rds 
-Currently on:  23500  of  63544  stan files.
-stan_results_usesizes_0_continuous_knowsizes_nclusters_20_nunits_25pct_sim_58.rds 
-Currently on:  24000  of  63544  stan files.
-stan_results_usesizes_0_continuous_knowsizes_nclusters_30_nunits_10_sim_58.rds 
-Currently on:  24500  of  63544  stan files.
-stan_results_usesizes_0_continuous_knowsizes_nclusters_30_nunits_50pct_sim_58.rds 
-Currently on:  25000  of  63544  stan files.
-stan_results_usesizes_0_continuous_knowsizes_nclusters_5_nunits_10pct_sim_58.rds 
-Currently on:  25500  of  63544  stan files.
-stan_results_usesizes_0_continuous_knowsizes_nclusters_5_nunits_60_sim_58.rds 
-Currently on:  26000  of  63544  stan files.
-stan_results_usesizes_0_continuous_lognormal_nclusters_10_nunits_30_sim_58.rds 
-Currently on:  26500  of  63544  stan files.
-stan_results_usesizes_0_continuous_lognormal_nclusters_20_nunits_100pct_sim_58.rds 
-Currently on:  27000  of  63544  stan files.
-stan_results_usesizes_0_continuous_lognormal_nclusters_20_nunits_5pct_sim_58.rds 
-Currently on:  27500  of  63544  stan files.
-stan_results_usesizes_0_continuous_lognormal_nclusters_30_nunits_25pct_sim_58.rds 
-Currently on:  28000  of  63544  stan files.
-stan_results_usesizes_0_continuous_lognormal_nclusters_5_nunits_10_sim_58.rds 
-Currently on:  28500  of  63544  stan files.
-stan_results_usesizes_0_continuous_lognormal_nclusters_5_nunits_50pct_sim_58.rds 
+Loading required package: tidyr
+Loading required package: pps
+Loading required package: rstan
+Loading required package: ggplot2
+Loading required package: StanHeaders
+rstan (Version 2.12.1, packaged: 2016-09-11 13:07:50 UTC, GitRev: 85f7a56811da)
+For execution on a local, multicore CPU with excess RAM we recommend calling
+rstan_options(auto_write = TRUE)
+options(mc.cores = parallel::detectCores())
+
+Attaching package: ‘rstan’
+
+The following object is masked from ‘package:tidyr’:
+
+    extract
+
+Loading required package: sampling
+ [1] "--simno"        "--use_sizes"    "--outcome_type" "--size_model"  
+ [5] "--numclusters"  "--model_name"   "simno"          "use_sizes"     
+ [9] "outcome_type"   "size_model"     "numclusters"    "model_name"    
+List of 6
+ $ simno       : chr "1"
+ $ use_sizes   : chr "1"
+ $ outcome_type: chr "continuous"
+ $ size_model  : chr "multinomial"
+ $ numclusters : chr "100"
+ $ model_name  : chr "negbin"
+NULL
+[1] "simno"        "use_sizes"    "outcome_type" "size_model"   "numclusters" 
+[6] "model_name"  
+[1] "Assigning 1 to simno"
+[1] "Assigning 1 to use_sizes"
+[1] "Assigning continuous to outcome_type"
+[1] "Assigning multinomial to size_model"
+[1] "Assigning 100 to numclusters"
+[1] "Assigning negbin to model_name"
+##################################################################################
+##################################################################################
+THIS FILE: use_sizes = 1 , outcome_type = continuous , size_model = multinomial , stanmod = negbin 
+[1] "2017-07-07 14:27:08 EDT"
+CURRENTLY ON: num_clusters = 5 , num_units = 0.05 , use_sizes = 1 , size_model = multinomial , stanmod = negbin 
+Sampling data
+[1] "2017-07-07 14:27:08 EDT"
+DONE sampling
+Running stan
+[1] "2017-07-07 14:27:09 EDT"
+[1] "2017-07-07 14:27:09 EDT"
+[1] "making stan data"
+[1] "2017-07-07 14:27:09 EDT"
+/vega/stats/users/smm2253/rpackages/StanHeaders/include/stan/math/rev/core/set_zero_all_adjoints.hpp:14: warning: ‘void stan::math::set_zero_all_adjoints()’ defined but not used
+List of 8
+ $ J            : num 100
+ $ K            : num 5
+ $ n            : num 84
+ $ x            : num [1:84] 7.46 -8.54 -12.54 -7.54 10.46 ...
+ $ y            : num [1:84] -8.09 7.85 11.96 6.63 -11.22 ...
+ $ cluster_id   : int [1:84] 1 1 1 1 1 1 1 2 2 2 ...
+ $ Nj_sample    : num [1:5] 142 228 240 460 617
+ $ log_Nj_sample: num [1:5] -0.4618 0.0117 0.063 0.7136 1.0072
+NULL
+[1] "2017-07-07 14:27:41 EDT"
+
+SAMPLING FOR MODEL 'negbin' NOW (CHAIN 1).
+
+Chain 1, Iteration:   1 / 1000 [  0%]  (Warmup)
+Chain 1, Iteration: 100 / 1000 [ 10%]  (Warmup)
+Chain 1, Iteration: 200 / 1000 [ 20%]  (Warmup)
+Chain 1, Iteration: 300 / 1000 [ 30%]  (Warmup)
+Chain 1, Iteration: 400 / 1000 [ 40%]  (Warmup)
+Chain 1, Iteration: 500 / 1000 [ 50%]  (Warmup)
+Chain 1, Iteration: 501 / 1000 [ 50%]  (Sampling)
+Chain 1, Iteration: 600 / 1000 [ 60%]  (Sampling)
+Chain 1, Iteration: 700 / 1000 [ 70%]  (Sampling)
+Chain 1, Iteration: 800 / 1000 [ 80%]  (Sampling)
+Chain 1, Iteration: 900 / 1000 [ 90%]  (Sampling)
+Chain 1, Iteration: 1000 / 1000 [100%]  (Sampling)
+ Elapsed Time: 2.22 seconds (Warm-up)
+               0.42 seconds (Sampling)
+               2.64 seconds (Total)
+
+
+SAMPLING FOR MODEL 'negbin' NOW (CHAIN 2).
+
+Chain 2, Iteration:   1 / 1000 [  0%]  (Warmup)
+Chain 2, Iteration: 100 / 1000 [ 10%]  (Warmup)
+Chain 2, Iteration: 200 / 1000 [ 20%]  (Warmup)
+Chain 2, Iteration: 300 / 1000 [ 30%]  (Warmup)
+Chain 2, Iteration: 400 / 1000 [ 40%]  (Warmup)
+Chain 2, Iteration: 500 / 1000 [ 50%]  (Warmup)
+Chain 2, Iteration: 501 / 1000 [ 50%]  (Sampling)
+Chain 2, Iteration: 600 / 1000 [ 60%]  (Sampling)
+Chain 2, Iteration: 700 / 1000 [ 70%]  (Sampling)
+Chain 2, Iteration: 800 / 1000 [ 80%]  (Sampling)
+Chain 2, Iteration: 900 / 1000 [ 90%]  (Sampling)
+Chain 2, Iteration: 1000 / 1000 [100%]  (Sampling)
+ Elapsed Time: 1.28 seconds (Warm-up)
+               0.39 seconds (Sampling)
+               1.67 seconds (Total)
+
+
+SAMPLING FOR MODEL 'negbin' NOW (CHAIN 3).
+
+Chain 3, Iteration:   1 / 1000 [  0%]  (Warmup)
+Chain 3, Iteration: 100 / 1000 [ 10%]  (Warmup)
+Chain 3, Iteration: 200 / 1000 [ 20%]  (Warmup)
+Chain 3, Iteration: 300 / 1000 [ 30%]  (Warmup)
+Chain 3, Iteration: 400 / 1000 [ 40%]  (Warmup)
+Chain 3, Iteration: 500 / 1000 [ 50%]  (Warmup)
+Chain 3, Iteration: 501 / 1000 [ 50%]  (Sampling)
+Chain 3, Iteration: 600 / 1000 [ 60%]  (Sampling)
+Chain 3, Iteration: 700 / 1000 [ 70%]  (Sampling)
+Chain 3, Iteration: 800 / 1000 [ 80%]  (Sampling)
+Chain 3, Iteration: 900 / 1000 [ 90%]  (Sampling)
+Chain 3, Iteration: 1000 / 1000 [100%]  (Sampling)
+ Elapsed Time: 2.07 seconds (Warm-up)
+               0.37 seconds (Sampling)
+               2.44 seconds (Total)
+
+
+SAMPLING FOR MODEL 'negbin' NOW (CHAIN 4).
+
+Chain 4, Iteration:   1 / 1000 [  0%]  (Warmup)
+Chain 4, Iteration: 100 / 1000 [ 10%]  (Warmup)
+Chain 4, Iteration: 200 / 1000 [ 20%]  (Warmup)
+Chain 4, Iteration: 300 / 1000 [ 30%]  (Warmup)
+Chain 4, Iteration: 400 / 1000 [ 40%]  (Warmup)
+Chain 4, Iteration: 500 / 1000 [ 50%]  (Warmup)
+Chain 4, Iteration: 501 / 1000 [ 50%]  (Sampling)
+Chain 4, Iteration: 600 / 1000 [ 60%]  (Sampling)
+Chain 4, Iteration: 700 / 1000 [ 70%]  (Sampling)
+Chain 4, Iteration: 800 / 1000 [ 80%]  (Sampling)
+Chain 4, Iteration: 900 / 1000 [ 90%]  (Sampling)
+Chain 4, Iteration: 1000 / 1000 [100%]  (Sampling)
+ Elapsed Time: 2.12 seconds (Warm-up)
+               0.38 seconds (Sampling)
+               2.5 seconds (Total)
+
+[1] "done fitting stan model"
+[1] "2017-07-07 14:27:50 EDT"
+NULL
+[1] "done saving stanfit object"
+[1] "2017-07-07 14:27:51 EDT"
+[1] "done making samps"
+[1] "2017-07-07 14:27:51 EDT"
+[1] "done making par_ests"
+[1] "2017-07-07 14:27:51 EDT"
+[1] "making par_ests"
+[1] "2017-07-07 14:27:51 EDT"
+[1] "printing par_ests"
+[1] "2017-07-07 14:27:51 EDT"
+'data.frame':	11 obs. of  11 variables:
+ $ mean   : num  -0.717 0.206 -0.907 0.262 0.576 ...
+ $ se_mean: num  0.01018 0.01336 0.00856 0.01188 0.01334 ...
+ $ sd     : num  0.287 0.444 0.229 0.354 0.354 ...
+ $ 2.5%   : num  -1.243 -0.734 -1.276 -0.57 0.22 ...
+ $ 25%    : num  -0.8884 -0.0491 -1.0352 0.0962 0.3478 ...
+ $ 50%    : num  -0.749 0.219 -0.935 0.289 0.481 ...
+ $ 75%    : num  -0.579 0.467 -0.808 0.466 0.692 ...
+ $ 97.5%  : num  -0.021 1.101 -0.358 0.869 1.511 ...
+ $ n_eff  : num  792 1106 714 890 703 ...
+ $ Rhat   : num  1 1 1 1 1.01 ...
+ $ NA     : Factor w/ 11 levels "alpha0","alpha1",..: 1 3 2 4 9 10 11 6 8 5 ...
+NULL
+[1] "summarizing draws"
+# A tibble: 2 x 9
+     param          mean          sd         p025           p25          p50
+     <chr>         <dbl>       <dbl>        <dbl>         <dbl>        <dbl>
+1    N_new 28165.5345000 7578.996703 12507.600000 23477.0000000 28102.000000
+2 ybar_new    -0.5968248    0.318882    -1.177845    -0.7720317    -0.625637
+# ... with 3 more variables: p75 <dbl>, p975 <dbl>, truth <dbl>
+NULL
+##################################################################################
+NULL
+CURRENTLY ON: num_clusters = 10 , num_units = 0.05 , use_sizes = 1 , size_model = multinomial , stanmod = negbin 
+Sampling data
+[1] "2017-07-07 14:28:42 EDT"
+DONE sampling
+Running stan
+[1] "2017-07-07 14:28:42 EDT"
+[1] "2017-07-07 14:28:42 EDT"
+[1] "making stan data"
+[1] "2017-07-07 14:28:42 EDT"
+List of 8
+ $ J            : num 100
+ $ K            : num 10
+ $ n            : num 198
+ $ x            : num [1:198] 1.46 9.46 -8.54 -6.54 2.46 ...
+ $ y            : num [1:198] -3.79 -18.65 13.91 10.4 -5.32 ...
+ $ cluster_id   : int [1:198] 1 1 1 1 2 2 2 2 2 2 ...
+ $ Nj_sample    : num [1:10] 87 171 254 309 327 476 476 502 617 742
+ $ log_Nj_sample: num [1:10] -0.952 -0.276 0.12 0.316 0.372 ...
+NULL
+[1] "2017-07-07 14:28:42 EDT"
+
+SAMPLING FOR MODEL 'negbin' NOW (CHAIN 1).
+
+Chain 1, Iteration:   1 / 1000 [  0%]  (Warmup)
+Chain 1, Iteration: 100 / 1000 [ 10%]  (Warmup)
+Chain 1, Iteration: 200 / 1000 [ 20%]  (Warmup)
+Chain 1, Iteration: 300 / 1000 [ 30%]  (Warmup)
+Chain 1, Iteration: 400 / 1000 [ 40%]  (Warmup)
+Chain 1, Iteration: 500 / 1000 [ 50%]  (Warmup)
+Chain 1, Iteration: 501 / 1000 [ 50%]  (Sampling)
+Chain 1, Iteration: 600 / 1000 [ 60%]  (Sampling)
+Chain 1, Iteration: 700 / 1000 [ 70%]  (Sampling)
+Chain 1, Iteration: 800 / 1000 [ 80%]  (Sampling)
+Chain 1, Iteration: 900 / 1000 [ 90%]  (Sampling)
+Chain 1, Iteration: 1000 / 1000 [100%]  (Sampling)
+ Elapsed Time: 3.81 seconds (Warm-up)
+               0.68 seconds (Sampling)
+               4.49 seconds (Total)
+
+
+SAMPLING FOR MODEL 'negbin' NOW (CHAIN 2).
+
+Chain 2, Iteration:   1 / 1000 [  0%]  (Warmup)
+Chain 2, Iteration: 100 / 1000 [ 10%]  (Warmup)
+Chain 2, Iteration: 200 / 1000 [ 20%]  (Warmup)
+Chain 2, Iteration: 300 / 1000 [ 30%]  (Warmup)
+Chain 2, Iteration: 400 / 1000 [ 40%]  (Warmup)
+Chain 2, Iteration: 500 / 1000 [ 50%]  (Warmup)
+Chain 2, Iteration: 501 / 1000 [ 50%]  (Sampling)
+Chain 2, Iteration: 600 / 1000 [ 60%]  (Sampling)
+Chain 2, Iteration: 700 / 1000 [ 70%]  (Sampling)
+Chain 2, Iteration: 800 / 1000 [ 80%]  (Sampling)
+Chain 2, Iteration: 900 / 1000 [ 90%]  (Sampling)
+Chain 2, Iteration: 1000 / 1000 [100%]  (Sampling)
+ Elapsed Time: 3.67 seconds (Warm-up)
+               0.67 seconds (Sampling)
+               4.34 seconds (Total)
+
+
+SAMPLING FOR MODEL 'negbin' NOW (CHAIN 3).
+
+Chain 3, Iteration:   1 / 1000 [  0%]  (Warmup)
+Chain 3, Iteration: 100 / 1000 [ 10%]  (Warmup)
+Chain 3, Iteration: 200 / 1000 [ 20%]  (Warmup)
+Chain 3, Iteration: 300 / 1000 [ 30%]  (Warmup)
+Chain 3, Iteration: 400 / 1000 [ 40%]  (Warmup)
+Chain 3, Iteration: 500 / 1000 [ 50%]  (Warmup)
+Chain 3, Iteration: 501 / 1000 [ 50%]  (Sampling)
+Chain 3, Iteration: 600 / 1000 [ 60%]  (Sampling)
+Chain 3, Iteration: 700 / 1000 [ 70%]  (Sampling)
+Chain 3, Iteration: 800 / 1000 [ 80%]  (Sampling)
+Chain 3, Iteration: 900 / 1000 [ 90%]  (Sampling)
+Chain 3, Iteration: 1000 / 1000 [100%]  (Sampling)
+ Elapsed Time: 3.38 seconds (Warm-up)
+               0.7 seconds (Sampling)
+               4.08 seconds (Total)
+
+
+SAMPLING FOR MODEL 'negbin' NOW (CHAIN 4).
+
+Chain 4, Iteration:   1 / 1000 [  0%]  (Warmup)
+Chain 4, Iteration: 100 / 1000 [ 10%]  (Warmup)
+Chain 4, Iteration: 200 / 1000 [ 20%]  (Warmup)
+Chain 4, Iteration: 300 / 1000 [ 30%]  (Warmup)
+Chain 4, Iteration: 400 / 1000 [ 40%]  (Warmup)
+Chain 4, Iteration: 500 / 1000 [ 50%]  (Warmup)
+Chain 4, Iteration: 501 / 1000 [ 50%]  (Sampling)
+Chain 4, Iteration: 600 / 1000 [ 60%]  (Sampling)
+Chain 4, Iteration: 700 / 1000 [ 70%]  (Sampling)
+Chain 4, Iteration: 800 / 1000 [ 80%]  (Sampling)
+Chain 4, Iteration: 900 / 1000 [ 90%]  (Sampling)
+Chain 4, Iteration: 1000 / 1000 [100%]  (Sampling)
+ Elapsed Time: 3.5 seconds (Warm-up)
+               0.69 seconds (Sampling)
+               4.19 seconds (Total)
+
+[1] "done fitting stan model"
+[1] "2017-07-07 14:29:00 EDT"
+NULL
+[1] "done saving stanfit object"
+[1] "2017-07-07 14:29:01 EDT"
+[1] "done making samps"
+[1] "2017-07-07 14:29:01 EDT"
+[1] "done making par_ests"
+[1] "2017-07-07 14:29:01 EDT"
+[1] "making par_ests"
+[1] "2017-07-07 14:29:01 EDT"
+[1] "printing par_ests"
+[1] "2017-07-07 14:29:01 EDT"
+'data.frame':	11 obs. of  11 variables:
+ $ mean   : num  -0.998 0.249 -1.274 0.605 0.454 ...
+ $ se_mean: num  0.00511 0.00631 0.00448 0.00598 0.00397 ...
+ $ sd     : num  0.175 0.226 0.16 0.207 0.136 ...
+ $ 2.5%   : num  -1.347 -0.2 -1.578 0.154 0.277 ...
+ $ 25%    : num  -1.109 0.104 -1.374 0.481 0.361 ...
+ $ 50%    : num  -1.002 0.253 -1.281 0.611 0.426 ...
+ $ 75%    : num  -0.892 0.395 -1.185 0.738 0.508 ...
+ $ 97.5%  : num  -0.637 0.692 -0.92 1.012 0.804 ...
+ $ n_eff  : num  1166 1279 1271 1196 1170 ...
+ $ Rhat   : num  0.999 1.002 1.002 1.002 1.001 ...
+ $ NA     : Factor w/ 11 levels "alpha0","alpha1",..: 1 3 2 4 9 10 11 6 8 5 ...
+NULL
