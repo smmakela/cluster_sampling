@@ -42,7 +42,7 @@ List of 6
  $ simno       : chr "1"
  $ use_sizes   : chr "1"
  $ outcome_type: chr "continuous"
- $ size_model  : chr "multinomial"
+ $ size_model  : chr "ff"
  $ numclusters : chr "100"
  $ model_name  : chr "negbin"
 NULL
@@ -51,36 +51,45 @@ NULL
 [1] "Assigning 1 to simno"
 [1] "Assigning 1 to use_sizes"
 [1] "Assigning continuous to outcome_type"
-[1] "Assigning multinomial to size_model"
+[1] "Assigning ff to size_model"
 [1] "Assigning 100 to numclusters"
 [1] "Assigning negbin to model_name"
 ##################################################################################
 ##################################################################################
-THIS FILE: use_sizes = 1 , outcome_type = continuous , size_model = multinomial , stanmod = negbin 
-[1] "2017-07-07 14:27:08 EDT"
-CURRENTLY ON: num_clusters = 5 , num_units = 0.05 , use_sizes = 1 , size_model = multinomial , stanmod = negbin 
+THIS FILE: use_sizes = 1 , outcome_type = continuous , size_model = ff , stanmod = negbin 
+[1] "2017-07-12 10:39:25 EDT"
+CURRENTLY ON: , use_sizes = 1 , size_model = ff , stanmod = negbin_ff 
 Sampling data
-[1] "2017-07-07 14:27:08 EDT"
+[1] "2017-07-12 10:39:25 EDT"
 DONE sampling
 Running stan
-[1] "2017-07-07 14:27:09 EDT"
-[1] "2017-07-07 14:27:09 EDT"
+[1] "2017-07-12 10:39:33 EDT"
+[1] "2017-07-12 10:39:33 EDT"
 [1] "making stan data"
-[1] "2017-07-07 14:27:09 EDT"
+[1] "2017-07-12 10:39:33 EDT"
 /vega/stats/users/smm2253/rpackages/StanHeaders/include/stan/math/rev/core/set_zero_all_adjoints.hpp:14: warning: ‘void stan::math::set_zero_all_adjoints()’ defined but not used
-List of 8
- $ J            : num 100
- $ K            : num 5
- $ n            : num 84
- $ x            : num [1:84] 7.46 -8.54 -12.54 -7.54 10.46 ...
- $ y            : num [1:84] -8.09 7.85 11.96 6.63 -11.22 ...
- $ cluster_id   : int [1:84] 1 1 1 1 1 1 1 2 2 2 ...
- $ Nj_sample    : num [1:5] 142 228 240 460 617
- $ log_Nj_sample: num [1:5] -0.4618 0.0117 0.063 0.7136 1.0072
+List of 11
+ $ J             : num 77
+ $ K             : num 16
+ $ n             : int 3400
+ $ x             : num [1:3400] -12.49 2.51 -6.49 -10.49 -1.49 ...
+ $ y             : num [1:3400] 21.6 -2.65 11.74 17.97 3.2 ...
+ $ cluster_id    : int [1:3400] 1 1 1 1 1 1 1 1 1 1 ...
+ $ Nj_sample     : int [1:16] 752 514 617 817 201 275 493 7333 992 2732 ...
+ $ log_Nj_sample : num [1:16] 0.518 0.137 0.32 0.601 -0.802 ...
+ $ stratum_id    : int [1:16] 1 2 3 4 5 6 7 8 9 9 ...
+ $ S             : num 9
+ $ stratum_matrix: num [1:16, 1:9] 1 0 0 0 0 0 0 0 0 0 ...
+  ..- attr(*, "dimnames")=List of 2
+  .. ..$ : chr [1:16] "1" "2" "3" "4" ...
+  .. ..$ : chr [1:9] "factor(stratum_id)1" "factor(stratum_id)2" "factor(stratum_id)3" "factor(stratum_id)4" ...
+  ..- attr(*, "assign")= int [1:9] 1 1 1 1 1 1 1 1 1
+  ..- attr(*, "contrasts")=List of 1
+  .. ..$ factor(stratum_id): chr "contr.treatment"
 NULL
-[1] "2017-07-07 14:27:41 EDT"
+[1] "2017-07-12 10:40:10 EDT"
 
-SAMPLING FOR MODEL 'negbin' NOW (CHAIN 1).
+SAMPLING FOR MODEL 'negbin_ff' NOW (CHAIN 1).
 
 Chain 1, Iteration:   1 / 1000 [  0%]  (Warmup)
 Chain 1, Iteration: 100 / 1000 [ 10%]  (Warmup)
@@ -94,144 +103,12 @@ Chain 1, Iteration: 700 / 1000 [ 70%]  (Sampling)
 Chain 1, Iteration: 800 / 1000 [ 80%]  (Sampling)
 Chain 1, Iteration: 900 / 1000 [ 90%]  (Sampling)
 Chain 1, Iteration: 1000 / 1000 [100%]  (Sampling)
- Elapsed Time: 2.22 seconds (Warm-up)
-               0.42 seconds (Sampling)
-               2.64 seconds (Total)
+ Elapsed Time: 165.62 seconds (Warm-up)
+               188.83 seconds (Sampling)
+               354.45 seconds (Total)
 
 
-SAMPLING FOR MODEL 'negbin' NOW (CHAIN 2).
-
-Chain 2, Iteration:   1 / 1000 [  0%]  (Warmup)
-Chain 2, Iteration: 100 / 1000 [ 10%]  (Warmup)
-Chain 2, Iteration: 200 / 1000 [ 20%]  (Warmup)
-Chain 2, Iteration: 300 / 1000 [ 30%]  (Warmup)
-Chain 2, Iteration: 400 / 1000 [ 40%]  (Warmup)
-Chain 2, Iteration: 500 / 1000 [ 50%]  (Warmup)
-Chain 2, Iteration: 501 / 1000 [ 50%]  (Sampling)
-Chain 2, Iteration: 600 / 1000 [ 60%]  (Sampling)
-Chain 2, Iteration: 700 / 1000 [ 70%]  (Sampling)
-Chain 2, Iteration: 800 / 1000 [ 80%]  (Sampling)
-Chain 2, Iteration: 900 / 1000 [ 90%]  (Sampling)
-Chain 2, Iteration: 1000 / 1000 [100%]  (Sampling)
- Elapsed Time: 1.28 seconds (Warm-up)
-               0.39 seconds (Sampling)
-               1.67 seconds (Total)
-
-
-SAMPLING FOR MODEL 'negbin' NOW (CHAIN 3).
-
-Chain 3, Iteration:   1 / 1000 [  0%]  (Warmup)
-Chain 3, Iteration: 100 / 1000 [ 10%]  (Warmup)
-Chain 3, Iteration: 200 / 1000 [ 20%]  (Warmup)
-Chain 3, Iteration: 300 / 1000 [ 30%]  (Warmup)
-Chain 3, Iteration: 400 / 1000 [ 40%]  (Warmup)
-Chain 3, Iteration: 500 / 1000 [ 50%]  (Warmup)
-Chain 3, Iteration: 501 / 1000 [ 50%]  (Sampling)
-Chain 3, Iteration: 600 / 1000 [ 60%]  (Sampling)
-Chain 3, Iteration: 700 / 1000 [ 70%]  (Sampling)
-Chain 3, Iteration: 800 / 1000 [ 80%]  (Sampling)
-Chain 3, Iteration: 900 / 1000 [ 90%]  (Sampling)
-Chain 3, Iteration: 1000 / 1000 [100%]  (Sampling)
- Elapsed Time: 2.07 seconds (Warm-up)
-               0.37 seconds (Sampling)
-               2.44 seconds (Total)
-
-
-SAMPLING FOR MODEL 'negbin' NOW (CHAIN 4).
-
-Chain 4, Iteration:   1 / 1000 [  0%]  (Warmup)
-Chain 4, Iteration: 100 / 1000 [ 10%]  (Warmup)
-Chain 4, Iteration: 200 / 1000 [ 20%]  (Warmup)
-Chain 4, Iteration: 300 / 1000 [ 30%]  (Warmup)
-Chain 4, Iteration: 400 / 1000 [ 40%]  (Warmup)
-Chain 4, Iteration: 500 / 1000 [ 50%]  (Warmup)
-Chain 4, Iteration: 501 / 1000 [ 50%]  (Sampling)
-Chain 4, Iteration: 600 / 1000 [ 60%]  (Sampling)
-Chain 4, Iteration: 700 / 1000 [ 70%]  (Sampling)
-Chain 4, Iteration: 800 / 1000 [ 80%]  (Sampling)
-Chain 4, Iteration: 900 / 1000 [ 90%]  (Sampling)
-Chain 4, Iteration: 1000 / 1000 [100%]  (Sampling)
- Elapsed Time: 2.12 seconds (Warm-up)
-               0.38 seconds (Sampling)
-               2.5 seconds (Total)
-
-[1] "done fitting stan model"
-[1] "2017-07-07 14:27:50 EDT"
-NULL
-[1] "done saving stanfit object"
-[1] "2017-07-07 14:27:51 EDT"
-[1] "done making samps"
-[1] "2017-07-07 14:27:51 EDT"
-[1] "done making par_ests"
-[1] "2017-07-07 14:27:51 EDT"
-[1] "making par_ests"
-[1] "2017-07-07 14:27:51 EDT"
-[1] "printing par_ests"
-[1] "2017-07-07 14:27:51 EDT"
-'data.frame':	11 obs. of  11 variables:
- $ mean   : num  -0.717 0.206 -0.907 0.262 0.576 ...
- $ se_mean: num  0.01018 0.01336 0.00856 0.01188 0.01334 ...
- $ sd     : num  0.287 0.444 0.229 0.354 0.354 ...
- $ 2.5%   : num  -1.243 -0.734 -1.276 -0.57 0.22 ...
- $ 25%    : num  -0.8884 -0.0491 -1.0352 0.0962 0.3478 ...
- $ 50%    : num  -0.749 0.219 -0.935 0.289 0.481 ...
- $ 75%    : num  -0.579 0.467 -0.808 0.466 0.692 ...
- $ 97.5%  : num  -0.021 1.101 -0.358 0.869 1.511 ...
- $ n_eff  : num  792 1106 714 890 703 ...
- $ Rhat   : num  1 1 1 1 1.01 ...
- $ NA     : Factor w/ 11 levels "alpha0","alpha1",..: 1 3 2 4 9 10 11 6 8 5 ...
-NULL
-[1] "summarizing draws"
-# A tibble: 2 x 9
-     param          mean          sd         p025           p25          p50
-     <chr>         <dbl>       <dbl>        <dbl>         <dbl>        <dbl>
-1    N_new 28165.5345000 7578.996703 12507.600000 23477.0000000 28102.000000
-2 ybar_new    -0.5968248    0.318882    -1.177845    -0.7720317    -0.625637
-# ... with 3 more variables: p75 <dbl>, p975 <dbl>, truth <dbl>
-NULL
-##################################################################################
-NULL
-CURRENTLY ON: num_clusters = 10 , num_units = 0.05 , use_sizes = 1 , size_model = multinomial , stanmod = negbin 
-Sampling data
-[1] "2017-07-07 14:28:42 EDT"
-DONE sampling
-Running stan
-[1] "2017-07-07 14:28:42 EDT"
-[1] "2017-07-07 14:28:42 EDT"
-[1] "making stan data"
-[1] "2017-07-07 14:28:42 EDT"
-List of 8
- $ J            : num 100
- $ K            : num 10
- $ n            : num 198
- $ x            : num [1:198] 1.46 9.46 -8.54 -6.54 2.46 ...
- $ y            : num [1:198] -3.79 -18.65 13.91 10.4 -5.32 ...
- $ cluster_id   : int [1:198] 1 1 1 1 2 2 2 2 2 2 ...
- $ Nj_sample    : num [1:10] 87 171 254 309 327 476 476 502 617 742
- $ log_Nj_sample: num [1:10] -0.952 -0.276 0.12 0.316 0.372 ...
-NULL
-[1] "2017-07-07 14:28:42 EDT"
-
-SAMPLING FOR MODEL 'negbin' NOW (CHAIN 1).
-
-Chain 1, Iteration:   1 / 1000 [  0%]  (Warmup)
-Chain 1, Iteration: 100 / 1000 [ 10%]  (Warmup)
-Chain 1, Iteration: 200 / 1000 [ 20%]  (Warmup)
-Chain 1, Iteration: 300 / 1000 [ 30%]  (Warmup)
-Chain 1, Iteration: 400 / 1000 [ 40%]  (Warmup)
-Chain 1, Iteration: 500 / 1000 [ 50%]  (Warmup)
-Chain 1, Iteration: 501 / 1000 [ 50%]  (Sampling)
-Chain 1, Iteration: 600 / 1000 [ 60%]  (Sampling)
-Chain 1, Iteration: 700 / 1000 [ 70%]  (Sampling)
-Chain 1, Iteration: 800 / 1000 [ 80%]  (Sampling)
-Chain 1, Iteration: 900 / 1000 [ 90%]  (Sampling)
-Chain 1, Iteration: 1000 / 1000 [100%]  (Sampling)
- Elapsed Time: 3.81 seconds (Warm-up)
-               0.68 seconds (Sampling)
-               4.49 seconds (Total)
-
-
-SAMPLING FOR MODEL 'negbin' NOW (CHAIN 2).
+SAMPLING FOR MODEL 'negbin_ff' NOW (CHAIN 2).
 
 Chain 2, Iteration:   1 / 1000 [  0%]  (Warmup)
 Chain 2, Iteration: 100 / 1000 [ 10%]  (Warmup)
@@ -245,12 +122,12 @@ Chain 2, Iteration: 700 / 1000 [ 70%]  (Sampling)
 Chain 2, Iteration: 800 / 1000 [ 80%]  (Sampling)
 Chain 2, Iteration: 900 / 1000 [ 90%]  (Sampling)
 Chain 2, Iteration: 1000 / 1000 [100%]  (Sampling)
- Elapsed Time: 3.67 seconds (Warm-up)
-               0.67 seconds (Sampling)
-               4.34 seconds (Total)
+ Elapsed Time: 177.07 seconds (Warm-up)
+               189.68 seconds (Sampling)
+               366.75 seconds (Total)
 
 
-SAMPLING FOR MODEL 'negbin' NOW (CHAIN 3).
+SAMPLING FOR MODEL 'negbin_ff' NOW (CHAIN 3).
 
 Chain 3, Iteration:   1 / 1000 [  0%]  (Warmup)
 Chain 3, Iteration: 100 / 1000 [ 10%]  (Warmup)
@@ -264,12 +141,12 @@ Chain 3, Iteration: 700 / 1000 [ 70%]  (Sampling)
 Chain 3, Iteration: 800 / 1000 [ 80%]  (Sampling)
 Chain 3, Iteration: 900 / 1000 [ 90%]  (Sampling)
 Chain 3, Iteration: 1000 / 1000 [100%]  (Sampling)
- Elapsed Time: 3.38 seconds (Warm-up)
-               0.7 seconds (Sampling)
-               4.08 seconds (Total)
+ Elapsed Time: 164.88 seconds (Warm-up)
+               187.66 seconds (Sampling)
+               352.54 seconds (Total)
 
 
-SAMPLING FOR MODEL 'negbin' NOW (CHAIN 4).
+SAMPLING FOR MODEL 'negbin_ff' NOW (CHAIN 4).
 
 Chain 4, Iteration:   1 / 1000 [  0%]  (Warmup)
 Chain 4, Iteration: 100 / 1000 [ 10%]  (Warmup)
@@ -283,33 +160,26 @@ Chain 4, Iteration: 700 / 1000 [ 70%]  (Sampling)
 Chain 4, Iteration: 800 / 1000 [ 80%]  (Sampling)
 Chain 4, Iteration: 900 / 1000 [ 90%]  (Sampling)
 Chain 4, Iteration: 1000 / 1000 [100%]  (Sampling)
- Elapsed Time: 3.5 seconds (Warm-up)
-               0.69 seconds (Sampling)
-               4.19 seconds (Total)
+ Elapsed Time: 173.71 seconds (Warm-up)
+               188.12 seconds (Sampling)
+               361.83 seconds (Total)
 
 [1] "done fitting stan model"
-[1] "2017-07-07 14:29:00 EDT"
+[1] "2017-07-12 11:04:11 EDT"
 NULL
 [1] "done saving stanfit object"
-[1] "2017-07-07 14:29:01 EDT"
+[1] "2017-07-12 11:04:23 EDT"
 [1] "done making samps"
-[1] "2017-07-07 14:29:01 EDT"
-[1] "done making par_ests"
-[1] "2017-07-07 14:29:01 EDT"
-[1] "making par_ests"
-[1] "2017-07-07 14:29:01 EDT"
-[1] "printing par_ests"
-[1] "2017-07-07 14:29:01 EDT"
-'data.frame':	11 obs. of  11 variables:
- $ mean   : num  -0.998 0.249 -1.274 0.605 0.454 ...
- $ se_mean: num  0.00511 0.00631 0.00448 0.00598 0.00397 ...
- $ sd     : num  0.175 0.226 0.16 0.207 0.136 ...
- $ 2.5%   : num  -1.347 -0.2 -1.578 0.154 0.277 ...
- $ 25%    : num  -1.109 0.104 -1.374 0.481 0.361 ...
- $ 50%    : num  -1.002 0.253 -1.281 0.611 0.426 ...
- $ 75%    : num  -0.892 0.395 -1.185 0.738 0.508 ...
- $ 97.5%  : num  -0.637 0.692 -0.92 1.012 0.804 ...
- $ n_eff  : num  1166 1279 1271 1196 1170 ...
- $ Rhat   : num  0.999 1.002 1.002 1.002 1.001 ...
- $ NA     : Factor w/ 11 levels "alpha0","alpha1",..: 1 3 2 4 9 10 11 6 8 5 ...
+[1] "2017-07-12 11:04:24 EDT"
+ num [1:3492, 1:10] 0.147 0.61 0.861 1.347 -0.908 ...
+ - attr(*, "dimnames")=List of 2
+  ..$ : chr [1:3492] "sigma_beta0" "sigma_beta1" "sigma_y" "alpha0" ...
+  ..$ : chr [1:10] "mean" "se_mean" "sd" "2.5%" ...
 NULL
+NULL
+ [1] "alpha0"      "gamma0"      "alpha1"      "gamma1"      "sigma_beta0"
+ [6] "sigma_beta1" "sigma_y"     "mu_star"     "phi_star"    "mu"         
+[11] "phi"        
+Error in tt[parlist, ] : subscript out of bounds
+Calls: runstan
+Execution halted

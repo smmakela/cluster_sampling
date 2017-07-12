@@ -7,7 +7,7 @@
 #PBS -M smm2253@columbia.edu
 #PBS -m a
 #PBS -j oe
-#PBS -t 1-128
+#PBS -t 1-260
 #PBS -o localhost:/vega/stats/users/smm2253/cluster_sampling/output/simulation/outfiles
 #PBS -e localhost:/vega/stats/users/smm2253/cluster_sampling/output/simulation/outfiles
 export CCACHE_DISABLE=1

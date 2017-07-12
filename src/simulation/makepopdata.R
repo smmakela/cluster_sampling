@@ -99,7 +99,7 @@
 
     # Draw cluster sizes using the specified size_model
     if (size_model == "multinomial") {
-      alpha_vec <- rep(1.5, times = J) # alpha for dirichlet distribution
+      alpha_vec <- rep(10, times = J) # alpha for dirichlet distribution
       # take dirichlet draws by scaling gamma draws
       gamma_draws <- sort(rgamma(alpha_vec, shape = alpha_vec, scale = 1))
       dir_draws <- gamma_draws / sum(gamma_draws)

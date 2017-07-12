@@ -85,6 +85,7 @@ Options:
     if (size_model == "ff") {
       num_clusters <- 16
       num_units <- 99
+      stanmod_name <- paste0(stanmod_name, "_ff2")
 
       # Print a message about which parameters we're running now
       cat("CURRENTLY ON:", 
@@ -92,6 +93,20 @@ Options:
           ", size_model =", size_model,
           ", stanmod =", stanmod_name, "\n")
   
+      # If the file exists, skip it
+      #nunits <- num_units
+      #fil <- paste0(rootdir, "output/simulation/stan_results_usesizes_",
+      #              use_sizes, "_", outcome_type, "_", size_model, "_",
+      #              model_name, "_nclusters_", num_clusters,
+      #              "_nunits_", nunits, "_sim_", simno, ".rds")
+      #if (file.exists(fil)) {
+      #  cat("----------------------------------------------------\n")
+      #  cat("This file already exists, next!\n")
+      #  cat(fil, "\n")
+      #  cat("----------------------------------------------------\n")
+      #  next
+      #}
+
       # Sample data using above parameters
       cat("Sampling data\n")
       print(Sys.time())
@@ -106,7 +121,7 @@ Options:
       print(Sys.time())
       stan_res <- runstan(num_clusters, num_units, use_sizes, outcome_type,
                           size_model, rootdir, simno, stanmod, stanmod_name,
-                          sim_data, num_iter = 1000, num_chains = 4)
+                          sim_data, num_iter = 10, num_chains = 2)
       cat("##################################################################################\n")
       print(warnings()) 
     } else {
@@ -115,23 +130,24 @@ Options:
         num_clusters <- sim.params[k, "num_clusters.list"]
         num_units    <- sim.params[k, "num_units.list"]
 
+# TEMP: removing to redo multinomial since we want all sims to be based on the same pop
         # If the file exists, skip it
-        if (num_units <= 1) {
-          nunits <- paste(100*num_units, "pct", sep = "")
-        } else {
-          nunits <- num_units
-        }
-        fil <- paste0(rootdir, "output/simulation/stan_results_usesizes_",
-                      use_sizes, "_", outcome_type, "_", size_model, "_",
-                      model_name, "_nclusters_", num_clusters,
-                      "_nunits_", nunits, "_sim_", simno, ".rds")
-        if (file.exists(fil)) {
-          cat("----------------------------------------------------\n")
-          cat("This file already exists, next!\n")
-          cat(fil, "\n")
-          cat("----------------------------------------------------\n")
-          next
-        }
+        #if (num_units <= 1) {
+        #  nunits <- paste(100*num_units, "pct", sep = "")
+        #} else {
+        #  nunits <- num_units
+        #}
+        #fil <- paste0(rootdir, "output/simulation/stan_results_usesizes_",
+        #              use_sizes, "_", outcome_type, "_", size_model, "_",
+        #              model_name, "_nclusters_", num_clusters,
+        #              "_nunits_", nunits, "_sim_", simno, ".rds")
+        #if (file.exists(fil)) {
+        #  cat("----------------------------------------------------\n")
+        #  cat("This file already exists, next!\n")
+        #  cat(fil, "\n")
+        #  cat("----------------------------------------------------\n")
+        #  next
+        #}
 
         # Print a message about which parameters we're running now
         cat("CURRENTLY ON:", 

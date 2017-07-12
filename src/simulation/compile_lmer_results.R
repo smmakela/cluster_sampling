@@ -35,114 +35,126 @@
 ################################################################################
 # Get the values of the sim parameters for this iteration
 ################################################################################
-  sim.params <- expand.grid(use.sizes = c(0, 1),
-                            outcome.type = c("binary", "continuous"),
-                            num.clusters = c(5, 10, 20, 30),
-                            num.units = c(0.05, 0.1, 0.25, 0.5, 1, 10, 30, 60))
-  curr.params <- sim.params[rownum, ]
-  use.sizes <- curr.params$use.sizes
-  outcome.type <- curr.params$outcome.type
-  num.clusters <- curr.params$num.clusters
-  num.units <- curr.params$num.units
-  if (num.units <= 1) {
-    nunits <- paste(100*num.units, "pct", sep = "")
+  sp1 <- expand.grid(use_sizes = c(0, 1),
+                     outcome_type = c("binary", "continuous"),
+                     size_model = c("multinomial", "poisson"),
+                     num_clusters = c(5, 10, 20, 30),
+                     num_units = c(0.05, 0.1, 0.25, 0.5, 1, 10, 30, 60))
+  sp2 <- expand.grid(use_sizes = c(0, 1),
+                     outcome_type = c("binary", "continuous"),
+                     size_model = "ff",
+                     num_clusters = 16,
+                     num_units = 99)
+
+  if (rownum <= nrow(sp1)) {
+    curr_params <- sp1[rownum, ]
   } else {
-    nunits <- num.units
+    curr_params <- sp2[rownum - nrow(sp1), ]
+  }
+
+  use_sizes <- curr_params$use_sizes
+  size_model <- curr_params$size_model
+  outcome_type <- curr_params$outcome_type
+  num_clusters <- curr_params$num_clusters
+  num_units <- curr_params$num_units
+  if (num_units <= 1) {
+    nunits <- paste(100*num_units, "pct", sep = "")
+  } else {
+    nunits <- num_units
   }
 
   # Concatenate to get current stubs
-  curr.stub <- paste0("lmer_ests_usesizes_", use.sizes, "_", outcome.type,
-                      "_nclusters_", num.clusters, "_nunits_",
+  curr_stub <- paste0("lmer_ests_usesizes_", use_sizes, "_", outcome_type,
+                      "_", size_model, "_nclusters_", num_clusters, "_nunits_",
                       nunits, "_simno_.*.rds")
 
   cat("#####################################################################\n")
-  cat("Currently on:", curr.stub, "\n")
+  cat("Currently on:", curr_stub, "\n")
 
 ################################################################################
 # Calculate true values
 ################################################################################
   cat("#####################################################################\n")
   cat("Compiling true values\n")
-  params.true <- data.frame()
-  popdata <- readRDS(paste0(resdir, "/popdata_usesizes_", use.sizes, "_",
-                            outcome.type, ".rds"))
+  params_true <- data.frame()
+  popdata <- readRDS(paste0(resdir, "/popdata_usesizes_", use_sizes, "_",
+                            outcome_type, "_", size_model, ".rds"))
 
   # true parameter values
-  params.true <- gather(popdata[["truepars"]], key = param.name) 
-  names(params.true) <- c("param.name", "true")
-  params.true$param.name <- as.character(params.true$param.name)
+  params_true <- gather(popdata[["truepars"]], key = param_name) 
+  names(params_true) <- c("param_name", "true")
+  params_true$param_name <- as.character(params_true$param_name)
 
-  print("params.true:") 
-  print(params.true) 
+  print("params_true:") 
+  print(params_true) 
   print(Sys.time())
 
 ################################################################################
 ### Preallocate space to hold all results
 ################################################################################
-  n.sims <- 100
-  stat.list <- c("est", "stderr", "lci50", "uci50", "lci95", "uci95")
-  param.ests <- expand.grid(param.name  = params.true$param.name[params.true$param.name != "ybar_true"],
-                            model.name  = c("with_sizes", "no_sizes"),
-                            simno       = c(1:n.sims))
-  param.ests$param.name <- as.character(param.ests$param.name)
-  tokeep <- !(param.ests$param.name %in% c("gamma0", "gamma1") &
-              param.ests$model.name == "no_sizes")
-  param.ests <- param.ests[tokeep, ]
-  param.ests <- left_join(param.ests, params.true, by = c("param.name"))
-  param.ests[, stat.list] <- NA
-  print(head(param.ests))
+  n_sims <- 100
+  stat_list <- c("est", "stderr", "lci50", "uci50", "lci95", "uci95")
+  param_ests <- expand.grid(param_name  = params_true$param_name[params_true$param_name != "ybar_true"],
+                            model_name  = c("with_sizes", "no_sizes"),
+                            simno       = c(1:n_sims))
+  param_ests$param_name <- as.character(param_ests$param_name)
+  tokeep <- !(param_ests$param_name %in% c("gamma0", "gamma1") &
+              param_ests$model_name == "no_sizes")
+  param_ests <- param_ests[tokeep, ]
+  param_ests <- left_join(param_ests, params_true, by = c("param_name"))
+  param_ests[, stat_list] <- NA
+  print(head(param_ests))
 
 ################################################################################
-### Loop through LMER result files
+### Loop through LMER result_files
 ################################################################################
   cat("#####################################################################\n")
-  cat("Now doing LMER files\n")
+  cat("Now doing LMER_files\n")
   ci_50_mult <- qnorm(0.25, lower.tail = FALSE)
   ci_95_mult <- qnorm(0.025, lower.tail = FALSE)
-  fil.list <- list.files(resdir, curr.stub)
-  # loop through models, outcome type, usesizes and compile -- uses less
+  fil_list <- list.files(resdir, curr_stub)
+  # loop through models, outcome_type, usesizes and compile -- use_ less
   # memory than trying to compile everything at once
-  #for (i in 1:length(fil.list)) {
-  for (i in 1:1) {
+  for (i in 1:length(fil_list)) {
     
-# read in current file
-    curr.name <- fil.list[i]
-    curr.fil <- readRDS(curr.name)
+    # read in current_file
+    curr_name <- fil_list[i]
+    curr_fil <- readRDS(curr_name)
 
-    # parse the filename to extract sim number
-    simno <- regmatches(curr.name, regexpr("[0-9]{1,3}.rds", curr.name))
+    # parse the_filename to extract sim number
+    simno <- regmatches(curr_name, regexpr("[0-9]{1,3}.rds", curr_name))
     simno <- as.numeric(gsub(".rds", "", simno))
 
     # add param names, model names
-    curr.fil$param.name <- rownames(curr.fil)
-    rownames(curr.fil) <- NULL
-    curr.fil$param.name <- gsub("01", "0", curr.fil$param.name)
-    curr.fil$param.name <- gsub("11", "1", curr.fil$param.name)
-    curr.fil$param.name <- gsub("sigma_y1", "sigma_y", curr.fil$param.name)
-    curr.fil$whichmodel[curr.fil$whichmodel == 1] <- "with_sizes"
-    curr.fil$whichmodel[curr.fil$whichmodel == 2] <- "no_sizes"
+    curr_fil$param_name <- rownames(curr_fil)
+    rownames(curr_fil) <- NULL
+    curr_fil$param_name <- gsub("01", "0", curr_fil$param_name)
+    curr_fil$param_name <- gsub("11", "1", curr_fil$param_name)
+    curr_fil$param_name <- gsub("sigma_y1", "sigma_y", curr_fil$param_name)
+    curr_fil$whichmodel[curr_fil$whichmodel == 1] <- "with_sizes"
+    curr_fil$whichmodel[curr_fil$whichmodel == 2] <- "no_sizes"
 
     # add 50pct, 95pct CI's
-    curr.fil$lci50 <- curr.fil$est - ci_50_mult * curr.fil$stderr
-    curr.fil$uci50 <- curr.fil$est + ci_50_mult * curr.fil$stderr
-    curr.fil$lci95 <- curr.fil$est - ci_95_mult * curr.fil$stderr
-    curr.fil$uci95 <- curr.fil$est + ci_95_mult * curr.fil$stderr
-    names(curr.fil) <- c("est", "stderr", "true", "model.name", "param.name",
+    curr_fil$lci50 <- curr_fil$est - ci_50_mult * curr_fil$stderr
+    curr_fil$uci50 <- curr_fil$est + ci_50_mult * curr_fil$stderr
+    curr_fil$lci95 <- curr_fil$est - ci_95_mult * curr_fil$stderr
+    curr_fil$uci95 <- curr_fil$est + ci_95_mult * curr_fil$stderr
+    names(curr_fil) <- c("est", "stderr", "true", "model_name", "param_name",
                          "lci50", "uci50", "lci95", "uci95")
-    neworder <- c("param.name", "true", "model.name", "est", "stderr", 
+    neworder <- c("param_name", "true", "model_name", "est", "stderr", 
                   "lci50", "uci50", "lci95", "uci95")
-    curr.fil <- curr.fil[, neworder]
+    curr_fil <- curr_fil[, neworder]
 
     # get the right index
-    inds <- param.ests$simno == simno
-    param.ests[inds, names(curr.fil)] <- curr.fil
+    inds <- param_ests$simno == simno
+    param_ests[inds, names(curr_fil)] <- curr_fil
 
-  } # end file for loop
+  } # end_file for loop
   
   # Now collapse across all sims to get means, CIs, etc
   ### PARAM ESTS
-  param.ests.summ <- param.ests %>%
-    dplyr::group_by(param.name, model.name) %>%
+  param_ests_summ <- param_ests %>%
+    dplyr::group_by(param_name, model_name) %>%
     dplyr::summarise(num.sims   = sum(!is.na(est)),
                      bias       = mean(true - est, na.rm = TRUE),
                      rel_bias   = mean((true - est)/true, na.rm = TRUE),
@@ -155,21 +167,23 @@
                      rel_len_50 = mean((uci50 - lci50)/true, na.rm = TRUE),
                      rel_len_95 = mean((uci95 - lci95)/true, na.rm = TRUE))
 
-  param.ests.summ$use.sizes <- use.sizes
-  param.ests.summ$outcome.type <- outcome.type
-  param.ests.summ$outcome.type <- as.character(param.ests.summ$outcome.type)
-  param.ests.summ$num.clusters <- num.clusters
-  param.ests.summ$num.units <- num.units
-  param.ests.summ$model.name <- as.character(param.ests.summ$model.name)
+  param_ests_summ$use_sizes <- use_sizes
+  param_ests_summ$outcome_type <- outcome_type
+  param_ests_summ$outcome_type <- as.character(param_ests_summ$outcome_type)
+  param_ests_summ$size_model <- size_model
+  param_ests_summ$size_model <- as.character(param_ests_summ$size_model)
+  param_ests_summ$num_clusters <- num_clusters
+  param_ests_summ$num_units <- num_units
+  param_ests_summ$model_name <- as.character(param_ests_summ$model_name)
 
-  print(param.ests.summ)
+  print(param_ests_summ)
   print(warnings())
   print(Sys.time())
 
 
-  res.fil <- paste0("compiled_lmer_results_usesizes_", use.sizes, "_",
-                    outcome.type, "_nclusters_", num.clusters, 
+  res_fil <- paste0("compiled_lmer_results_usesizes_", use_sizes, "_",
+                    outcome_type, "_", size_model, "_nclusters_", num_clusters, 
                     "_nunits_", nunits, "_", today, ".rds")
-  saveRDS(param.ests.summ, file = paste0(resdir, res.fil))
+  saveRDS(param_ests_summ, file = paste0(resdir, res_fil))
 
 

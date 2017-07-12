@@ -41,29 +41,61 @@ runstan <- function(num_clusters, num_units, use_sizes, outcome_type, size_model
   print("making stan data")
   print(Sys.time())
 
-  # SORT pop and sample data by cluster_id
-  pop_data <- dplyr::arrange(pop_data, cluster_id)
-  sample_data <- dplyr::arrange(sample_data, cluster_id)
-
   if (num_units != 999) {
     K <- num_clusters
   } else {
     K <- J
   }
-  Nj_pop <- Mj
-  N <- sum(Nj_pop)
-  n <- sum(pop_data$insample)
-  tmp <- dplyr::summarise(group_by(pop_data, cluster_id),
-                          xbar_pop = mean(x))
-  tmp <- dplyr::arrange(tmp, cluster_id)
-  xbar_pop <- tmp$xbar_pop
+
+  # SORT pop and sample data by cluster_id
+  pop_data <- dplyr::arrange(pop_data, cluster_id)
+  sample_data <- dplyr::arrange(sample_data, cluster_id)
+
+  # Take things directly from sample_data
   x <- sample_data$x
   y <- sample_data$y
   cluster_id <- sample_data$cluster_id
+  n <- nrow(sample_data)
 
-  # get sample data at cluster level
+  #Nj_pop <- Mj
+  #N <- sum(Nj_pop)
+  #n <- sum(pop_data$insample)
+  #tmp <- dplyr::summarise(group_by(pop_data, cluster_id),
+  #                        xbar_pop = mean(x))
+  #tmp <- dplyr::arrange(tmp, cluster_id)
+  #xbar_pop <- tmp$xbar_pop
+  #x <- sample_data$x
+  #y <- sample_data$y
+  #cluster_id <- sample_data$cluster_id
+
+  # Get pop data at cluster level -- calculate mean of x, grouping by cluster_id,
+  # stratum_id, Mj, logMj_c (cluster_id is the most detailed)
+  if (size_model == "ff") {
+    cluster_data_pop <- pop_data %>%
+      dplyr::select(cluster_id, stratum_id, Mj, logMj_c, x) %>%
+      dplyr::group_by(cluster_id, stratum_id, Mj, logMj_c) %>%
+      dplyr::summarise(xbar_pop = mean(x)) %>%
+      dplyr::arrange(cluster_id)
+  } else {
+    cluster_data_pop <- pop_data %>%
+      dplyr::select(cluster_id, Mj, logMj_c, x) %>%
+      dplyr::group_by(cluster_id, Mj, logMj_c) %>%
+      dplyr::summarise(xbar_pop = mean(x)) %>%
+      dplyr::arrange(cluster_id)
+  }
+  Nj_pop <- cluster_data_pop$Mj
+  N <- sum(Nj_pop)
+  xbar_pop <- cluster_data_pop$xbar_pop
+
+  # Get sample data at cluster level
   sam_dat <- dplyr::filter(pop_data, insample == 1)
-  sam_dat <- dplyr::distinct(sam_dat, cluster_id, Mj, logMj_c)
+  if (size_model == "ff") {
+    sam_dat <- dplyr::distinct(sam_dat, cluster_id, stratum_id, Mj, logMj_c)
+    stratum_id <- sam_dat$stratum_id
+  } else {
+    sam_dat <- dplyr::distinct(sam_dat, cluster_id, Mj, logMj_c)
+  }
+  sam_dat <- dplyr::arrange(sam_dat, cluster_id)
   Nj_sample <- sam_dat$Mj
   log_Nj_sample <- sam_dat$logMj_c
 
@@ -75,9 +107,8 @@ runstan <- function(num_clusters, num_units, use_sizes, outcome_type, size_model
   Nj_unique <- n_dat$Mj # vector of unique cluster sizes
 
   # delete pop and sample data to save memory
-  rm(pop_data)
-  rm(sample_data)
-
+  #rm(pop_data)
+  #rm(sample_data)
   ##########################################
   ### Make inputs to stan -- data list, parameters, functions
   ##########################################
@@ -85,6 +116,15 @@ runstan <- function(num_clusters, num_units, use_sizes, outcome_type, size_model
   parlist <- c("alpha0", "gamma0", "alpha1", "gamma1",
                "sigma_beta0", "sigma_beta1", "sigma_y")
   betapars <- c("beta0", "beta1")
+  if (size_model == "ff") {
+    kappapars <- c("kappa0", "kappa1")
+    if (grepl("lognormal", stanmod_name)) {
+      sbpars <- c("mu", "phi")
+    }
+    if (grepl("negbin", stanmod_name)) {
+      sbpars <- c("mu", "phi")
+    }
+  }
   if (grepl("bb", stanmod_name)) {
     standata <- list(J = J,
                      K = K,
@@ -134,7 +174,15 @@ runstan <- function(num_clusters, num_units, use_sizes, outcome_type, size_model
                      cluster_id = cluster_id,
                      Nj_sample = Nj_sample,
                      log_Nj_sample = log_Nj_sample)
-    parlist <- c(parlist, "mu_star", "phi_star", "mu", "phi")
+    if (size_model == "ff") {
+      stratum_matrix <- model.matrix(~ 0 + factor(stratum_id), sam_dat)
+      stratum_matrix_pop <- model.matrix(~ 0 + factor(stratum_id), cluster_data_pop)
+      #standata <- c(standata, list(stratum_id = stratum_id, S = 9,
+      #                             stratum_matrix = stratum_matrix))
+      parlist <- c(parlist, "mu", "phi")
+    } #else { # don't include these for ff because they're vectors in it
+      #parlist <- c(parlist, "mu_star", "phi_star", "mu", "phi")
+    #}
   } else {
     stop("Invalid stan model")
   }
@@ -144,11 +192,14 @@ runstan <- function(num_clusters, num_units, use_sizes, outcome_type, size_model
   if (outcome_type == "binary") {
     standata$x <- NULL
     betapars <- "beta0"
+    kappapars <- "kappa0"
     plist <- c("alpha1", "gamma1", "sigma_beta1", "sigma_y")
     parlist <- parlist[!(parlist %in% plist)]
   }
 
   print(str(standata))
+  rm(pop_data)
+  rm(sample_data)
 
   ##########################################
   ### Run stan
@@ -273,6 +324,29 @@ runstan <- function(num_clusters, num_units, use_sizes, outcome_type, size_model
       dplyr::mutate(draw_num = row_number()) %>%
       tidyr::spread(key = par, value = value) -> beta_samps
 
+  # same for the kappas and sb pars, if we're doing ff
+  #if (size_model == "ff") {
+  #  kappa_samps_orig <- data.frame(rstan::extract(fit, pars = kappapars))
+  #  nck <- nchar("kappa0")
+  #  kappa_samps_orig %>%
+  #      tidyr::gather(key = pname, value = value) %>%
+  #      dplyr::mutate(par = substr(pname, 1, nck),
+  #                    cluster_id = as.numeric(substr(pname, nck+2, nchar(pname))),
+  #                    pname = NULL) %>%
+  #      dplyr::group_by(par, cluster_id) %>%
+  #      dplyr::mutate(draw_num = row_number()) %>%
+  #      tidyr::spread(key = par, value = value) -> kappa_samps
+  #  if (grepl("lognormal", stanmod_name) || grepl("negbin", stanmod_name)) {
+  #    sb_samps_orig <- data.frame(rstan::extract(fit, pars = sbpars))
+  #    sb_samps_orig %>%
+  #        tidyr::gather(key = pname, value = value) %>%
+  #        tidyr::separate(pname, into = c("par", "cluster_id"), sep = "\\.") %>%
+  #        dplyr::group_by(par, cluster_id) %>%
+  #        dplyr::mutate(draw_num = row_number()) %>%
+  #        tidyr::spread(key = par, value = value) -> sb_samps
+  #  }
+  #}
+
   # same for phi_star, if we're doing bb
   if (grepl("bb", stanmod_name)) {
     nc2 <- nchar("phi_star")
@@ -293,6 +367,9 @@ runstan <- function(num_clusters, num_units, use_sizes, outcome_type, size_model
   print(Sys.time())
 
   tt <- summary(fit)$summary
+print(str(tt))
+print(attr(tt, "dimnames")[[2]])
+print(parlist)
   par_ests <- tt[parlist, ]
   rm(fit)
   print("done making par_ests")
@@ -471,6 +548,51 @@ runstan <- function(num_clusters, num_units, use_sizes, outcome_type, size_model
                                      param_samps$sigma_beta0[s],
                                      Nj_new)
     } # end num_draws loop
+  } else if (stanmod_name == "negbin_ff" & outcome_type == "continuous") {
+    for (s in 1:num_draws) {
+      beta_samps_sub <- dplyr::filter(beta_samps, draw_num == s)
+      kappa_samps_sub <- dplyr::filter(kappa_samps, draw_num == s)
+      sb_samps_sub <- dplyr::filter(sb_samps, draw_num == s)
+      # make strat_inds so we only take the stratum id's for the nonsampled
+      # clusters
+      strat_inds <- cluster_data_pop$cluster_id %in% c((K+1):J)
+      Nj_new <- Nj_new_nb_rng(J, K, S=9,
+                              cluster_data_pop$stratum_id[strat_inds],
+                              Nj_sample, sb_samps_sub$mu, sb_samps_sub$phi)
+      Nj_new_df$Nj_new[Nj_new_df$draw_num == s] <- Nj_new
+      N_new[s] <- sum(Nj_new)
+      ybar_new[s] <- ybar_new_nb_rng(J, K, S=9, xbar_pop,
+                                     beta_samps_sub$beta0,
+                                     beta_samps_sub$beta1,
+                                     param_samps$alpha0[s],
+                                     param_samps$gamma0[s],
+                                     param_samps$alpha1[s],
+                                     param_samps$gamma1[s],
+                                     kappa_samps_sub$kappa0,
+                                     kappa_samps_sub$kappa1,
+                                     stratum_matrix_pop,
+                                     param_samps$sigma_beta0[s],
+                                     param_samps$sigma_beta1[s],
+                                     param_samps$sigma_y[s], Nj_new)
+    } # end num_draws loop
+  } else if (stanmod_name == "negbin_ff2" & outcome_type == "continuous") {
+    for (s in 1:num_draws) {
+      beta_samps_sub <- dplyr::filter(beta_samps, draw_num == s)
+      Nj_new <- Nj_new_nb_rng(J, K,
+                              Nj_sample, param_samps$mu[s], param_samps$phi[s])
+      Nj_new_df$Nj_new[Nj_new_df$draw_num == s] <- Nj_new
+      N_new[s] <- sum(Nj_new)
+      ybar_new[s] <- ybar_new_nb_rng(J, K, xbar_pop,
+                                     beta_samps_sub$beta0,
+                                     beta_samps_sub$beta1,
+                                     param_samps$alpha0[s],
+                                     param_samps$gamma0[s],
+                                     param_samps$alpha1[s],
+                                     param_samps$gamma1[s],
+                                     param_samps$sigma_beta0[s],
+                                     param_samps$sigma_beta1[s],
+                                     param_samps$sigma_y[s], Nj_new)
+    } # end num_draws loop
   } else {
     stop("Invalid stan model")
   }
@@ -494,8 +616,8 @@ runstan <- function(num_clusters, num_units, use_sizes, outcome_type, size_model
       ggtitle(paste0("Model: ", stanmod_name)) +
       theme_bw()
     ggsave(plt, file = paste0(rootdir, "/output/figures/Nj_draws_usesizes_",
-                              use_sizes, "_", outcome_type, "_", size_model,
-                              model_name, "_", "_nclusters_", num_clusters,
+                              use_sizes, "_", outcome_type, "_", size_model, "_",
+                              model_name, "_nclusters_", num_clusters,
                               "_nunits_", nunits, "_sim_", simno, ".pdf"),
            width = 10, height = 8)
   }
@@ -513,8 +635,8 @@ runstan <- function(num_clusters, num_units, use_sizes, outcome_type, size_model
       ggtitle(paste0("Model: ", stanmod_name)) +
       theme_bw()
     ggsave(plt, file = paste0(rootdir, "/output/figures/ybar_new_draws_usesizes_",
-                              use_sizes, "_", outcome_type, "_", size_model,
-                              model_name, "_", "_nclusters_", num_clusters,
+                              use_sizes, "_", outcome_type, "_", size_model, "_",
+                              model_name, "_nclusters_", num_clusters,
                               "_nunits_", nunits, "_sim_", simno, ".pdf"),
            width = 10, height = 8)
   }
