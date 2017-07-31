@@ -102,6 +102,11 @@
       alpha_vec <- rep(10, times = J) # alpha for dirichlet distribution
       # take dirichlet draws by scaling gamma draws
       gamma_draws <- sort(rgamma(alpha_vec, shape = alpha_vec, scale = 1))
+      # make sure we don't get any cluster sizes smaller than 325 (max number of
+      # births we are gonna sample)
+      while (min(round(100*gamma_draws)) < 325) {
+        gamma_draws <- sort(rgamma(alpha_vec, shape = alpha_vec, scale = 1))
+      }
       dir_draws <- gamma_draws / sum(gamma_draws)
       # use multinomial to draw which gamma sizes we'll use
       mn_draws <- rmultinom(n = 1, size = J, prob = dir_draws)
@@ -110,14 +115,21 @@
       Mj <- as.numeric(round(rep(100*gamma_draws, times = mn_draws)))
       stratum_id <- rep(1, length(Mj)) # filler
     } else if (size_model == "poisson") {
-      Mj <- rpois(J, 200)
+      Mj <- rpois(J, 500)
+      # make sure we don't get any cluster sizes smaller than 325 (max number of
+      # births we are gonna sample)
+      while (min(Mj) < 325) {
+        Mj <- rpois(J, 500)
+      }
       stratum_id <- rep(1, length(Mj))
     } else { # size_model == "ff"
       codedir <- "/vega/stats/users/smm2253/cluster_sampling/src/simulation"
       pop_dat <- read.csv(paste0(codedir, "/observed_city_pops.csv"), header = TRUE)
       Mj <- as.integer(round(pop_dat$population/1000))
       stratum_id <- pop_dat$stratum # have their own numbering scheme
-      stratum_id <- as.integer(factor(stratum_id)) # renumber 1-num_strat
+      # renumber 1-num_strat -- checked that this makes the non-extreme stratum
+      # be number 9, which is what we want
+      stratum_id <- as.integer(factor(stratum_id)) 
       tot_births <- pop_dat$ubrth + pop_dat$mbrth
     }
 

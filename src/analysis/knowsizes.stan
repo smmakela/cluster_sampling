@@ -63,10 +63,10 @@ model {
   sigma_beta0 ~ cauchy(0, 2.5);
   sigma_beta1 ~ cauchy(0, 2.5);
   sigma_y ~ cauchy(0, 2.5);
-  alpha0 ~ normal(0, 1);
-  gamma0 ~ normal(0, 1);
-  alpha1 ~ normal(0, 1);
-  gamma1 ~ normal(0, 1);
+  alpha0 ~ normal(0, 10);
+  gamma0 ~ normal(0, 10);
+  alpha1 ~ normal(0, 10);
+  gamma1 ~ normal(0, 10);
   beta0 ~ normal(alpha0 + gamma0 * log_Nj_sample, sigma_beta0);
   beta1 ~ normal(alpha1 + gamma1 * log_Nj_sample, sigma_beta1);
   y ~ normal(ymean, sigma_y);

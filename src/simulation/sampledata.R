@@ -43,29 +43,29 @@ sampledata <- function(num_clusters, num_units, use_sizes, outcome_type,
     strat_dat <- data.frame(stratum_id, Mj, cluster_id = c(1:J), tot_births)
     strat_dat <- dplyr::arrange(strat_dat, stratum_id)
     strat_dat$num_units_to_sample <- ifelse(strat_dat$stratum_id == 9, 100, 325)
-    sampled_cluster_list_orig <- ppssstrat(strat_dat$Mj, strat_dat$stratum_id,
-                                           c(rep(1, times = 8), 8))
+    #sampled_cluster_list_orig <- ppssstrat(strat_dat$Mj, strat_dat$stratum_id,
+    #                                       c(rep(1, times = 8), 8))
     
 
     # ppsstrat returns cluster ids in the sorted order (from arrange()), so
     # the cluster id's it returns don't correspond to our actual cluster ids.
     # use the output of ppsstrat to index into the actual cluster id variable
     # to get the correct sampled cluster ids
-    sampled_cluster_list <- strat_dat$cluster_id[sampled_cluster_list_orig]
+    #sampled_cluster_list <- strat_dat$cluster_id[sampled_cluster_list_orig]
 
     # Also pull out the correct number of units to be sampled and the total
     # number of units in each cluster
-    num_units_vec <- strat_dat$num_units_to_sample[sampled_cluster_list_orig]
-    tot_births <- strat_dat$tot_births[sampled_cluster_list_orig]
+    #num_units_vec <- strat_dat$num_units_to_sample[sampled_cluster_list_orig]
+    #tot_births <- strat_dat$tot_births[sampled_cluster_list_orig]
 
     # NON-STRATIFIED PPS
     # Sample clusters
-    #pik <- inclusionprobabilities(strat_dat$Mj, num_clusters)
-    #PI_full <- UPtillepi2(pik) # pairwise selection probabilities
-    #sampled_cluster_list <- strat_dat$cluster_id[UPtille(pik) == 1]
-    #rm(Mj) # remove Mj b/c will overwrite it after clusters are renumbered
-    #tot_births <- strat_dat$tot_births[sampled_cluster_list]
-    #num_units_vec <- strat_dat$num_units_to_sample[sampled_cluster_list]
+    pik <- inclusionprobabilities(strat_dat$Mj, num_clusters)
+    PI_full <- UPtillepi2(pik) # pairwise selection probabilities
+    sampled_cluster_list <- strat_dat$cluster_id[UPtille(pik) == 1]
+    rm(Mj) # remove Mj b/c will overwrite it after clusters are renumbered
+    tot_births <- strat_dat$tot_births[sampled_cluster_list]
+    num_units_vec <- strat_dat$num_units_to_sample[sampled_cluster_list]
 
     # RENUMBER cluster ids so that sampled clusters run from 1:num_clusters
     #   and the rest from (num_clusters + 1):J

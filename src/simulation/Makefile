@@ -23,10 +23,10 @@ R_OPTS         = --no-save --no-restore --no-init-file --no-site-file
 
 # Hard-code highest-level simulation parameters
 NUM_POP_CLUSTERS = 100
-NUM_SIMS         = 1
-USE_SIZE_VALS    = 1
-OUTCOME_TYPES    = continuous
-SIZE_MODEL_NAMES = ff
+NUM_SIMS         = 100
+USE_SIZE_VALS    = 0 1
+OUTCOME_TYPES    = binary continuous
+SIZE_MODEL_NAMES = poisson multinomial
 STAN_MODEL_NAMES = negbin
 
 # Variables that store filenames of population data

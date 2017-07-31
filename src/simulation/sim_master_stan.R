@@ -62,8 +62,10 @@ Options:
   #############################################################################
   ### Create list of parameters to loop through for sim
   #############################################################################
-    num_clusters.list <- c(5, 10, 20, 30)
+    num_clusters.list <- c(5, 10, 30, 50)
     num_units.list <- c(0.05, 0.1, 0.25, 0.5, 1, 10, 30, 60)
+    #num_clusters.list <- 5
+    #num_units.list <- 0.5
     if (outcome_type == "binary") {
       stanmod_name <- paste0(model_name, "_binary")
     } else {
@@ -85,7 +87,7 @@ Options:
     if (size_model == "ff") {
       num_clusters <- 16
       num_units <- 99
-      stanmod_name <- paste0(stanmod_name, "_ff2")
+      #stanmod_name <- paste0(stanmod_name, "_ff2")
 
       # Print a message about which parameters we're running now
       cat("CURRENTLY ON:", 
@@ -121,7 +123,7 @@ Options:
       print(Sys.time())
       stan_res <- runstan(num_clusters, num_units, use_sizes, outcome_type,
                           size_model, rootdir, simno, stanmod, stanmod_name,
-                          sim_data, num_iter = 10, num_chains = 2)
+                          sim_data, num_iter = 1000, num_chains = 4)
       cat("##################################################################################\n")
       print(warnings()) 
     } else {
@@ -163,7 +165,8 @@ Options:
         sim_data <- sampledata(num_clusters, num_units, use_sizes, outcome_type,
                                size_model)
         cat("DONE sampling\n")
- 
+saveRDS(sim_data, file = paste0(rootdir, "/output/simulation/simdataTEMP_", use_sizes, "_", outcome_type,
+                          "_", size_model, "_", model_name, "_sim_", simno, ".rds")) 
         # Run stan model
         cat("Running stan\n")
         print(Sys.time())
@@ -171,7 +174,7 @@ Options:
         print(Sys.time())
         stan_res <- runstan(num_clusters, num_units, use_sizes, outcome_type,
                             size_model, rootdir, simno, stanmod, stanmod_name,
-                            sim_data, num_iter = 1000, num_chains = 4)
+                            sim_data, num_iter = 2000, num_chains = 4)
         cat("##################################################################################\n")
         print(warnings()) 
       } # end sim parameters loop

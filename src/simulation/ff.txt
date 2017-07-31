@@ -39,147 +39,2585 @@ Loading required package: sampling
  [5] "--numclusters"  "--model_name"   "simno"          "use_sizes"     
  [9] "outcome_type"   "size_model"     "numclusters"    "model_name"    
 List of 6
- $ simno       : chr "1"
+ $ simno       : chr "94"
  $ use_sizes   : chr "1"
- $ outcome_type: chr "continuous"
- $ size_model  : chr "ff"
+ $ outcome_type: chr "binary"
+ $ size_model  : chr "multinomial"
  $ numclusters : chr "100"
  $ model_name  : chr "negbin"
 NULL
 [1] "simno"        "use_sizes"    "outcome_type" "size_model"   "numclusters" 
 [6] "model_name"  
-[1] "Assigning 1 to simno"
+[1] "Assigning 94 to simno"
 [1] "Assigning 1 to use_sizes"
-[1] "Assigning continuous to outcome_type"
-[1] "Assigning ff to size_model"
+[1] "Assigning binary to outcome_type"
+[1] "Assigning multinomial to size_model"
 [1] "Assigning 100 to numclusters"
 [1] "Assigning negbin to model_name"
 ##################################################################################
 ##################################################################################
-THIS FILE: use_sizes = 1 , outcome_type = continuous , size_model = ff , stanmod = negbin 
-[1] "2017-07-12 10:39:25 EDT"
-CURRENTLY ON: , use_sizes = 1 , size_model = ff , stanmod = negbin_ff 
+THIS FILE: use_sizes = 1 , outcome_type = binary , size_model = multinomial , stanmod = negbin_binary 
+[1] "2017-07-31 13:17:42 EDT"
+CURRENTLY ON: num_clusters = 5 , num_units = 0.05 , use_sizes = 1 , size_model = multinomial , stanmod = negbin_binary 
 Sampling data
-[1] "2017-07-12 10:39:25 EDT"
+[1] "2017-07-31 13:17:42 EDT"
 DONE sampling
 Running stan
-[1] "2017-07-12 10:39:33 EDT"
-[1] "2017-07-12 10:39:33 EDT"
+[1] "2017-07-31 13:17:42 EDT"
+[1] "2017-07-31 13:17:43 EDT"
 [1] "making stan data"
-[1] "2017-07-12 10:39:33 EDT"
+[1] "2017-07-31 13:17:43 EDT"
 /vega/stats/users/smm2253/rpackages/StanHeaders/include/stan/math/rev/core/set_zero_all_adjoints.hpp:14: warning: ‘void stan::math::set_zero_all_adjoints()’ defined but not used
-List of 11
- $ J             : num 77
- $ K             : num 16
- $ n             : int 3400
- $ x             : num [1:3400] -12.49 2.51 -6.49 -10.49 -1.49 ...
- $ y             : num [1:3400] 21.6 -2.65 11.74 17.97 3.2 ...
- $ cluster_id    : int [1:3400] 1 1 1 1 1 1 1 1 1 1 ...
- $ Nj_sample     : int [1:16] 752 514 617 817 201 275 493 7333 992 2732 ...
- $ log_Nj_sample : num [1:16] 0.518 0.137 0.32 0.601 -0.802 ...
- $ stratum_id    : int [1:16] 1 2 3 4 5 6 7 8 9 9 ...
- $ S             : num 9
- $ stratum_matrix: num [1:16, 1:9] 1 0 0 0 0 0 0 0 0 0 ...
-  ..- attr(*, "dimnames")=List of 2
-  .. ..$ : chr [1:16] "1" "2" "3" "4" ...
-  .. ..$ : chr [1:9] "factor(stratum_id)1" "factor(stratum_id)2" "factor(stratum_id)3" "factor(stratum_id)4" ...
-  ..- attr(*, "assign")= int [1:9] 1 1 1 1 1 1 1 1 1
-  ..- attr(*, "contrasts")=List of 1
-  .. ..$ factor(stratum_id): chr "contr.treatment"
+List of 7
+ $ J            : num 100
+ $ K            : num 5
+ $ n            : int 244
+ $ y            : int [1:244] 1 0 1 1 1 1 1 1 1 1 ...
+ $ cluster_id   : int [1:244] 1 1 1 1 1 1 1 1 1 1 ...
+ $ Nj_sample    : num [1:5] 606 934 1033 1055 1239
+ $ log_Nj_sample: num [1:5] -0.555232 -0.122636 -0.02189 -0.000816 0.159948
 NULL
-[1] "2017-07-12 10:40:10 EDT"
+[1] "2017-07-31 13:18:02 EDT"
 
-SAMPLING FOR MODEL 'negbin_ff' NOW (CHAIN 1).
+SAMPLING FOR MODEL 'negbin_binary' NOW (CHAIN 1).
 
-Chain 1, Iteration:   1 / 1000 [  0%]  (Warmup)
-Chain 1, Iteration: 100 / 1000 [ 10%]  (Warmup)
-Chain 1, Iteration: 200 / 1000 [ 20%]  (Warmup)
-Chain 1, Iteration: 300 / 1000 [ 30%]  (Warmup)
-Chain 1, Iteration: 400 / 1000 [ 40%]  (Warmup)
-Chain 1, Iteration: 500 / 1000 [ 50%]  (Warmup)
-Chain 1, Iteration: 501 / 1000 [ 50%]  (Sampling)
-Chain 1, Iteration: 600 / 1000 [ 60%]  (Sampling)
-Chain 1, Iteration: 700 / 1000 [ 70%]  (Sampling)
-Chain 1, Iteration: 800 / 1000 [ 80%]  (Sampling)
-Chain 1, Iteration: 900 / 1000 [ 90%]  (Sampling)
-Chain 1, Iteration: 1000 / 1000 [100%]  (Sampling)
- Elapsed Time: 165.62 seconds (Warm-up)
-               188.83 seconds (Sampling)
-               354.45 seconds (Total)
-
-
-SAMPLING FOR MODEL 'negbin_ff' NOW (CHAIN 2).
-
-Chain 2, Iteration:   1 / 1000 [  0%]  (Warmup)
-Chain 2, Iteration: 100 / 1000 [ 10%]  (Warmup)
-Chain 2, Iteration: 200 / 1000 [ 20%]  (Warmup)
-Chain 2, Iteration: 300 / 1000 [ 30%]  (Warmup)
-Chain 2, Iteration: 400 / 1000 [ 40%]  (Warmup)
-Chain 2, Iteration: 500 / 1000 [ 50%]  (Warmup)
-Chain 2, Iteration: 501 / 1000 [ 50%]  (Sampling)
-Chain 2, Iteration: 600 / 1000 [ 60%]  (Sampling)
-Chain 2, Iteration: 700 / 1000 [ 70%]  (Sampling)
-Chain 2, Iteration: 800 / 1000 [ 80%]  (Sampling)
-Chain 2, Iteration: 900 / 1000 [ 90%]  (Sampling)
-Chain 2, Iteration: 1000 / 1000 [100%]  (Sampling)
- Elapsed Time: 177.07 seconds (Warm-up)
-               189.68 seconds (Sampling)
-               366.75 seconds (Total)
+Chain 1, Iteration:    1 / 2000 [  0%]  (Warmup)
+Chain 1, Iteration:  200 / 2000 [ 10%]  (Warmup)
+Chain 1, Iteration:  400 / 2000 [ 20%]  (Warmup)
+Chain 1, Iteration:  600 / 2000 [ 30%]  (Warmup)
+Chain 1, Iteration:  800 / 2000 [ 40%]  (Warmup)
+Chain 1, Iteration: 1000 / 2000 [ 50%]  (Warmup)
+Chain 1, Iteration: 1001 / 2000 [ 50%]  (Sampling)
+Chain 1, Iteration: 1200 / 2000 [ 60%]  (Sampling)
+Chain 1, Iteration: 1400 / 2000 [ 70%]  (Sampling)
+Chain 1, Iteration: 1600 / 2000 [ 80%]  (Sampling)
+Chain 1, Iteration: 1800 / 2000 [ 90%]  (Sampling)
+Chain 1, Iteration: 2000 / 2000 [100%]  (Sampling)
+ Elapsed Time: 15.37 seconds (Warm-up)
+               11.12 seconds (Sampling)
+               26.49 seconds (Total)
 
 
-SAMPLING FOR MODEL 'negbin_ff' NOW (CHAIN 3).
+SAMPLING FOR MODEL 'negbin_binary' NOW (CHAIN 2).
 
-Chain 3, Iteration:   1 / 1000 [  0%]  (Warmup)
-Chain 3, Iteration: 100 / 1000 [ 10%]  (Warmup)
-Chain 3, Iteration: 200 / 1000 [ 20%]  (Warmup)
-Chain 3, Iteration: 300 / 1000 [ 30%]  (Warmup)
-Chain 3, Iteration: 400 / 1000 [ 40%]  (Warmup)
-Chain 3, Iteration: 500 / 1000 [ 50%]  (Warmup)
-Chain 3, Iteration: 501 / 1000 [ 50%]  (Sampling)
-Chain 3, Iteration: 600 / 1000 [ 60%]  (Sampling)
-Chain 3, Iteration: 700 / 1000 [ 70%]  (Sampling)
-Chain 3, Iteration: 800 / 1000 [ 80%]  (Sampling)
-Chain 3, Iteration: 900 / 1000 [ 90%]  (Sampling)
-Chain 3, Iteration: 1000 / 1000 [100%]  (Sampling)
- Elapsed Time: 164.88 seconds (Warm-up)
-               187.66 seconds (Sampling)
-               352.54 seconds (Total)
+Chain 2, Iteration:    1 / 2000 [  0%]  (Warmup)
+Chain 2, Iteration:  200 / 2000 [ 10%]  (Warmup)
+Chain 2, Iteration:  400 / 2000 [ 20%]  (Warmup)
+Chain 2, Iteration:  600 / 2000 [ 30%]  (Warmup)
+Chain 2, Iteration:  800 / 2000 [ 40%]  (Warmup)
+Chain 2, Iteration: 1000 / 2000 [ 50%]  (Warmup)
+Chain 2, Iteration: 1001 / 2000 [ 50%]  (Sampling)
+Chain 2, Iteration: 1200 / 2000 [ 60%]  (Sampling)
+Chain 2, Iteration: 1400 / 2000 [ 70%]  (Sampling)
+Chain 2, Iteration: 1600 / 2000 [ 80%]  (Sampling)
+Chain 2, Iteration: 1800 / 2000 [ 90%]  (Sampling)
+Chain 2, Iteration: 2000 / 2000 [100%]  (Sampling)
+ Elapsed Time: 14.19 seconds (Warm-up)
+               2.65 seconds (Sampling)
+               16.84 seconds (Total)
 
 
-SAMPLING FOR MODEL 'negbin_ff' NOW (CHAIN 4).
+SAMPLING FOR MODEL 'negbin_binary' NOW (CHAIN 3).
 
-Chain 4, Iteration:   1 / 1000 [  0%]  (Warmup)
-Chain 4, Iteration: 100 / 1000 [ 10%]  (Warmup)
-Chain 4, Iteration: 200 / 1000 [ 20%]  (Warmup)
-Chain 4, Iteration: 300 / 1000 [ 30%]  (Warmup)
-Chain 4, Iteration: 400 / 1000 [ 40%]  (Warmup)
-Chain 4, Iteration: 500 / 1000 [ 50%]  (Warmup)
-Chain 4, Iteration: 501 / 1000 [ 50%]  (Sampling)
-Chain 4, Iteration: 600 / 1000 [ 60%]  (Sampling)
-Chain 4, Iteration: 700 / 1000 [ 70%]  (Sampling)
-Chain 4, Iteration: 800 / 1000 [ 80%]  (Sampling)
-Chain 4, Iteration: 900 / 1000 [ 90%]  (Sampling)
-Chain 4, Iteration: 1000 / 1000 [100%]  (Sampling)
- Elapsed Time: 173.71 seconds (Warm-up)
-               188.12 seconds (Sampling)
-               361.83 seconds (Total)
+Chain 3, Iteration:    1 / 2000 [  0%]  (Warmup)
+Chain 3, Iteration:  200 / 2000 [ 10%]  (Warmup)
+Chain 3, Iteration:  400 / 2000 [ 20%]  (Warmup)
+Chain 3, Iteration:  600 / 2000 [ 30%]  (Warmup)
+Chain 3, Iteration:  800 / 2000 [ 40%]  (Warmup)
+Chain 3, Iteration: 1000 / 2000 [ 50%]  (Warmup)
+Chain 3, Iteration: 1001 / 2000 [ 50%]  (Sampling)
+Chain 3, Iteration: 1200 / 2000 [ 60%]  (Sampling)
+Chain 3, Iteration: 1400 / 2000 [ 70%]  (Sampling)
+Chain 3, Iteration: 1600 / 2000 [ 80%]  (Sampling)
+Chain 3, Iteration: 1800 / 2000 [ 90%]  (Sampling)
+Chain 3, Iteration: 2000 / 2000 [100%]  (Sampling)
+ Elapsed Time: 10.93 seconds (Warm-up)
+               2.7 seconds (Sampling)
+               13.63 seconds (Total)
+
+
+SAMPLING FOR MODEL 'negbin_binary' NOW (CHAIN 4).
+
+Chain 4, Iteration:    1 / 2000 [  0%]  (Warmup)
+Chain 4, Iteration:  200 / 2000 [ 10%]  (Warmup)
+Chain 4, Iteration:  400 / 2000 [ 20%]  (Warmup)
+Chain 4, Iteration:  600 / 2000 [ 30%]  (Warmup)
+Chain 4, Iteration:  800 / 2000 [ 40%]  (Warmup)
+Chain 4, Iteration: 1000 / 2000 [ 50%]  (Warmup)
+Chain 4, Iteration: 1001 / 2000 [ 50%]  (Sampling)
+Chain 4, Iteration: 1200 / 2000 [ 60%]  (Sampling)
+Chain 4, Iteration: 1400 / 2000 [ 70%]  (Sampling)
+Chain 4, Iteration: 1600 / 2000 [ 80%]  (Sampling)
+Chain 4, Iteration: 1800 / 2000 [ 90%]  (Sampling)
+Chain 4, Iteration: 2000 / 2000 [100%]  (Sampling)
+ Elapsed Time: 14.87 seconds (Warm-up)
+               4.94 seconds (Sampling)
+               19.81 seconds (Total)
 
 [1] "done fitting stan model"
-[1] "2017-07-12 11:04:11 EDT"
+[1] "2017-07-31 13:19:19 EDT"
 NULL
-[1] "done saving stanfit object"
-[1] "2017-07-12 11:04:23 EDT"
+----------------------------------------------------------------
+Divergent transitions happened, rerunning with adapt_delta = 0.9999 
+num_clusters = 5 num_units= 0.05 
+
+SAMPLING FOR MODEL 'negbin_binary' NOW (CHAIN 1).
+
+Chain 1, Iteration:    1 / 2000 [  0%]  (Warmup)
+Chain 1, Iteration:  200 / 2000 [ 10%]  (Warmup)
+Chain 1, Iteration:  400 / 2000 [ 20%]  (Warmup)
+Chain 1, Iteration:  600 / 2000 [ 30%]  (Warmup)
+Chain 1, Iteration:  800 / 2000 [ 40%]  (Warmup)
+Chain 1, Iteration: 1000 / 2000 [ 50%]  (Warmup)
+Chain 1, Iteration: 1001 / 2000 [ 50%]  (Sampling)
+Chain 1, Iteration: 1200 / 2000 [ 60%]  (Sampling)
+Chain 1, Iteration: 1400 / 2000 [ 70%]  (Sampling)
+Chain 1, Iteration: 1600 / 2000 [ 80%]  (Sampling)
+Chain 1, Iteration: 1800 / 2000 [ 90%]  (Sampling)
+Chain 1, Iteration: 2000 / 2000 [100%]  (Sampling)
+ Elapsed Time: 9.02 seconds (Warm-up)
+               4.02 seconds (Sampling)
+               13.04 seconds (Total)
+
+
+SAMPLING FOR MODEL 'negbin_binary' NOW (CHAIN 2).
+
+Chain 2, Iteration:    1 / 2000 [  0%]  (Warmup)
+Chain 2, Iteration:  200 / 2000 [ 10%]  (Warmup)
+Chain 2, Iteration:  400 / 2000 [ 20%]  (Warmup)
+Chain 2, Iteration:  600 / 2000 [ 30%]  (Warmup)
+Chain 2, Iteration:  800 / 2000 [ 40%]  (Warmup)
+Chain 2, Iteration: 1000 / 2000 [ 50%]  (Warmup)
+Chain 2, Iteration: 1001 / 2000 [ 50%]  (Sampling)
+Chain 2, Iteration: 1200 / 2000 [ 60%]  (Sampling)
+Chain 2, Iteration: 1400 / 2000 [ 70%]  (Sampling)
+Chain 2, Iteration: 1600 / 2000 [ 80%]  (Sampling)
+Chain 2, Iteration: 1800 / 2000 [ 90%]  (Sampling)
+Chain 2, Iteration: 2000 / 2000 [100%]  (Sampling)
+ Elapsed Time: 8.52 seconds (Warm-up)
+               3.24 seconds (Sampling)
+               11.76 seconds (Total)
+
+
+SAMPLING FOR MODEL 'negbin_binary' NOW (CHAIN 3).
+
+Chain 3, Iteration:    1 / 2000 [  0%]  (Warmup)
+Chain 3, Iteration:  200 / 2000 [ 10%]  (Warmup)
+Chain 3, Iteration:  400 / 2000 [ 20%]  (Warmup)
+Chain 3, Iteration:  600 / 2000 [ 30%]  (Warmup)
+Chain 3, Iteration:  800 / 2000 [ 40%]  (Warmup)
+Chain 3, Iteration: 1000 / 2000 [ 50%]  (Warmup)
+Chain 3, Iteration: 1001 / 2000 [ 50%]  (Sampling)
+Chain 3, Iteration: 1200 / 2000 [ 60%]  (Sampling)
+Chain 3, Iteration: 1400 / 2000 [ 70%]  (Sampling)
+Chain 3, Iteration: 1600 / 2000 [ 80%]  (Sampling)
+Chain 3, Iteration: 1800 / 2000 [ 90%]  (Sampling)
+Chain 3, Iteration: 2000 / 2000 [100%]  (Sampling)
+ Elapsed Time: 10.25 seconds (Warm-up)
+               3.01 seconds (Sampling)
+               13.26 seconds (Total)
+
+
+SAMPLING FOR MODEL 'negbin_binary' NOW (CHAIN 4).
+
+Chain 4, Iteration:    1 / 2000 [  0%]  (Warmup)
+Chain 4, Iteration:  200 / 2000 [ 10%]  (Warmup)
+Chain 4, Iteration:  400 / 2000 [ 20%]  (Warmup)
+Chain 4, Iteration:  600 / 2000 [ 30%]  (Warmup)
+Chain 4, Iteration:  800 / 2000 [ 40%]  (Warmup)
+Chain 4, Iteration: 1000 / 2000 [ 50%]  (Warmup)
+Chain 4, Iteration: 1001 / 2000 [ 50%]  (Sampling)
+Chain 4, Iteration: 1200 / 2000 [ 60%]  (Sampling)
+Chain 4, Iteration: 1400 / 2000 [ 70%]  (Sampling)
+Chain 4, Iteration: 1600 / 2000 [ 80%]  (Sampling)
+Chain 4, Iteration: 1800 / 2000 [ 90%]  (Sampling)
+Chain 4, Iteration: 2000 / 2000 [100%]  (Sampling)
+ Elapsed Time: 12.58 seconds (Warm-up)
+               2.93 seconds (Sampling)
+               15.51 seconds (Total)
+
+[1] "done fitting stan model"
+[1] "2017-07-31 13:20:13 EDT"
+NULL
+----------------------------------------------------------------
+Divergent transitions happened, rerunning with adapt_delta = 0.99999 
+num_clusters = 5 num_units= 0.05 
+
+SAMPLING FOR MODEL 'negbin_binary' NOW (CHAIN 1).
+
+Chain 1, Iteration:    1 / 2000 [  0%]  (Warmup)
+Chain 1, Iteration:  200 / 2000 [ 10%]  (Warmup)
+Chain 1, Iteration:  400 / 2000 [ 20%]  (Warmup)
+Chain 1, Iteration:  600 / 2000 [ 30%]  (Warmup)
+Chain 1, Iteration:  800 / 2000 [ 40%]  (Warmup)
+Chain 1, Iteration: 1000 / 2000 [ 50%]  (Warmup)
+Chain 1, Iteration: 1001 / 2000 [ 50%]  (Sampling)
+Chain 1, Iteration: 1200 / 2000 [ 60%]  (Sampling)
+Chain 1, Iteration: 1400 / 2000 [ 70%]  (Sampling)
+Chain 1, Iteration: 1600 / 2000 [ 80%]  (Sampling)
+Chain 1, Iteration: 1800 / 2000 [ 90%]  (Sampling)
+Chain 1, Iteration: 2000 / 2000 [100%]  (Sampling)
+ Elapsed Time: 8.69 seconds (Warm-up)
+               2.53 seconds (Sampling)
+               11.22 seconds (Total)
+
+
+SAMPLING FOR MODEL 'negbin_binary' NOW (CHAIN 2).
+
+Chain 2, Iteration:    1 / 2000 [  0%]  (Warmup)
+Chain 2, Iteration:  200 / 2000 [ 10%]  (Warmup)
+Chain 2, Iteration:  400 / 2000 [ 20%]  (Warmup)
+Chain 2, Iteration:  600 / 2000 [ 30%]  (Warmup)
+Chain 2, Iteration:  800 / 2000 [ 40%]  (Warmup)
+Chain 2, Iteration: 1000 / 2000 [ 50%]  (Warmup)
+Chain 2, Iteration: 1001 / 2000 [ 50%]  (Sampling)
+Chain 2, Iteration: 1200 / 2000 [ 60%]  (Sampling)
+Chain 2, Iteration: 1400 / 2000 [ 70%]  (Sampling)
+Chain 2, Iteration: 1600 / 2000 [ 80%]  (Sampling)
+Chain 2, Iteration: 1800 / 2000 [ 90%]  (Sampling)
+Chain 2, Iteration: 2000 / 2000 [100%]  (Sampling)
+ Elapsed Time: 8.56 seconds (Warm-up)
+               3.92 seconds (Sampling)
+               12.48 seconds (Total)
+
+
+SAMPLING FOR MODEL 'negbin_binary' NOW (CHAIN 3).
+
+Chain 3, Iteration:    1 / 2000 [  0%]  (Warmup)
+Chain 3, Iteration:  200 / 2000 [ 10%]  (Warmup)
+Chain 3, Iteration:  400 / 2000 [ 20%]  (Warmup)
+Chain 3, Iteration:  600 / 2000 [ 30%]  (Warmup)
+Chain 3, Iteration:  800 / 2000 [ 40%]  (Warmup)
+Chain 3, Iteration: 1000 / 2000 [ 50%]  (Warmup)
+Chain 3, Iteration: 1001 / 2000 [ 50%]  (Sampling)
+Chain 3, Iteration: 1200 / 2000 [ 60%]  (Sampling)
+Chain 3, Iteration: 1400 / 2000 [ 70%]  (Sampling)
+Chain 3, Iteration: 1600 / 2000 [ 80%]  (Sampling)
+Chain 3, Iteration: 1800 / 2000 [ 90%]  (Sampling)
+Chain 3, Iteration: 2000 / 2000 [100%]  (Sampling)
+ Elapsed Time: 18.4 seconds (Warm-up)
+               3.44 seconds (Sampling)
+               21.84 seconds (Total)
+
+
+SAMPLING FOR MODEL 'negbin_binary' NOW (CHAIN 4).
+
+Chain 4, Iteration:    1 / 2000 [  0%]  (Warmup)
+Chain 4, Iteration:  200 / 2000 [ 10%]  (Warmup)
+Chain 4, Iteration:  400 / 2000 [ 20%]  (Warmup)
+Chain 4, Iteration:  600 / 2000 [ 30%]  (Warmup)
+Chain 4, Iteration:  800 / 2000 [ 40%]  (Warmup)
+Chain 4, Iteration: 1000 / 2000 [ 50%]  (Warmup)
+Chain 4, Iteration: 1001 / 2000 [ 50%]  (Sampling)
+Chain 4, Iteration: 1200 / 2000 [ 60%]  (Sampling)
+Chain 4, Iteration: 1400 / 2000 [ 70%]  (Sampling)
+Chain 4, Iteration: 1600 / 2000 [ 80%]  (Sampling)
+Chain 4, Iteration: 1800 / 2000 [ 90%]  (Sampling)
+Chain 4, Iteration: 2000 / 2000 [100%]  (Sampling)
+ Elapsed Time: 12.55 seconds (Warm-up)
+               10.67 seconds (Sampling)
+               23.22 seconds (Total)
+
+[1] "done fitting stan model"
+[1] "2017-07-31 13:21:22 EDT"
+NULL
+----------------------------------------------------------------
+Divergent transitions happened, rerunning with adapt_delta = 0.999999 
+num_clusters = 5 num_units= 0.05 
+
+SAMPLING FOR MODEL 'negbin_binary' NOW (CHAIN 1).
+
+Chain 1, Iteration:    1 / 2000 [  0%]  (Warmup)
+Chain 1, Iteration:  200 / 2000 [ 10%]  (Warmup)
+Chain 1, Iteration:  400 / 2000 [ 20%]  (Warmup)
+Chain 1, Iteration:  600 / 2000 [ 30%]  (Warmup)
+Chain 1, Iteration:  800 / 2000 [ 40%]  (Warmup)
+Chain 1, Iteration: 1000 / 2000 [ 50%]  (Warmup)
+Chain 1, Iteration: 1001 / 2000 [ 50%]  (Sampling)
+Chain 1, Iteration: 1200 / 2000 [ 60%]  (Sampling)
+Chain 1, Iteration: 1400 / 2000 [ 70%]  (Sampling)
+Chain 1, Iteration: 1600 / 2000 [ 80%]  (Sampling)
+Chain 1, Iteration: 1800 / 2000 [ 90%]  (Sampling)
+Chain 1, Iteration: 2000 / 2000 [100%]  (Sampling)
+ Elapsed Time: 14.48 seconds (Warm-up)
+               6.98 seconds (Sampling)
+               21.46 seconds (Total)
+
+
+SAMPLING FOR MODEL 'negbin_binary' NOW (CHAIN 2).
+
+Chain 2, Iteration:    1 / 2000 [  0%]  (Warmup)
+Chain 2, Iteration:  200 / 2000 [ 10%]  (Warmup)
+Chain 2, Iteration:  400 / 2000 [ 20%]  (Warmup)
+Chain 2, Iteration:  600 / 2000 [ 30%]  (Warmup)
+Chain 2, Iteration:  800 / 2000 [ 40%]  (Warmup)
+Chain 2, Iteration: 1000 / 2000 [ 50%]  (Warmup)
+Chain 2, Iteration: 1001 / 2000 [ 50%]  (Sampling)
+Chain 2, Iteration: 1200 / 2000 [ 60%]  (Sampling)
+Chain 2, Iteration: 1400 / 2000 [ 70%]  (Sampling)
+Chain 2, Iteration: 1600 / 2000 [ 80%]  (Sampling)
+Chain 2, Iteration: 1800 / 2000 [ 90%]  (Sampling)
+Chain 2, Iteration: 2000 / 2000 [100%]  (Sampling)
+ Elapsed Time: 9.23 seconds (Warm-up)
+               4.72 seconds (Sampling)
+               13.95 seconds (Total)
+
+
+SAMPLING FOR MODEL 'negbin_binary' NOW (CHAIN 3).
+
+Chain 3, Iteration:    1 / 2000 [  0%]  (Warmup)
+Chain 3, Iteration:  200 / 2000 [ 10%]  (Warmup)
+Chain 3, Iteration:  400 / 2000 [ 20%]  (Warmup)
+Chain 3, Iteration:  600 / 2000 [ 30%]  (Warmup)
+Chain 3, Iteration:  800 / 2000 [ 40%]  (Warmup)
+Chain 3, Iteration: 1000 / 2000 [ 50%]  (Warmup)
+Chain 3, Iteration: 1001 / 2000 [ 50%]  (Sampling)
+Chain 3, Iteration: 1200 / 2000 [ 60%]  (Sampling)
+Chain 3, Iteration: 1400 / 2000 [ 70%]  (Sampling)
+Chain 3, Iteration: 1600 / 2000 [ 80%]  (Sampling)
+Chain 3, Iteration: 1800 / 2000 [ 90%]  (Sampling)
+Chain 3, Iteration: 2000 / 2000 [100%]  (Sampling)
+ Elapsed Time: 9.07 seconds (Warm-up)
+               10.72 seconds (Sampling)
+               19.79 seconds (Total)
+
+
+SAMPLING FOR MODEL 'negbin_binary' NOW (CHAIN 4).
+
+Chain 4, Iteration:    1 / 2000 [  0%]  (Warmup)
+Chain 4, Iteration:  200 / 2000 [ 10%]  (Warmup)
+Chain 4, Iteration:  400 / 2000 [ 20%]  (Warmup)
+Chain 4, Iteration:  600 / 2000 [ 30%]  (Warmup)
+Chain 4, Iteration:  800 / 2000 [ 40%]  (Warmup)
+Chain 4, Iteration: 1000 / 2000 [ 50%]  (Warmup)
+Chain 4, Iteration: 1001 / 2000 [ 50%]  (Sampling)
+Chain 4, Iteration: 1200 / 2000 [ 60%]  (Sampling)
+Chain 4, Iteration: 1400 / 2000 [ 70%]  (Sampling)
+Chain 4, Iteration: 1600 / 2000 [ 80%]  (Sampling)
+Chain 4, Iteration: 1800 / 2000 [ 90%]  (Sampling)
+Chain 4, Iteration: 2000 / 2000 [100%]  (Sampling)
+ Elapsed Time: 18.21 seconds (Warm-up)
+               5.41 seconds (Sampling)
+               23.62 seconds (Total)
+
+[1] "done fitting stan model"
+[1] "2017-07-31 13:22:41 EDT"
+NULL
+----------------------------------------------------------------
+Divergent transitions remain, running NCP version
+num_clusters = 5 num_units= 0.05 
+
+SAMPLING FOR MODEL 'negbin_binary_ncp' NOW (CHAIN 1).
+
+Chain 1, Iteration:    1 / 2000 [  0%]  (Warmup)
+Chain 1, Iteration:  200 / 2000 [ 10%]  (Warmup)
+Chain 1, Iteration:  400 / 2000 [ 20%]  (Warmup)
+Chain 1, Iteration:  600 / 2000 [ 30%]  (Warmup)
+Chain 1, Iteration:  800 / 2000 [ 40%]  (Warmup)
+Chain 1, Iteration: 1000 / 2000 [ 50%]  (Warmup)
+Chain 1, Iteration: 1001 / 2000 [ 50%]  (Sampling)
+Chain 1, Iteration: 1200 / 2000 [ 60%]  (Sampling)
+Chain 1, Iteration: 1400 / 2000 [ 70%]  (Sampling)
+Chain 1, Iteration: 1600 / 2000 [ 80%]  (Sampling)
+Chain 1, Iteration: 1800 / 2000 [ 90%]  (Sampling)
+Chain 1, Iteration: 2000 / 2000 [100%]  (Sampling)
+ Elapsed Time: 5.1 seconds (Warm-up)
+               1.49 seconds (Sampling)
+               6.59 seconds (Total)
+
+
+SAMPLING FOR MODEL 'negbin_binary_ncp' NOW (CHAIN 2).
+
+Chain 2, Iteration:    1 / 2000 [  0%]  (Warmup)
+Chain 2, Iteration:  200 / 2000 [ 10%]  (Warmup)
+Chain 2, Iteration:  400 / 2000 [ 20%]  (Warmup)
+Chain 2, Iteration:  600 / 2000 [ 30%]  (Warmup)
+Chain 2, Iteration:  800 / 2000 [ 40%]  (Warmup)
+Chain 2, Iteration: 1000 / 2000 [ 50%]  (Warmup)
+Chain 2, Iteration: 1001 / 2000 [ 50%]  (Sampling)
+Chain 2, Iteration: 1200 / 2000 [ 60%]  (Sampling)
+Chain 2, Iteration: 1400 / 2000 [ 70%]  (Sampling)
+Chain 2, Iteration: 1600 / 2000 [ 80%]  (Sampling)
+Chain 2, Iteration: 1800 / 2000 [ 90%]  (Sampling)
+Chain 2, Iteration: 2000 / 2000 [100%]  (Sampling)
+ Elapsed Time: 4.52 seconds (Warm-up)
+               1.63 seconds (Sampling)
+               6.15 seconds (Total)
+
+
+SAMPLING FOR MODEL 'negbin_binary_ncp' NOW (CHAIN 3).
+
+Chain 3, Iteration:    1 / 2000 [  0%]  (Warmup)
+Chain 3, Iteration:  200 / 2000 [ 10%]  (Warmup)
+Chain 3, Iteration:  400 / 2000 [ 20%]  (Warmup)
+Chain 3, Iteration:  600 / 2000 [ 30%]  (Warmup)
+Chain 3, Iteration:  800 / 2000 [ 40%]  (Warmup)
+Chain 3, Iteration: 1000 / 2000 [ 50%]  (Warmup)
+Chain 3, Iteration: 1001 / 2000 [ 50%]  (Sampling)
+Chain 3, Iteration: 1200 / 2000 [ 60%]  (Sampling)
+Chain 3, Iteration: 1400 / 2000 [ 70%]  (Sampling)
+Chain 3, Iteration: 1600 / 2000 [ 80%]  (Sampling)
+Chain 3, Iteration: 1800 / 2000 [ 90%]  (Sampling)
+Chain 3, Iteration: 2000 / 2000 [100%]  (Sampling)
+ Elapsed Time: 4.01 seconds (Warm-up)
+               1.88 seconds (Sampling)
+               5.89 seconds (Total)
+
+
+SAMPLING FOR MODEL 'negbin_binary_ncp' NOW (CHAIN 4).
+
+Chain 4, Iteration:    1 / 2000 [  0%]  (Warmup)
+Chain 4, Iteration:  200 / 2000 [ 10%]  (Warmup)
+Chain 4, Iteration:  400 / 2000 [ 20%]  (Warmup)
+Chain 4, Iteration:  600 / 2000 [ 30%]  (Warmup)
+Chain 4, Iteration:  800 / 2000 [ 40%]  (Warmup)
+Chain 4, Iteration: 1000 / 2000 [ 50%]  (Warmup)
+Chain 4, Iteration: 1001 / 2000 [ 50%]  (Sampling)
+Chain 4, Iteration: 1200 / 2000 [ 60%]  (Sampling)
+Chain 4, Iteration: 1400 / 2000 [ 70%]  (Sampling)
+Chain 4, Iteration: 1600 / 2000 [ 80%]  (Sampling)
+Chain 4, Iteration: 1800 / 2000 [ 90%]  (Sampling)
+Chain 4, Iteration: 2000 / 2000 [100%]  (Sampling)
+ Elapsed Time: 5.98 seconds (Warm-up)
+               1.63 seconds (Sampling)
+               7.61 seconds (Total)
+
+[1] "done fitting stan model"
+[1] "2017-07-31 13:23:07 EDT"
+NULL
+Inference for Stan model: negbin_binary_ncp.
+4 chains, each with iter=2000; warmup=1000; thin=1; 
+post-warmup draws per chain=1000, total post-warmup draws=4000.
+
+              mean se_mean     sd   2.5%    25%    50%    75%   97.5% n_eff
+alpha0        1.04    0.01   0.26   0.56   0.89   1.03   1.18    1.63  1116
+gamma0        0.00    0.03   1.08  -2.06  -0.61  -0.01   0.61    2.09  1407
+sigma_beta0   0.30    0.01   0.30   0.01   0.10   0.22   0.40    1.09   832
+mu          899.14    3.69 156.13 553.77 816.65 905.60 991.71 1207.89  1795
+phi          13.27    0.18   9.75   1.51   6.13  11.05  17.79   38.39  3093
+            Rhat
+alpha0         1
+gamma0         1
+sigma_beta0    1
+mu             1
+phi            1
+
+Samples were drawn using NUTS(diag_e) at Mon Jul 31 13:23:07 2017.
+For each parameter, n_eff is a crude measure of effective sample size,
+and Rhat is the potential scale reduction factor on split chains (at 
+convergence, Rhat=1).
 [1] "done making samps"
-[1] "2017-07-12 11:04:24 EDT"
- num [1:3492, 1:10] 0.147 0.61 0.861 1.347 -0.908 ...
+[1] "2017-07-31 13:23:09 EDT"
+ num [1:263, 1:10] 0.29865 1.04015 -0.00155 -0.00989 0.17751 ...
  - attr(*, "dimnames")=List of 2
-  ..$ : chr [1:3492] "sigma_beta0" "sigma_beta1" "sigma_y" "alpha0" ...
+  ..$ : chr [1:263] "sigma_beta0" "alpha0" "gamma0" "eta0[1]" ...
   ..$ : chr [1:10] "mean" "se_mean" "sd" "2.5%" ...
 NULL
+ [1] "mean"    "se_mean" "sd"      "2.5%"    "25%"     "50%"     "75%"    
+ [8] "97.5%"   "n_eff"   "Rhat"   
+[1] "alpha0"      "gamma0"      "sigma_beta0" "mu"          "phi"        
+[1] "done making par_ests"
+[1] "2017-07-31 13:23:09 EDT"
+[1] "making par_ests"
+[1] "2017-07-31 13:23:09 EDT"
+[1] "printing par_ests"
+[1] "2017-07-31 13:23:09 EDT"
+'data.frame':	5 obs. of  11 variables:
+ $ mean   : num  1.04015 -0.00155 0.29865 899.142 13.27182
+ $ se_mean: num  0.00791 0.02879 0.01042 3.68518 0.1754
+ $ sd     : num  0.264 1.08 0.301 156.13 9.755
+ $ 2.5%   : num  0.56013 -2.06412 0.00755 553.76731 1.50516
+ $ 25%    : num  0.8944 -0.6143 0.0954 816.6477 6.1327
+ $ 50%    : num  1.03074 -0.00885 0.21697 905.60347 11.04682
+ $ 75%    : num  1.178 0.606 0.4 991.706 17.79
+ $ 97.5%  : num  1.63 2.09 1.09 1207.89 38.39
+ $ n_eff  : num  1116 1407 832 1795 3093
+ $ Rhat   : num  1 1 1 1 1
+ $ NA     : Factor w/ 5 levels "alpha0","gamma0",..: 1 2 5 3 4
 NULL
- [1] "alpha0"      "gamma0"      "alpha1"      "gamma1"      "sigma_beta0"
- [6] "sigma_beta1" "sigma_y"     "mu_star"     "phi_star"    "mu"         
-[11] "phi"        
-Error in tt[parlist, ] : subscript out of bounds
-Calls: runstan
-Execution halted
+[1] "summarizing draws"
+# A tibble: 2 x 9
+     param         mean           sd         p025          p25         p50
+     <chr>        <dbl>        <dbl>        <dbl>        <dbl>       <dbl>
+1    N_new 9.025719e+04 1.507462e+04 5.735845e+04 8.192375e+04 9.09485e+04
+2 ybar_new 7.233562e-01 6.748555e-02 5.572936e-01 6.959485e-01 7.32107e-01
+# ... with 3 more variables: p75 <dbl>, p975 <dbl>, truth <dbl>
+NULL
+##################################################################################
+NULL
+CURRENTLY ON: num_clusters = 10 , num_units = 0.05 , use_sizes = 1 , size_model = multinomial , stanmod = negbin_binary 
+Sampling data
+[1] "2017-07-31 13:23:28 EDT"
+DONE sampling
+Running stan
+[1] "2017-07-31 13:23:28 EDT"
+[1] "2017-07-31 13:23:28 EDT"
+[1] "making stan data"
+[1] "2017-07-31 13:23:28 EDT"
+List of 7
+ $ J            : num 100
+ $ K            : num 10
+ $ n            : int 537
+ $ y            : int [1:537] 1 1 1 0 0 1 1 1 0 1 ...
+ $ cluster_id   : int [1:537] 1 1 1 1 1 1 1 1 1 1 ...
+ $ Nj_sample    : num [1:10] 628 791 957 990 1021 ...
+ $ log_Nj_sample: num [1:10] -0.5196 -0.2888 -0.0983 -0.0644 -0.0336 ...
+NULL
+[1] "2017-07-31 13:23:28 EDT"
+
+SAMPLING FOR MODEL 'negbin_binary' NOW (CHAIN 1).
+
+Chain 1, Iteration:    1 / 2000 [  0%]  (Warmup)
+Chain 1, Iteration:  200 / 2000 [ 10%]  (Warmup)
+Chain 1, Iteration:  400 / 2000 [ 20%]  (Warmup)
+Chain 1, Iteration:  600 / 2000 [ 30%]  (Warmup)
+Chain 1, Iteration:  800 / 2000 [ 40%]  (Warmup)
+Chain 1, Iteration: 1000 / 2000 [ 50%]  (Warmup)
+Chain 1, Iteration: 1001 / 2000 [ 50%]  (Sampling)
+Chain 1, Iteration: 1200 / 2000 [ 60%]  (Sampling)
+Chain 1, Iteration: 1400 / 2000 [ 70%]  (Sampling)
+Chain 1, Iteration: 1600 / 2000 [ 80%]  (Sampling)
+Chain 1, Iteration: 1800 / 2000 [ 90%]  (Sampling)
+Chain 1, Iteration: 2000 / 2000 [100%]  (Sampling)
+ Elapsed Time: 4.92 seconds (Warm-up)
+               4 seconds (Sampling)
+               8.92 seconds (Total)
+
+
+SAMPLING FOR MODEL 'negbin_binary' NOW (CHAIN 2).
+
+Chain 2, Iteration:    1 / 2000 [  0%]  (Warmup)
+Chain 2, Iteration:  200 / 2000 [ 10%]  (Warmup)
+Chain 2, Iteration:  400 / 2000 [ 20%]  (Warmup)
+Chain 2, Iteration:  600 / 2000 [ 30%]  (Warmup)
+Chain 2, Iteration:  800 / 2000 [ 40%]  (Warmup)
+Chain 2, Iteration: 1000 / 2000 [ 50%]  (Warmup)
+Chain 2, Iteration: 1001 / 2000 [ 50%]  (Sampling)
+Chain 2, Iteration: 1200 / 2000 [ 60%]  (Sampling)
+Chain 2, Iteration: 1400 / 2000 [ 70%]  (Sampling)
+Chain 2, Iteration: 1600 / 2000 [ 80%]  (Sampling)
+Chain 2, Iteration: 1800 / 2000 [ 90%]  (Sampling)
+Chain 2, Iteration: 2000 / 2000 [100%]  (Sampling)
+ Elapsed Time: 6.18 seconds (Warm-up)
+               2.82 seconds (Sampling)
+               9 seconds (Total)
+
+
+SAMPLING FOR MODEL 'negbin_binary' NOW (CHAIN 3).
+
+Chain 3, Iteration:    1 / 2000 [  0%]  (Warmup)
+Chain 3, Iteration:  200 / 2000 [ 10%]  (Warmup)
+Chain 3, Iteration:  400 / 2000 [ 20%]  (Warmup)
+Chain 3, Iteration:  600 / 2000 [ 30%]  (Warmup)
+Chain 3, Iteration:  800 / 2000 [ 40%]  (Warmup)
+Chain 3, Iteration: 1000 / 2000 [ 50%]  (Warmup)
+Chain 3, Iteration: 1001 / 2000 [ 50%]  (Sampling)
+Chain 3, Iteration: 1200 / 2000 [ 60%]  (Sampling)
+Chain 3, Iteration: 1400 / 2000 [ 70%]  (Sampling)
+Chain 3, Iteration: 1600 / 2000 [ 80%]  (Sampling)
+Chain 3, Iteration: 1800 / 2000 [ 90%]  (Sampling)
+Chain 3, Iteration: 2000 / 2000 [100%]  (Sampling)
+ Elapsed Time: 6.3 seconds (Warm-up)
+               3.44 seconds (Sampling)
+               9.74 seconds (Total)
+
+
+SAMPLING FOR MODEL 'negbin_binary' NOW (CHAIN 4).
+
+Chain 4, Iteration:    1 / 2000 [  0%]  (Warmup)
+Chain 4, Iteration:  200 / 2000 [ 10%]  (Warmup)
+Chain 4, Iteration:  400 / 2000 [ 20%]  (Warmup)
+Chain 4, Iteration:  600 / 2000 [ 30%]  (Warmup)
+Chain 4, Iteration:  800 / 2000 [ 40%]  (Warmup)
+Chain 4, Iteration: 1000 / 2000 [ 50%]  (Warmup)
+Chain 4, Iteration: 1001 / 2000 [ 50%]  (Sampling)
+Chain 4, Iteration: 1200 / 2000 [ 60%]  (Sampling)
+Chain 4, Iteration: 1400 / 2000 [ 70%]  (Sampling)
+Chain 4, Iteration: 1600 / 2000 [ 80%]  (Sampling)
+Chain 4, Iteration: 1800 / 2000 [ 90%]  (Sampling)
+Chain 4, Iteration: 2000 / 2000 [100%]  (Sampling)
+ Elapsed Time: 7.19 seconds (Warm-up)
+               3.07 seconds (Sampling)
+               10.26 seconds (Total)
+
+[1] "done fitting stan model"
+[1] "2017-07-31 13:24:07 EDT"
+NULL
+Inference for Stan model: negbin_binary.
+4 chains, each with iter=2000; warmup=1000; thin=1; 
+post-warmup draws per chain=1000, total post-warmup draws=4000.
+
+               mean se_mean    sd   2.5%    25%     50%     75%   97.5% n_eff
+alpha0         1.06    0.00  0.23   0.62   0.92    1.06    1.20    1.54  2798
+gamma0        -0.17    0.02  0.98  -2.17  -0.77   -0.16    0.43    1.75  2470
+sigma_beta0    0.63    0.01  0.25   0.26   0.45    0.59    0.74    1.24  1185
+mu          1001.93    1.87 96.67 800.53 945.01 1005.67 1063.12 1190.56  2680
+phi           15.15    0.13  7.77   3.81   9.29   13.98   19.41   33.79  3800
+            Rhat
+alpha0      1.00
+gamma0      1.00
+sigma_beta0 1.01
+mu          1.00
+phi         1.00
+
+Samples were drawn using NUTS(diag_e) at Mon Jul 31 13:24:07 2017.
+For each parameter, n_eff is a crude measure of effective sample size,
+and Rhat is the potential scale reduction factor on split chains (at 
+convergence, Rhat=1).
+[1] "done making samps"
+[1] "2017-07-31 13:24:10 EDT"
+ num [1:556, 1:10] 0.626 1.064 -0.172 0.799 0.766 ...
+ - attr(*, "dimnames")=List of 2
+  ..$ : chr [1:556] "sigma_beta0" "alpha0" "gamma0" "beta0[1]" ...
+  ..$ : chr [1:10] "mean" "se_mean" "sd" "2.5%" ...
+NULL
+ [1] "mean"    "se_mean" "sd"      "2.5%"    "25%"     "50%"     "75%"    
+ [8] "97.5%"   "n_eff"   "Rhat"   
+[1] "alpha0"      "gamma0"      "sigma_beta0" "mu"          "phi"        
+[1] "done making par_ests"
+[1] "2017-07-31 13:24:10 EDT"
+[1] "making par_ests"
+[1] "2017-07-31 13:24:10 EDT"
+[1] "printing par_ests"
+[1] "2017-07-31 13:24:10 EDT"
+'data.frame':	5 obs. of  11 variables:
+ $ mean   : num  1.064 -0.172 0.626 1001.927 15.154
+ $ se_mean: num  0.00433 0.01974 0.00725 1.86746 0.126
+ $ sd     : num  0.229 0.981 0.25 96.671 7.768
+ $ 2.5%   : num  0.616 -2.171 0.263 800.534 3.809
+ $ 25%    : num  0.923 -0.769 0.455 945.005 9.292
+ $ 50%    : num  1.058 -0.161 0.585 1005.672 13.981
+ $ 75%    : num  1.202 0.435 0.745 1063.118 19.41
+ $ 97.5%  : num  1.54 1.75 1.24 1190.56 33.79
+ $ n_eff  : num  2798 2470 1185 2680 3800
+ $ Rhat   : num  1 1 1.01 1 1
+ $ NA     : Factor w/ 5 levels "alpha0","gamma0",..: 1 2 5 3 4
+NULL
+[1] "summarizing draws"
+# A tibble: 2 x 9
+     param         mean           sd         p025          p25          p50
+     <chr>        <dbl>        <dbl>        <dbl>        <dbl>        <dbl>
+1    N_new 1.008430e+05 9.151708e+03 8.144088e+04 9.531975e+04 1.010350e+05
+2 ybar_new 7.201081e-01 4.323931e-02 6.216784e-01 6.951556e-01 7.235484e-01
+# ... with 3 more variables: p75 <dbl>, p975 <dbl>, truth <dbl>
+NULL
+##################################################################################
+NULL
+CURRENTLY ON: num_clusters = 30 , num_units = 0.05 , use_sizes = 1 , size_model = multinomial , stanmod = negbin_binary 
+Sampling data
+[1] "2017-07-31 13:24:33 EDT"
+DONE sampling
+Running stan
+[1] "2017-07-31 13:24:33 EDT"
+[1] "2017-07-31 13:24:33 EDT"
+[1] "making stan data"
+[1] "2017-07-31 13:24:33 EDT"
+List of 7
+ $ J            : num 100
+ $ K            : num 30
+ $ n            : int 1775
+ $ y            : int [1:1775] 0 1 1 1 0 1 0 0 1 0 ...
+ $ cluster_id   : int [1:1775] 1 1 1 1 1 1 1 1 1 1 ...
+ $ Nj_sample    : num [1:30] 679 698 703 791 865 ...
+ $ log_Nj_sample: num [1:30] -0.441 -0.414 -0.407 -0.289 -0.199 ...
+NULL
+[1] "2017-07-31 13:24:34 EDT"
+
+SAMPLING FOR MODEL 'negbin_binary' NOW (CHAIN 1).
+
+Chain 1, Iteration:    1 / 2000 [  0%]  (Warmup)
+Chain 1, Iteration:  200 / 2000 [ 10%]  (Warmup)
+Chain 1, Iteration:  400 / 2000 [ 20%]  (Warmup)
+Chain 1, Iteration:  600 / 2000 [ 30%]  (Warmup)
+Chain 1, Iteration:  800 / 2000 [ 40%]  (Warmup)
+Chain 1, Iteration: 1000 / 2000 [ 50%]  (Warmup)
+Chain 1, Iteration: 1001 / 2000 [ 50%]  (Sampling)
+Chain 1, Iteration: 1200 / 2000 [ 60%]  (Sampling)
+Chain 1, Iteration: 1400 / 2000 [ 70%]  (Sampling)
+Chain 1, Iteration: 1600 / 2000 [ 80%]  (Sampling)
+Chain 1, Iteration: 1800 / 2000 [ 90%]  (Sampling)
+Chain 1, Iteration: 2000 / 2000 [100%]  (Sampling)
+ Elapsed Time: 18.78 seconds (Warm-up)
+               10.12 seconds (Sampling)
+               28.9 seconds (Total)
+
+
+SAMPLING FOR MODEL 'negbin_binary' NOW (CHAIN 2).
+
+Chain 2, Iteration:    1 / 2000 [  0%]  (Warmup)
+Chain 2, Iteration:  200 / 2000 [ 10%]  (Warmup)
+Chain 2, Iteration:  400 / 2000 [ 20%]  (Warmup)
+Chain 2, Iteration:  600 / 2000 [ 30%]  (Warmup)
+Chain 2, Iteration:  800 / 2000 [ 40%]  (Warmup)
+Chain 2, Iteration: 1000 / 2000 [ 50%]  (Warmup)
+Chain 2, Iteration: 1001 / 2000 [ 50%]  (Sampling)
+Chain 2, Iteration: 1200 / 2000 [ 60%]  (Sampling)
+Chain 2, Iteration: 1400 / 2000 [ 70%]  (Sampling)
+Chain 2, Iteration: 1600 / 2000 [ 80%]  (Sampling)
+Chain 2, Iteration: 1800 / 2000 [ 90%]  (Sampling)
+Chain 2, Iteration: 2000 / 2000 [100%]  (Sampling)
+ Elapsed Time: 19.39 seconds (Warm-up)
+               10.04 seconds (Sampling)
+               29.43 seconds (Total)
+
+
+SAMPLING FOR MODEL 'negbin_binary' NOW (CHAIN 3).
+
+Chain 3, Iteration:    1 / 2000 [  0%]  (Warmup)
+Chain 3, Iteration:  200 / 2000 [ 10%]  (Warmup)
+Chain 3, Iteration:  400 / 2000 [ 20%]  (Warmup)
+Chain 3, Iteration:  600 / 2000 [ 30%]  (Warmup)
+Chain 3, Iteration:  800 / 2000 [ 40%]  (Warmup)
+Chain 3, Iteration: 1000 / 2000 [ 50%]  (Warmup)
+Chain 3, Iteration: 1001 / 2000 [ 50%]  (Sampling)
+Chain 3, Iteration: 1200 / 2000 [ 60%]  (Sampling)
+Chain 3, Iteration: 1400 / 2000 [ 70%]  (Sampling)
+Chain 3, Iteration: 1600 / 2000 [ 80%]  (Sampling)
+Chain 3, Iteration: 1800 / 2000 [ 90%]  (Sampling)
+Chain 3, Iteration: 2000 / 2000 [100%]  (Sampling)
+ Elapsed Time: 18.87 seconds (Warm-up)
+               10.28 seconds (Sampling)
+               29.15 seconds (Total)
+
+
+SAMPLING FOR MODEL 'negbin_binary' NOW (CHAIN 4).
+
+Chain 4, Iteration:    1 / 2000 [  0%]  (Warmup)
+Chain 4, Iteration:  200 / 2000 [ 10%]  (Warmup)
+Chain 4, Iteration:  400 / 2000 [ 20%]  (Warmup)
+Chain 4, Iteration:  600 / 2000 [ 30%]  (Warmup)
+Chain 4, Iteration:  800 / 2000 [ 40%]  (Warmup)
+Chain 4, Iteration: 1000 / 2000 [ 50%]  (Warmup)
+Chain 4, Iteration: 1001 / 2000 [ 50%]  (Sampling)
+Chain 4, Iteration: 1200 / 2000 [ 60%]  (Sampling)
+Chain 4, Iteration: 1400 / 2000 [ 70%]  (Sampling)
+Chain 4, Iteration: 1600 / 2000 [ 80%]  (Sampling)
+Chain 4, Iteration: 1800 / 2000 [ 90%]  (Sampling)
+Chain 4, Iteration: 2000 / 2000 [100%]  (Sampling)
+ Elapsed Time: 17.36 seconds (Warm-up)
+               10.26 seconds (Sampling)
+               27.62 seconds (Total)
+
+[1] "done fitting stan model"
+[1] "2017-07-31 13:26:30 EDT"
+NULL
+Inference for Stan model: negbin_binary.
+4 chains, each with iter=2000; warmup=1000; thin=1; 
+post-warmup draws per chain=1000, total post-warmup draws=4000.
+
+               mean se_mean    sd   2.5%     25%     50%     75%   97.5% n_eff
+alpha0         1.06    0.00  0.13   0.81    0.98    1.05    1.14    1.30  4000
+gamma0        -0.13    0.01  0.48  -1.08   -0.44   -0.14    0.17    0.82  4000
+sigma_beta0    0.57    0.00  0.11   0.39    0.49    0.56    0.63    0.80  3136
+mu          1106.37    0.89 56.41 990.42 1070.11 1108.17 1143.49 1214.53  4000
+phi           15.01    0.07  4.20   8.05   11.99   14.59   17.66   24.51  4000
+            Rhat
+alpha0         1
+gamma0         1
+sigma_beta0    1
+mu             1
+phi            1
+
+Samples were drawn using NUTS(diag_e) at Mon Jul 31 13:26:30 2017.
+For each parameter, n_eff is a crude measure of effective sample size,
+and Rhat is the potential scale reduction factor on split chains (at 
+convergence, Rhat=1).
+[1] "done making samps"
+[1] "2017-07-31 13:26:40 EDT"
+ num [1:1814, 1:10] 0.566 1.056 -0.135 1.072 0.989 ...
+ - attr(*, "dimnames")=List of 2
+  ..$ : chr [1:1814] "sigma_beta0" "alpha0" "gamma0" "beta0[1]" ...
+  ..$ : chr [1:10] "mean" "se_mean" "sd" "2.5%" ...
+NULL
+ [1] "mean"    "se_mean" "sd"      "2.5%"    "25%"     "50%"     "75%"    
+ [8] "97.5%"   "n_eff"   "Rhat"   
+[1] "alpha0"      "gamma0"      "sigma_beta0" "mu"          "phi"        
+[1] "done making par_ests"
+[1] "2017-07-31 13:26:40 EDT"
+[1] "making par_ests"
+[1] "2017-07-31 13:26:40 EDT"
+[1] "printing par_ests"
+[1] "2017-07-31 13:26:40 EDT"
+'data.frame':	5 obs. of  11 variables:
+ $ mean   : num  1.056 -0.135 0.566 1106.373 15.008
+ $ se_mean: num  0.00198 0.00754 0.00188 0.89189 0.06638
+ $ sd     : num  0.125 0.477 0.105 56.408 4.198
+ $ 2.5%   : num  0.814 -1.082 0.389 990.418 8.047
+ $ 25%    : num  0.977 -0.439 0.492 1070.105 11.988
+ $ 50%    : num  1.053 -0.137 0.555 1108.174 14.587
+ $ 75%    : num  1.139 0.171 0.629 1143.487 17.662
+ $ 97.5%  : num  1.3 0.819 0.799 1214.53 24.507
+ $ n_eff  : num  4000 4000 3136 4000 4000
+ $ Rhat   : num  1 1 1 1 1
+ $ NA     : Factor w/ 5 levels "alpha0","gamma0",..: 1 2 5 3 4
+NULL
+[1] "summarizing draws"
+# A tibble: 2 x 9
+     param         mean           sd         p025          p25          p50
+     <chr>        <dbl>        <dbl>        <dbl>        <dbl>        <dbl>
+1    N_new 1.129578e+05 4.635260e+03 1.037084e+05 1.098698e+05 1.130865e+05
+2 ybar_new 7.258340e-01 1.913068e-02 6.859612e-01 7.133042e-01 7.262235e-01
+# ... with 3 more variables: p75 <dbl>, p975 <dbl>, truth <dbl>
+NULL
+##################################################################################
+NULL
+CURRENTLY ON: num_clusters = 50 , num_units = 0.05 , use_sizes = 1 , size_model = multinomial , stanmod = negbin_binary 
+Sampling data
+[1] "2017-07-31 13:27:07 EDT"
+DONE sampling
+Running stan
+[1] "2017-07-31 13:27:08 EDT"
+[1] "2017-07-31 13:27:08 EDT"
+[1] "making stan data"
+[1] "2017-07-31 13:27:08 EDT"
+List of 7
+ $ J            : num 100
+ $ K            : num 50
+ $ n            : int 2967
+ $ y            : int [1:2967] 1 1 1 0 1 1 1 1 0 1 ...
+ $ cluster_id   : int [1:2967] 1 1 1 1 1 1 1 1 1 1 ...
+ $ Nj_sample    : num [1:50] 496 606 679 703 731 750 760 779 779 943 ...
+ $ log_Nj_sample: num [1:50] -0.756 -0.555 -0.441 -0.407 -0.368 ...
+NULL
+[1] "2017-07-31 13:27:08 EDT"
+
+SAMPLING FOR MODEL 'negbin_binary' NOW (CHAIN 1).
+
+Chain 1, Iteration:    1 / 2000 [  0%]  (Warmup)
+Chain 1, Iteration:  200 / 2000 [ 10%]  (Warmup)
+Chain 1, Iteration:  400 / 2000 [ 20%]  (Warmup)
+Chain 1, Iteration:  600 / 2000 [ 30%]  (Warmup)
+Chain 1, Iteration:  800 / 2000 [ 40%]  (Warmup)
+Chain 1, Iteration: 1000 / 2000 [ 50%]  (Warmup)
+Chain 1, Iteration: 1001 / 2000 [ 50%]  (Sampling)
+Chain 1, Iteration: 1200 / 2000 [ 60%]  (Sampling)
+Chain 1, Iteration: 1400 / 2000 [ 70%]  (Sampling)
+Chain 1, Iteration: 1600 / 2000 [ 80%]  (Sampling)
+Chain 1, Iteration: 1800 / 2000 [ 90%]  (Sampling)
+Chain 1, Iteration: 2000 / 2000 [100%]  (Sampling)
+ Elapsed Time: 31.49 seconds (Warm-up)
+               17.11 seconds (Sampling)
+               48.6 seconds (Total)
+
+
+SAMPLING FOR MODEL 'negbin_binary' NOW (CHAIN 2).
+
+Chain 2, Iteration:    1 / 2000 [  0%]  (Warmup)
+Chain 2, Iteration:  200 / 2000 [ 10%]  (Warmup)
+Chain 2, Iteration:  400 / 2000 [ 20%]  (Warmup)
+Chain 2, Iteration:  600 / 2000 [ 30%]  (Warmup)
+Chain 2, Iteration:  800 / 2000 [ 40%]  (Warmup)
+Chain 2, Iteration: 1000 / 2000 [ 50%]  (Warmup)
+Chain 2, Iteration: 1001 / 2000 [ 50%]  (Sampling)
+Chain 2, Iteration: 1200 / 2000 [ 60%]  (Sampling)
+Chain 2, Iteration: 1400 / 2000 [ 70%]  (Sampling)
+Chain 2, Iteration: 1600 / 2000 [ 80%]  (Sampling)
+Chain 2, Iteration: 1800 / 2000 [ 90%]  (Sampling)
+Chain 2, Iteration: 2000 / 2000 [100%]  (Sampling)
+ Elapsed Time: 32.65 seconds (Warm-up)
+               17.17 seconds (Sampling)
+               49.82 seconds (Total)
+
+
+SAMPLING FOR MODEL 'negbin_binary' NOW (CHAIN 3).
+
+Chain 3, Iteration:    1 / 2000 [  0%]  (Warmup)
+Chain 3, Iteration:  200 / 2000 [ 10%]  (Warmup)
+Chain 3, Iteration:  400 / 2000 [ 20%]  (Warmup)
+Chain 3, Iteration:  600 / 2000 [ 30%]  (Warmup)
+Chain 3, Iteration:  800 / 2000 [ 40%]  (Warmup)
+Chain 3, Iteration: 1000 / 2000 [ 50%]  (Warmup)
+Chain 3, Iteration: 1001 / 2000 [ 50%]  (Sampling)
+Chain 3, Iteration: 1200 / 2000 [ 60%]  (Sampling)
+Chain 3, Iteration: 1400 / 2000 [ 70%]  (Sampling)
+Chain 3, Iteration: 1600 / 2000 [ 80%]  (Sampling)
+Chain 3, Iteration: 1800 / 2000 [ 90%]  (Sampling)
+Chain 3, Iteration: 2000 / 2000 [100%]  (Sampling)
+ Elapsed Time: 33.5 seconds (Warm-up)
+               18.03 seconds (Sampling)
+               51.53 seconds (Total)
+
+
+SAMPLING FOR MODEL 'negbin_binary' NOW (CHAIN 4).
+
+Chain 4, Iteration:    1 / 2000 [  0%]  (Warmup)
+Chain 4, Iteration:  200 / 2000 [ 10%]  (Warmup)
+Chain 4, Iteration:  400 / 2000 [ 20%]  (Warmup)
+Chain 4, Iteration:  600 / 2000 [ 30%]  (Warmup)
+Chain 4, Iteration:  800 / 2000 [ 40%]  (Warmup)
+Chain 4, Iteration: 1000 / 2000 [ 50%]  (Warmup)
+Chain 4, Iteration: 1001 / 2000 [ 50%]  (Sampling)
+Chain 4, Iteration: 1200 / 2000 [ 60%]  (Sampling)
+Chain 4, Iteration: 1400 / 2000 [ 70%]  (Sampling)
+Chain 4, Iteration: 1600 / 2000 [ 80%]  (Sampling)
+Chain 4, Iteration: 1800 / 2000 [ 90%]  (Sampling)
+Chain 4, Iteration: 2000 / 2000 [100%]  (Sampling)
+ Elapsed Time: 34.39 seconds (Warm-up)
+               31.99 seconds (Sampling)
+               66.38 seconds (Total)
+
+[1] "done fitting stan model"
+[1] "2017-07-31 13:30:46 EDT"
+NULL
+Inference for Stan model: negbin_binary.
+4 chains, each with iter=2000; warmup=1000; thin=1; 
+post-warmup draws per chain=1000, total post-warmup draws=4000.
+
+               mean se_mean    sd   2.5%     25%     50%     75%   97.5% n_eff
+alpha0         0.99    0.00  0.10   0.79    0.92    0.98    1.05    1.18  4000
+gamma0        -0.74    0.01  0.36  -1.44   -0.98   -0.74   -0.51   -0.03  3336
+sigma_beta0    0.59    0.00  0.08   0.45    0.53    0.58    0.64    0.76  2820
+mu          1094.21    0.75 47.58 998.23 1063.32 1095.37 1125.66 1185.46  4000
+phi           12.05    0.04  2.64   7.37   10.19   11.94   13.69   17.61  4000
+            Rhat
+alpha0         1
+gamma0         1
+sigma_beta0    1
+mu             1
+phi            1
+
+Samples were drawn using NUTS(diag_e) at Mon Jul 31 13:30:46 2017.
+For each parameter, n_eff is a crude measure of effective sample size,
+and Rhat is the potential scale reduction factor on split chains (at 
+convergence, Rhat=1).
+[1] "done making samps"
+[1] "2017-07-31 13:31:02 EDT"
+ num [1:3026, 1:10] 0.588 0.985 -0.74 1.799 1.688 ...
+ - attr(*, "dimnames")=List of 2
+  ..$ : chr [1:3026] "sigma_beta0" "alpha0" "gamma0" "beta0[1]" ...
+  ..$ : chr [1:10] "mean" "se_mean" "sd" "2.5%" ...
+NULL
+ [1] "mean"    "se_mean" "sd"      "2.5%"    "25%"     "50%"     "75%"    
+ [8] "97.5%"   "n_eff"   "Rhat"   
+[1] "alpha0"      "gamma0"      "sigma_beta0" "mu"          "phi"        
+[1] "done making par_ests"
+[1] "2017-07-31 13:31:02 EDT"
+[1] "making par_ests"
+[1] "2017-07-31 13:31:02 EDT"
+[1] "printing par_ests"
+[1] "2017-07-31 13:31:02 EDT"
+'data.frame':	5 obs. of  11 variables:
+ $ mean   : num  0.985 -0.74 0.588 1094.211 12.053
+ $ se_mean: num  0.00161 0.00615 0.00145 0.75235 0.0417
+ $ sd     : num  0.1017 0.3552 0.0771 47.583 2.6375
+ $ 2.5%   : num  0.786 -1.435 0.453 998.233 7.366
+ $ 25%    : num  0.917 -0.979 0.534 1063.317 10.194
+ $ 50%    : num  0.985 -0.744 0.582 1095.368 11.938
+ $ 75%    : num  1.053 -0.51 0.636 1125.659 13.694
+ $ 97.5%  : num  1.182 -0.0299 0.7556 1185.4636 17.6118
+ $ n_eff  : num  4000 3336 2820 4000 4000
+ $ Rhat   : num  1 1 1 0.999 0.999
+ $ NA     : Factor w/ 5 levels "alpha0","gamma0",..: 1 2 5 3 4
+NULL
+[1] "summarizing draws"
+# A tibble: 2 x 9
+     param         mean           sd         p025          p25          p50
+     <chr>        <dbl>        <dbl>        <dbl>        <dbl>        <dbl>
+1    N_new 1.139842e+05 3.291102e+03 1.073629e+05 1.118198e+05 1.140155e+05
+2 ybar_new 6.991128e-01 1.398436e-02 6.704673e-01 6.899833e-01 6.996517e-01
+# ... with 3 more variables: p75 <dbl>, p975 <dbl>, truth <dbl>
+NULL
+##################################################################################
+NULL
+CURRENTLY ON: num_clusters = 5 , num_units = 0.1 , use_sizes = 1 , size_model = multinomial , stanmod = negbin_binary 
+Sampling data
+[1] "2017-07-31 13:31:32 EDT"
+DONE sampling
+Running stan
+[1] "2017-07-31 13:31:32 EDT"
+[1] "2017-07-31 13:31:32 EDT"
+[1] "making stan data"
+[1] "2017-07-31 13:31:32 EDT"
+List of 7
+ $ J            : num 100
+ $ K            : num 5
+ $ n            : int 526
+ $ y            : int [1:526] 1 1 1 0 1 1 1 1 0 0 ...
+ $ cluster_id   : int [1:526] 1 1 1 1 1 1 1 1 1 1 ...
+ $ Nj_sample    : num [1:5] 496 779 1021 1402 1562
+ $ log_Nj_sample: num [1:5] -0.7555 -0.3041 -0.0336 0.2835 0.3916
+NULL
+[1] "2017-07-31 13:31:33 EDT"
+
+SAMPLING FOR MODEL 'negbin_binary' NOW (CHAIN 1).
+
+Chain 1, Iteration:    1 / 2000 [  0%]  (Warmup)
+Chain 1, Iteration:  200 / 2000 [ 10%]  (Warmup)
+Chain 1, Iteration:  400 / 2000 [ 20%]  (Warmup)
+Chain 1, Iteration:  600 / 2000 [ 30%]  (Warmup)
+Chain 1, Iteration:  800 / 2000 [ 40%]  (Warmup)
+Chain 1, Iteration: 1000 / 2000 [ 50%]  (Warmup)
+Chain 1, Iteration: 1001 / 2000 [ 50%]  (Sampling)
+Chain 1, Iteration: 1200 / 2000 [ 60%]  (Sampling)
+Chain 1, Iteration: 1400 / 2000 [ 70%]  (Sampling)
+Chain 1, Iteration: 1600 / 2000 [ 80%]  (Sampling)
+Chain 1, Iteration: 1800 / 2000 [ 90%]  (Sampling)
+Chain 1, Iteration: 2000 / 2000 [100%]  (Sampling)
+ Elapsed Time: 12.32 seconds (Warm-up)
+               9.54 seconds (Sampling)
+               21.86 seconds (Total)
+
+
+SAMPLING FOR MODEL 'negbin_binary' NOW (CHAIN 2).
+
+Chain 2, Iteration:    1 / 2000 [  0%]  (Warmup)
+Chain 2, Iteration:  200 / 2000 [ 10%]  (Warmup)
+Chain 2, Iteration:  400 / 2000 [ 20%]  (Warmup)
+Chain 2, Iteration:  600 / 2000 [ 30%]  (Warmup)
+Chain 2, Iteration:  800 / 2000 [ 40%]  (Warmup)
+Chain 2, Iteration: 1000 / 2000 [ 50%]  (Warmup)
+Chain 2, Iteration: 1001 / 2000 [ 50%]  (Sampling)
+Chain 2, Iteration: 1200 / 2000 [ 60%]  (Sampling)
+Chain 2, Iteration: 1400 / 2000 [ 70%]  (Sampling)
+Chain 2, Iteration: 1600 / 2000 [ 80%]  (Sampling)
+Chain 2, Iteration: 1800 / 2000 [ 90%]  (Sampling)
+Chain 2, Iteration: 2000 / 2000 [100%]  (Sampling)
+ Elapsed Time: 14.14 seconds (Warm-up)
+               3.9 seconds (Sampling)
+               18.04 seconds (Total)
+
+
+SAMPLING FOR MODEL 'negbin_binary' NOW (CHAIN 3).
+
+Chain 3, Iteration:    1 / 2000 [  0%]  (Warmup)
+Chain 3, Iteration:  200 / 2000 [ 10%]  (Warmup)
+Chain 3, Iteration:  400 / 2000 [ 20%]  (Warmup)
+Chain 3, Iteration:  600 / 2000 [ 30%]  (Warmup)
+Chain 3, Iteration:  800 / 2000 [ 40%]  (Warmup)
+Chain 3, Iteration: 1000 / 2000 [ 50%]  (Warmup)
+Chain 3, Iteration: 1001 / 2000 [ 50%]  (Sampling)
+Chain 3, Iteration: 1200 / 2000 [ 60%]  (Sampling)
+Chain 3, Iteration: 1400 / 2000 [ 70%]  (Sampling)
+Chain 3, Iteration: 1600 / 2000 [ 80%]  (Sampling)
+Chain 3, Iteration: 1800 / 2000 [ 90%]  (Sampling)
+Chain 3, Iteration: 2000 / 2000 [100%]  (Sampling)
+ Elapsed Time: 8.36 seconds (Warm-up)
+               17.97 seconds (Sampling)
+               26.33 seconds (Total)
+
+
+SAMPLING FOR MODEL 'negbin_binary' NOW (CHAIN 4).
+
+Chain 4, Iteration:    1 / 2000 [  0%]  (Warmup)
+Chain 4, Iteration:  200 / 2000 [ 10%]  (Warmup)
+Chain 4, Iteration:  400 / 2000 [ 20%]  (Warmup)
+Chain 4, Iteration:  600 / 2000 [ 30%]  (Warmup)
+Chain 4, Iteration:  800 / 2000 [ 40%]  (Warmup)
+Chain 4, Iteration: 1000 / 2000 [ 50%]  (Warmup)
+Chain 4, Iteration: 1001 / 2000 [ 50%]  (Sampling)
+Chain 4, Iteration: 1200 / 2000 [ 60%]  (Sampling)
+Chain 4, Iteration: 1400 / 2000 [ 70%]  (Sampling)
+Chain 4, Iteration: 1600 / 2000 [ 80%]  (Sampling)
+Chain 4, Iteration: 1800 / 2000 [ 90%]  (Sampling)
+Chain 4, Iteration: 2000 / 2000 [100%]  (Sampling)
+ Elapsed Time: 10.22 seconds (Warm-up)
+               6.13 seconds (Sampling)
+               16.35 seconds (Total)
+
+[1] "done fitting stan model"
+[1] "2017-07-31 13:32:55 EDT"
+NULL
+----------------------------------------------------------------
+Divergent transitions happened, rerunning with adapt_delta = 0.9999 
+num_clusters = 5 num_units= 0.1 
+
+SAMPLING FOR MODEL 'negbin_binary' NOW (CHAIN 1).
+
+Chain 1, Iteration:    1 / 2000 [  0%]  (Warmup)
+Chain 1, Iteration:  200 / 2000 [ 10%]  (Warmup)
+Chain 1, Iteration:  400 / 2000 [ 20%]  (Warmup)
+Chain 1, Iteration:  600 / 2000 [ 30%]  (Warmup)
+Chain 1, Iteration:  800 / 2000 [ 40%]  (Warmup)
+Chain 1, Iteration: 1000 / 2000 [ 50%]  (Warmup)
+Chain 1, Iteration: 1001 / 2000 [ 50%]  (Sampling)
+Chain 1, Iteration: 1200 / 2000 [ 60%]  (Sampling)
+Chain 1, Iteration: 1400 / 2000 [ 70%]  (Sampling)
+Chain 1, Iteration: 1600 / 2000 [ 80%]  (Sampling)
+Chain 1, Iteration: 1800 / 2000 [ 90%]  (Sampling)
+Chain 1, Iteration: 2000 / 2000 [100%]  (Sampling)
+ Elapsed Time: 13.23 seconds (Warm-up)
+               6.74 seconds (Sampling)
+               19.97 seconds (Total)
+
+
+SAMPLING FOR MODEL 'negbin_binary' NOW (CHAIN 2).
+
+Chain 2, Iteration:    1 / 2000 [  0%]  (Warmup)
+Chain 2, Iteration:  200 / 2000 [ 10%]  (Warmup)
+Chain 2, Iteration:  400 / 2000 [ 20%]  (Warmup)
+Chain 2, Iteration:  600 / 2000 [ 30%]  (Warmup)
+Chain 2, Iteration:  800 / 2000 [ 40%]  (Warmup)
+Chain 2, Iteration: 1000 / 2000 [ 50%]  (Warmup)
+Chain 2, Iteration: 1001 / 2000 [ 50%]  (Sampling)
+Chain 2, Iteration: 1200 / 2000 [ 60%]  (Sampling)
+Chain 2, Iteration: 1400 / 2000 [ 70%]  (Sampling)
+Chain 2, Iteration: 1600 / 2000 [ 80%]  (Sampling)
+Chain 2, Iteration: 1800 / 2000 [ 90%]  (Sampling)
+Chain 2, Iteration: 2000 / 2000 [100%]  (Sampling)
+ Elapsed Time: 11.95 seconds (Warm-up)
+               6.32 seconds (Sampling)
+               18.27 seconds (Total)
+
+
+SAMPLING FOR MODEL 'negbin_binary' NOW (CHAIN 3).
+
+Chain 3, Iteration:    1 / 2000 [  0%]  (Warmup)
+Chain 3, Iteration:  200 / 2000 [ 10%]  (Warmup)
+Chain 3, Iteration:  400 / 2000 [ 20%]  (Warmup)
+Chain 3, Iteration:  600 / 2000 [ 30%]  (Warmup)
+Chain 3, Iteration:  800 / 2000 [ 40%]  (Warmup)
+Chain 3, Iteration: 1000 / 2000 [ 50%]  (Warmup)
+Chain 3, Iteration: 1001 / 2000 [ 50%]  (Sampling)
+Chain 3, Iteration: 1200 / 2000 [ 60%]  (Sampling)
+Chain 3, Iteration: 1400 / 2000 [ 70%]  (Sampling)
+Chain 3, Iteration: 1600 / 2000 [ 80%]  (Sampling)
+Chain 3, Iteration: 1800 / 2000 [ 90%]  (Sampling)
+Chain 3, Iteration: 2000 / 2000 [100%]  (Sampling)
+ Elapsed Time: 32.16 seconds (Warm-up)
+               4.76 seconds (Sampling)
+               36.92 seconds (Total)
+
+
+SAMPLING FOR MODEL 'negbin_binary' NOW (CHAIN 4).
+
+Chain 4, Iteration:    1 / 2000 [  0%]  (Warmup)
+Chain 4, Iteration:  200 / 2000 [ 10%]  (Warmup)
+Chain 4, Iteration:  400 / 2000 [ 20%]  (Warmup)
+Chain 4, Iteration:  600 / 2000 [ 30%]  (Warmup)
+Chain 4, Iteration:  800 / 2000 [ 40%]  (Warmup)
+Chain 4, Iteration: 1000 / 2000 [ 50%]  (Warmup)
+Chain 4, Iteration: 1001 / 2000 [ 50%]  (Sampling)
+Chain 4, Iteration: 1200 / 2000 [ 60%]  (Sampling)
+Chain 4, Iteration: 1400 / 2000 [ 70%]  (Sampling)
+Chain 4, Iteration: 1600 / 2000 [ 80%]  (Sampling)
+Chain 4, Iteration: 1800 / 2000 [ 90%]  (Sampling)
+Chain 4, Iteration: 2000 / 2000 [100%]  (Sampling)
+ Elapsed Time: 14.94 seconds (Warm-up)
+               6.87 seconds (Sampling)
+               21.81 seconds (Total)
+
+[1] "done fitting stan model"
+[1] "2017-07-31 13:34:33 EDT"
+NULL
+----------------------------------------------------------------
+Divergent transitions happened, rerunning with adapt_delta = 0.99999 
+num_clusters = 5 num_units= 0.1 
+
+SAMPLING FOR MODEL 'negbin_binary' NOW (CHAIN 1).
+
+Chain 1, Iteration:    1 / 2000 [  0%]  (Warmup)
+Chain 1, Iteration:  200 / 2000 [ 10%]  (Warmup)
+Chain 1, Iteration:  400 / 2000 [ 20%]  (Warmup)
+Chain 1, Iteration:  600 / 2000 [ 30%]  (Warmup)
+Chain 1, Iteration:  800 / 2000 [ 40%]  (Warmup)
+Chain 1, Iteration: 1000 / 2000 [ 50%]  (Warmup)
+Chain 1, Iteration: 1001 / 2000 [ 50%]  (Sampling)
+Chain 1, Iteration: 1200 / 2000 [ 60%]  (Sampling)
+Chain 1, Iteration: 1400 / 2000 [ 70%]  (Sampling)
+Chain 1, Iteration: 1600 / 2000 [ 80%]  (Sampling)
+Chain 1, Iteration: 1800 / 2000 [ 90%]  (Sampling)
+Chain 1, Iteration: 2000 / 2000 [100%]  (Sampling)
+ Elapsed Time: 24.32 seconds (Warm-up)
+               5.34 seconds (Sampling)
+               29.66 seconds (Total)
+
+
+SAMPLING FOR MODEL 'negbin_binary' NOW (CHAIN 2).
+
+Chain 2, Iteration:    1 / 2000 [  0%]  (Warmup)
+Chain 2, Iteration:  200 / 2000 [ 10%]  (Warmup)
+Chain 2, Iteration:  400 / 2000 [ 20%]  (Warmup)
+Chain 2, Iteration:  600 / 2000 [ 30%]  (Warmup)
+Chain 2, Iteration:  800 / 2000 [ 40%]  (Warmup)
+Chain 2, Iteration: 1000 / 2000 [ 50%]  (Warmup)
+Chain 2, Iteration: 1001 / 2000 [ 50%]  (Sampling)
+Chain 2, Iteration: 1200 / 2000 [ 60%]  (Sampling)
+Chain 2, Iteration: 1400 / 2000 [ 70%]  (Sampling)
+Chain 2, Iteration: 1600 / 2000 [ 80%]  (Sampling)
+Chain 2, Iteration: 1800 / 2000 [ 90%]  (Sampling)
+Chain 2, Iteration: 2000 / 2000 [100%]  (Sampling)
+ Elapsed Time: 9.83 seconds (Warm-up)
+               6.59 seconds (Sampling)
+               16.42 seconds (Total)
+
+
+SAMPLING FOR MODEL 'negbin_binary' NOW (CHAIN 3).
+
+Chain 3, Iteration:    1 / 2000 [  0%]  (Warmup)
+Chain 3, Iteration:  200 / 2000 [ 10%]  (Warmup)
+Chain 3, Iteration:  400 / 2000 [ 20%]  (Warmup)
+Chain 3, Iteration:  600 / 2000 [ 30%]  (Warmup)
+Chain 3, Iteration:  800 / 2000 [ 40%]  (Warmup)
+Chain 3, Iteration: 1000 / 2000 [ 50%]  (Warmup)
+Chain 3, Iteration: 1001 / 2000 [ 50%]  (Sampling)
+Chain 3, Iteration: 1200 / 2000 [ 60%]  (Sampling)
+Chain 3, Iteration: 1400 / 2000 [ 70%]  (Sampling)
+Chain 3, Iteration: 1600 / 2000 [ 80%]  (Sampling)
+Chain 3, Iteration: 1800 / 2000 [ 90%]  (Sampling)
+Chain 3, Iteration: 2000 / 2000 [100%]  (Sampling)
+ Elapsed Time: 15.42 seconds (Warm-up)
+               9.12 seconds (Sampling)
+               24.54 seconds (Total)
+
+
+SAMPLING FOR MODEL 'negbin_binary' NOW (CHAIN 4).
+
+Chain 4, Iteration:    1 / 2000 [  0%]  (Warmup)
+Chain 4, Iteration:  200 / 2000 [ 10%]  (Warmup)
+Chain 4, Iteration:  400 / 2000 [ 20%]  (Warmup)
+Chain 4, Iteration:  600 / 2000 [ 30%]  (Warmup)
+Chain 4, Iteration:  800 / 2000 [ 40%]  (Warmup)
+Chain 4, Iteration: 1000 / 2000 [ 50%]  (Warmup)
+Chain 4, Iteration: 1001 / 2000 [ 50%]  (Sampling)
+Chain 4, Iteration: 1200 / 2000 [ 60%]  (Sampling)
+Chain 4, Iteration: 1400 / 2000 [ 70%]  (Sampling)
+Chain 4, Iteration: 1600 / 2000 [ 80%]  (Sampling)
+Chain 4, Iteration: 1800 / 2000 [ 90%]  (Sampling)
+Chain 4, Iteration: 2000 / 2000 [100%]  (Sampling)
+ Elapsed Time: 20.39 seconds (Warm-up)
+               19.62 seconds (Sampling)
+               40.01 seconds (Total)
+
+[1] "done fitting stan model"
+[1] "2017-07-31 13:36:24 EDT"
+NULL
+----------------------------------------------------------------
+Divergent transitions happened, rerunning with adapt_delta = 0.999999 
+num_clusters = 5 num_units= 0.1 
+
+SAMPLING FOR MODEL 'negbin_binary' NOW (CHAIN 1).
+
+Chain 1, Iteration:    1 / 2000 [  0%]  (Warmup)
+Chain 1, Iteration:  200 / 2000 [ 10%]  (Warmup)
+Chain 1, Iteration:  400 / 2000 [ 20%]  (Warmup)
+Chain 1, Iteration:  600 / 2000 [ 30%]  (Warmup)
+Chain 1, Iteration:  800 / 2000 [ 40%]  (Warmup)
+Chain 1, Iteration: 1000 / 2000 [ 50%]  (Warmup)
+Chain 1, Iteration: 1001 / 2000 [ 50%]  (Sampling)
+Chain 1, Iteration: 1200 / 2000 [ 60%]  (Sampling)
+Chain 1, Iteration: 1400 / 2000 [ 70%]  (Sampling)
+Chain 1, Iteration: 1600 / 2000 [ 80%]  (Sampling)
+Chain 1, Iteration: 1800 / 2000 [ 90%]  (Sampling)
+Chain 1, Iteration: 2000 / 2000 [100%]  (Sampling)
+ Elapsed Time: 11.44 seconds (Warm-up)
+               10.34 seconds (Sampling)
+               21.78 seconds (Total)
+
+
+SAMPLING FOR MODEL 'negbin_binary' NOW (CHAIN 2).
+
+Chain 2, Iteration:    1 / 2000 [  0%]  (Warmup)
+Chain 2, Iteration:  200 / 2000 [ 10%]  (Warmup)
+Chain 2, Iteration:  400 / 2000 [ 20%]  (Warmup)
+Chain 2, Iteration:  600 / 2000 [ 30%]  (Warmup)
+Chain 2, Iteration:  800 / 2000 [ 40%]  (Warmup)
+Chain 2, Iteration: 1000 / 2000 [ 50%]  (Warmup)
+Chain 2, Iteration: 1001 / 2000 [ 50%]  (Sampling)
+Chain 2, Iteration: 1200 / 2000 [ 60%]  (Sampling)
+Chain 2, Iteration: 1400 / 2000 [ 70%]  (Sampling)
+Chain 2, Iteration: 1600 / 2000 [ 80%]  (Sampling)
+Chain 2, Iteration: 1800 / 2000 [ 90%]  (Sampling)
+Chain 2, Iteration: 2000 / 2000 [100%]  (Sampling)
+ Elapsed Time: 33.45 seconds (Warm-up)
+               6.43 seconds (Sampling)
+               39.88 seconds (Total)
+
+
+SAMPLING FOR MODEL 'negbin_binary' NOW (CHAIN 3).
+
+Chain 3, Iteration:    1 / 2000 [  0%]  (Warmup)
+Chain 3, Iteration:  200 / 2000 [ 10%]  (Warmup)
+Chain 3, Iteration:  400 / 2000 [ 20%]  (Warmup)
+Chain 3, Iteration:  600 / 2000 [ 30%]  (Warmup)
+Chain 3, Iteration:  800 / 2000 [ 40%]  (Warmup)
+Chain 3, Iteration: 1000 / 2000 [ 50%]  (Warmup)
+Chain 3, Iteration: 1001 / 2000 [ 50%]  (Sampling)
+Chain 3, Iteration: 1200 / 2000 [ 60%]  (Sampling)
+Chain 3, Iteration: 1400 / 2000 [ 70%]  (Sampling)
+Chain 3, Iteration: 1600 / 2000 [ 80%]  (Sampling)
+Chain 3, Iteration: 1800 / 2000 [ 90%]  (Sampling)
+Chain 3, Iteration: 2000 / 2000 [100%]  (Sampling)
+ Elapsed Time: 9.55 seconds (Warm-up)
+               13.42 seconds (Sampling)
+               22.97 seconds (Total)
+
+
+SAMPLING FOR MODEL 'negbin_binary' NOW (CHAIN 4).
+
+Chain 4, Iteration:    1 / 2000 [  0%]  (Warmup)
+Chain 4, Iteration:  200 / 2000 [ 10%]  (Warmup)
+Chain 4, Iteration:  400 / 2000 [ 20%]  (Warmup)
+Chain 4, Iteration:  600 / 2000 [ 30%]  (Warmup)
+Chain 4, Iteration:  800 / 2000 [ 40%]  (Warmup)
+Chain 4, Iteration: 1000 / 2000 [ 50%]  (Warmup)
+Chain 4, Iteration: 1001 / 2000 [ 50%]  (Sampling)
+Chain 4, Iteration: 1200 / 2000 [ 60%]  (Sampling)
+Chain 4, Iteration: 1400 / 2000 [ 70%]  (Sampling)
+Chain 4, Iteration: 1600 / 2000 [ 80%]  (Sampling)
+Chain 4, Iteration: 1800 / 2000 [ 90%]  (Sampling)
+Chain 4, Iteration: 2000 / 2000 [100%]  (Sampling)
+ Elapsed Time: 17.19 seconds (Warm-up)
+               4.48 seconds (Sampling)
+               21.67 seconds (Total)
+
+[1] "done fitting stan model"
+[1] "2017-07-31 13:38:10 EDT"
+NULL
+----------------------------------------------------------------
+Divergent transitions remain, running NCP version
+num_clusters = 5 num_units= 0.1 
+
+SAMPLING FOR MODEL 'negbin_binary_ncp' NOW (CHAIN 1).
+
+Chain 1, Iteration:    1 / 2000 [  0%]  (Warmup)
+Chain 1, Iteration:  200 / 2000 [ 10%]  (Warmup)
+Chain 1, Iteration:  400 / 2000 [ 20%]  (Warmup)
+Chain 1, Iteration:  600 / 2000 [ 30%]  (Warmup)
+Chain 1, Iteration:  800 / 2000 [ 40%]  (Warmup)
+Chain 1, Iteration: 1000 / 2000 [ 50%]  (Warmup)
+Chain 1, Iteration: 1001 / 2000 [ 50%]  (Sampling)
+Chain 1, Iteration: 1200 / 2000 [ 60%]  (Sampling)
+Chain 1, Iteration: 1400 / 2000 [ 70%]  (Sampling)
+Chain 1, Iteration: 1600 / 2000 [ 80%]  (Sampling)
+Chain 1, Iteration: 1800 / 2000 [ 90%]  (Sampling)
+Chain 1, Iteration: 2000 / 2000 [100%]  (Sampling)
+ Elapsed Time: 12.39 seconds (Warm-up)
+               4.28 seconds (Sampling)
+               16.67 seconds (Total)
+
+
+SAMPLING FOR MODEL 'negbin_binary_ncp' NOW (CHAIN 2).
+
+Chain 2, Iteration:    1 / 2000 [  0%]  (Warmup)
+Chain 2, Iteration:  200 / 2000 [ 10%]  (Warmup)
+Chain 2, Iteration:  400 / 2000 [ 20%]  (Warmup)
+Chain 2, Iteration:  600 / 2000 [ 30%]  (Warmup)
+Chain 2, Iteration:  800 / 2000 [ 40%]  (Warmup)
+Chain 2, Iteration: 1000 / 2000 [ 50%]  (Warmup)
+Chain 2, Iteration: 1001 / 2000 [ 50%]  (Sampling)
+Chain 2, Iteration: 1200 / 2000 [ 60%]  (Sampling)
+Chain 2, Iteration: 1400 / 2000 [ 70%]  (Sampling)
+Chain 2, Iteration: 1600 / 2000 [ 80%]  (Sampling)
+Chain 2, Iteration: 1800 / 2000 [ 90%]  (Sampling)
+Chain 2, Iteration: 2000 / 2000 [100%]  (Sampling)
+ Elapsed Time: 10.49 seconds (Warm-up)
+               4.32 seconds (Sampling)
+               14.81 seconds (Total)
+
+
+SAMPLING FOR MODEL 'negbin_binary_ncp' NOW (CHAIN 3).
+
+Chain 3, Iteration:    1 / 2000 [  0%]  (Warmup)
+Chain 3, Iteration:  200 / 2000 [ 10%]  (Warmup)
+Chain 3, Iteration:  400 / 2000 [ 20%]  (Warmup)
+Chain 3, Iteration:  600 / 2000 [ 30%]  (Warmup)
+Chain 3, Iteration:  800 / 2000 [ 40%]  (Warmup)
+Chain 3, Iteration: 1000 / 2000 [ 50%]  (Warmup)
+Chain 3, Iteration: 1001 / 2000 [ 50%]  (Sampling)
+Chain 3, Iteration: 1200 / 2000 [ 60%]  (Sampling)
+Chain 3, Iteration: 1400 / 2000 [ 70%]  (Sampling)
+Chain 3, Iteration: 1600 / 2000 [ 80%]  (Sampling)
+Chain 3, Iteration: 1800 / 2000 [ 90%]  (Sampling)
+Chain 3, Iteration: 2000 / 2000 [100%]  (Sampling)
+ Elapsed Time: 10.61 seconds (Warm-up)
+               4.1 seconds (Sampling)
+               14.71 seconds (Total)
+
+
+SAMPLING FOR MODEL 'negbin_binary_ncp' NOW (CHAIN 4).
+
+Chain 4, Iteration:    1 / 2000 [  0%]  (Warmup)
+Chain 4, Iteration:  200 / 2000 [ 10%]  (Warmup)
+Chain 4, Iteration:  400 / 2000 [ 20%]  (Warmup)
+Chain 4, Iteration:  600 / 2000 [ 30%]  (Warmup)
+Chain 4, Iteration:  800 / 2000 [ 40%]  (Warmup)
+Chain 4, Iteration: 1000 / 2000 [ 50%]  (Warmup)
+Chain 4, Iteration: 1001 / 2000 [ 50%]  (Sampling)
+Chain 4, Iteration: 1200 / 2000 [ 60%]  (Sampling)
+Chain 4, Iteration: 1400 / 2000 [ 70%]  (Sampling)
+Chain 4, Iteration: 1600 / 2000 [ 80%]  (Sampling)
+Chain 4, Iteration: 1800 / 2000 [ 90%]  (Sampling)
+Chain 4, Iteration: 2000 / 2000 [100%]  (Sampling)
+ Elapsed Time: 9.39 seconds (Warm-up)
+               5.03 seconds (Sampling)
+               14.42 seconds (Total)
+
+[1] "done fitting stan model"
+[1] "2017-07-31 13:39:11 EDT"
+NULL
+----------------------------------------------------------------
+Divergent transitions happened for NCP, rerunning with adapt_delta = 0.9999 
+num_clusters = 5 num_units= 0.1 
+
+SAMPLING FOR MODEL 'negbin_binary_ncp' NOW (CHAIN 1).
+
+Chain 1, Iteration:    1 / 2000 [  0%]  (Warmup)
+Chain 1, Iteration:  200 / 2000 [ 10%]  (Warmup)
+Chain 1, Iteration:  400 / 2000 [ 20%]  (Warmup)
+Chain 1, Iteration:  600 / 2000 [ 30%]  (Warmup)
+Chain 1, Iteration:  800 / 2000 [ 40%]  (Warmup)
+Chain 1, Iteration: 1000 / 2000 [ 50%]  (Warmup)
+Chain 1, Iteration: 1001 / 2000 [ 50%]  (Sampling)
+Chain 1, Iteration: 1200 / 2000 [ 60%]  (Sampling)
+Chain 1, Iteration: 1400 / 2000 [ 70%]  (Sampling)
+Chain 1, Iteration: 1600 / 2000 [ 80%]  (Sampling)
+Chain 1, Iteration: 1800 / 2000 [ 90%]  (Sampling)
+Chain 1, Iteration: 2000 / 2000 [100%]  (Sampling)
+ Elapsed Time: 12.58 seconds (Warm-up)
+               6.35 seconds (Sampling)
+               18.93 seconds (Total)
+
+
+SAMPLING FOR MODEL 'negbin_binary_ncp' NOW (CHAIN 2).
+
+Chain 2, Iteration:    1 / 2000 [  0%]  (Warmup)
+Chain 2, Iteration:  200 / 2000 [ 10%]  (Warmup)
+Chain 2, Iteration:  400 / 2000 [ 20%]  (Warmup)
+Chain 2, Iteration:  600 / 2000 [ 30%]  (Warmup)
+Chain 2, Iteration:  800 / 2000 [ 40%]  (Warmup)
+Chain 2, Iteration: 1000 / 2000 [ 50%]  (Warmup)
+Chain 2, Iteration: 1001 / 2000 [ 50%]  (Sampling)
+Chain 2, Iteration: 1200 / 2000 [ 60%]  (Sampling)
+Chain 2, Iteration: 1400 / 2000 [ 70%]  (Sampling)
+Chain 2, Iteration: 1600 / 2000 [ 80%]  (Sampling)
+Chain 2, Iteration: 1800 / 2000 [ 90%]  (Sampling)
+Chain 2, Iteration: 2000 / 2000 [100%]  (Sampling)
+ Elapsed Time: 12.46 seconds (Warm-up)
+               3.9 seconds (Sampling)
+               16.36 seconds (Total)
+
+
+SAMPLING FOR MODEL 'negbin_binary_ncp' NOW (CHAIN 3).
+
+Chain 3, Iteration:    1 / 2000 [  0%]  (Warmup)
+Chain 3, Iteration:  200 / 2000 [ 10%]  (Warmup)
+Chain 3, Iteration:  400 / 2000 [ 20%]  (Warmup)
+Chain 3, Iteration:  600 / 2000 [ 30%]  (Warmup)
+Chain 3, Iteration:  800 / 2000 [ 40%]  (Warmup)
+Chain 3, Iteration: 1000 / 2000 [ 50%]  (Warmup)
+Chain 3, Iteration: 1001 / 2000 [ 50%]  (Sampling)
+Chain 3, Iteration: 1200 / 2000 [ 60%]  (Sampling)
+Chain 3, Iteration: 1400 / 2000 [ 70%]  (Sampling)
+Chain 3, Iteration: 1600 / 2000 [ 80%]  (Sampling)
+Chain 3, Iteration: 1800 / 2000 [ 90%]  (Sampling)
+Chain 3, Iteration: 2000 / 2000 [100%]  (Sampling)
+ Elapsed Time: 13 seconds (Warm-up)
+               5.76 seconds (Sampling)
+               18.76 seconds (Total)
+
+
+SAMPLING FOR MODEL 'negbin_binary_ncp' NOW (CHAIN 4).
+
+Chain 4, Iteration:    1 / 2000 [  0%]  (Warmup)
+Chain 4, Iteration:  200 / 2000 [ 10%]  (Warmup)
+Chain 4, Iteration:  400 / 2000 [ 20%]  (Warmup)
+Chain 4, Iteration:  600 / 2000 [ 30%]  (Warmup)
+Chain 4, Iteration:  800 / 2000 [ 40%]  (Warmup)
+Chain 4, Iteration: 1000 / 2000 [ 50%]  (Warmup)
+Chain 4, Iteration: 1001 / 2000 [ 50%]  (Sampling)
+Chain 4, Iteration: 1200 / 2000 [ 60%]  (Sampling)
+Chain 4, Iteration: 1400 / 2000 [ 70%]  (Sampling)
+Chain 4, Iteration: 1600 / 2000 [ 80%]  (Sampling)
+Chain 4, Iteration: 1800 / 2000 [ 90%]  (Sampling)
+Chain 4, Iteration: 2000 / 2000 [100%]  (Sampling)
+ Elapsed Time: 10.62 seconds (Warm-up)
+               7.42 seconds (Sampling)
+               18.04 seconds (Total)
+
+[1] "done fitting stan model"
+[1] "2017-07-31 13:40:23 EDT"
+NULL
+Inference for Stan model: negbin_binary_ncp.
+4 chains, each with iter=2000; warmup=1000; thin=1; 
+post-warmup draws per chain=1000, total post-warmup draws=4000.
+
+              mean se_mean     sd   2.5%    25%    50%     75%   97.5% n_eff
+alpha0        0.97    0.01   0.21   0.62   0.87   0.96    1.06    1.38  1595
+gamma0       -0.33    0.01   0.48  -1.30  -0.58  -0.33   -0.09    0.64  1585
+sigma_beta0   0.27    0.01   0.29   0.01   0.09   0.19    0.33    1.09   796
+mu          872.16    6.26 230.32 396.18 734.79 875.25 1015.38 1312.87  1354
+phi           4.73    0.07   3.33   0.58   2.33   4.02    6.31   13.26  2349
+            Rhat
+alpha0      1.00
+gamma0      1.00
+sigma_beta0 1.01
+mu          1.00
+phi         1.00
+
+Samples were drawn using NUTS(diag_e) at Mon Jul 31 13:40:23 2017.
+For each parameter, n_eff is a crude measure of effective sample size,
+and Rhat is the potential scale reduction factor on split chains (at 
+convergence, Rhat=1).
+[1] "done making samps"
+[1] "2017-07-31 13:40:26 EDT"
+ num [1:545, 1:10] 0.26774 0.97049 -0.32895 -0.05659 0.00785 ...
+ - attr(*, "dimnames")=List of 2
+  ..$ : chr [1:545] "sigma_beta0" "alpha0" "gamma0" "eta0[1]" ...
+  ..$ : chr [1:10] "mean" "se_mean" "sd" "2.5%" ...
+NULL
+ [1] "mean"    "se_mean" "sd"      "2.5%"    "25%"     "50%"     "75%"    
+ [8] "97.5%"   "n_eff"   "Rhat"   
+[1] "alpha0"      "gamma0"      "sigma_beta0" "mu"          "phi"        
+[1] "done making par_ests"
+[1] "2017-07-31 13:40:26 EDT"
+[1] "making par_ests"
+[1] "2017-07-31 13:40:26 EDT"
+[1] "printing par_ests"
+[1] "2017-07-31 13:40:26 EDT"
+'data.frame':	5 obs. of  11 variables:
+ $ mean   : num  0.97 -0.329 0.268 872.155 4.729
+ $ se_mean: num  0.00522 0.01195 0.01043 6.25865 0.0688
+ $ sd     : num  0.208 0.476 0.294 230.317 3.335
+ $ 2.5%   : num  0.62009 -1.30474 0.00993 396.18239 0.5803
+ $ 25%    : num  0.8697 -0.581 0.0899 734.7852 2.3307
+ $ 50%    : num  0.961 -0.328 0.189 875.253 4.023
+ $ 75%    : num  1.0616 -0.0879 0.3345 1015.3804 6.3078
+ $ 97.5%  : num  1.381 0.641 1.087 1312.872 13.263
+ $ n_eff  : num  1595 1585 796 1354 2349
+ $ Rhat   : num  1 1 1.01 1 1
+ $ NA     : Factor w/ 5 levels "alpha0","gamma0",..: 1 2 5 3 4
+NULL
+[1] "summarizing draws"
+# A tibble: 2 x 9
+     param         mean           sd         p025          p25          p50
+     <chr>        <dbl>        <dbl>        <dbl>        <dbl>        <dbl>
+1    N_new 8.813876e+04 2.204696e+04 4.368228e+04 7.452475e+04 8.836300e+04
+2 ybar_new 6.933104e-01 5.920396e-02 5.378746e-01 6.721992e-01 7.018531e-01
+# ... with 3 more variables: p75 <dbl>, p975 <dbl>, truth <dbl>
+NULL
+##################################################################################
+NULL
+CURRENTLY ON: num_clusters = 10 , num_units = 0.1 , use_sizes = 1 , size_model = multinomial , stanmod = negbin_binary 
+Sampling data
+[1] "2017-07-31 13:40:45 EDT"
+DONE sampling
+Running stan
+[1] "2017-07-31 13:40:46 EDT"
+[1] "2017-07-31 13:40:46 EDT"
+[1] "making stan data"
+[1] "2017-07-31 13:40:46 EDT"
+List of 7
+ $ J            : num 100
+ $ K            : num 10
+ $ n            : int 1317
+ $ y            : int [1:1317] 1 1 1 1 1 1 1 0 1 1 ...
+ $ cluster_id   : int [1:1317] 1 1 1 1 1 1 1 1 1 1 ...
+ $ Nj_sample    : num [1:10] 606 1162 1259 1303 1402 ...
+ $ log_Nj_sample: num [1:10] -0.5552 0.0958 0.176 0.2103 0.2835 ...
+NULL
+[1] "2017-07-31 13:40:46 EDT"
+
+SAMPLING FOR MODEL 'negbin_binary' NOW (CHAIN 1).
+
+Chain 1, Iteration:    1 / 2000 [  0%]  (Warmup)
+Chain 1, Iteration:  200 / 2000 [ 10%]  (Warmup)
+Chain 1, Iteration:  400 / 2000 [ 20%]  (Warmup)
+Chain 1, Iteration:  600 / 2000 [ 30%]  (Warmup)
+Chain 1, Iteration:  800 / 2000 [ 40%]  (Warmup)
+Chain 1, Iteration: 1000 / 2000 [ 50%]  (Warmup)
+Chain 1, Iteration: 1001 / 2000 [ 50%]  (Sampling)
+Chain 1, Iteration: 1200 / 2000 [ 60%]  (Sampling)
+Chain 1, Iteration: 1400 / 2000 [ 70%]  (Sampling)
+Chain 1, Iteration: 1600 / 2000 [ 80%]  (Sampling)
+Chain 1, Iteration: 1800 / 2000 [ 90%]  (Sampling)
+Chain 1, Iteration: 2000 / 2000 [100%]  (Sampling)
+ Elapsed Time: 11.27 seconds (Warm-up)
+               8.67 seconds (Sampling)
+               19.94 seconds (Total)
+
+
+SAMPLING FOR MODEL 'negbin_binary' NOW (CHAIN 2).
+
+Chain 2, Iteration:    1 / 2000 [  0%]  (Warmup)
+Chain 2, Iteration:  200 / 2000 [ 10%]  (Warmup)
+Chain 2, Iteration:  400 / 2000 [ 20%]  (Warmup)
+Chain 2, Iteration:  600 / 2000 [ 30%]  (Warmup)
+Chain 2, Iteration:  800 / 2000 [ 40%]  (Warmup)
+Chain 2, Iteration: 1000 / 2000 [ 50%]  (Warmup)
+Chain 2, Iteration: 1001 / 2000 [ 50%]  (Sampling)
+Chain 2, Iteration: 1200 / 2000 [ 60%]  (Sampling)
+Chain 2, Iteration: 1400 / 2000 [ 70%]  (Sampling)
+Chain 2, Iteration: 1600 / 2000 [ 80%]  (Sampling)
+Chain 2, Iteration: 1800 / 2000 [ 90%]  (Sampling)
+Chain 2, Iteration: 2000 / 2000 [100%]  (Sampling)
+ Elapsed Time: 11.48 seconds (Warm-up)
+               6.61 seconds (Sampling)
+               18.09 seconds (Total)
+
+
+SAMPLING FOR MODEL 'negbin_binary' NOW (CHAIN 3).
+
+Chain 3, Iteration:    1 / 2000 [  0%]  (Warmup)
+Chain 3, Iteration:  200 / 2000 [ 10%]  (Warmup)
+Chain 3, Iteration:  400 / 2000 [ 20%]  (Warmup)
+Chain 3, Iteration:  600 / 2000 [ 30%]  (Warmup)
+Chain 3, Iteration:  800 / 2000 [ 40%]  (Warmup)
+Chain 3, Iteration: 1000 / 2000 [ 50%]  (Warmup)
+Chain 3, Iteration: 1001 / 2000 [ 50%]  (Sampling)
+Chain 3, Iteration: 1200 / 2000 [ 60%]  (Sampling)
+Chain 3, Iteration: 1400 / 2000 [ 70%]  (Sampling)
+Chain 3, Iteration: 1600 / 2000 [ 80%]  (Sampling)
+Chain 3, Iteration: 1800 / 2000 [ 90%]  (Sampling)
+Chain 3, Iteration: 2000 / 2000 [100%]  (Sampling)
+ Elapsed Time: 16.14 seconds (Warm-up)
+               6.53 seconds (Sampling)
+               22.67 seconds (Total)
+
+
+SAMPLING FOR MODEL 'negbin_binary' NOW (CHAIN 4).
+
+Chain 4, Iteration:    1 / 2000 [  0%]  (Warmup)
+Chain 4, Iteration:  200 / 2000 [ 10%]  (Warmup)
+Chain 4, Iteration:  400 / 2000 [ 20%]  (Warmup)
+Chain 4, Iteration:  600 / 2000 [ 30%]  (Warmup)
+Chain 4, Iteration:  800 / 2000 [ 40%]  (Warmup)
+Chain 4, Iteration: 1000 / 2000 [ 50%]  (Warmup)
+Chain 4, Iteration: 1001 / 2000 [ 50%]  (Sampling)
+Chain 4, Iteration: 1200 / 2000 [ 60%]  (Sampling)
+Chain 4, Iteration: 1400 / 2000 [ 70%]  (Sampling)
+Chain 4, Iteration: 1600 / 2000 [ 80%]  (Sampling)
+Chain 4, Iteration: 1800 / 2000 [ 90%]  (Sampling)
+Chain 4, Iteration: 2000 / 2000 [100%]  (Sampling)
+ Elapsed Time: 11.67 seconds (Warm-up)
+               6.59 seconds (Sampling)
+               18.26 seconds (Total)
+
+[1] "done fitting stan model"
+[1] "2017-07-31 13:42:06 EDT"
+NULL
+Inference for Stan model: negbin_binary.
+4 chains, each with iter=2000; warmup=1000; thin=1; 
+post-warmup draws per chain=1000, total post-warmup draws=4000.
+
+               mean se_mean     sd   2.5%     25%     50%     75%   97.5% n_eff
+alpha0         0.76    0.00   0.21   0.35    0.62    0.76    0.89    1.19  2853
+gamma0         0.70    0.01   0.65  -0.60    0.30    0.69    1.09    1.97  2525
+sigma_beta0    0.47    0.00   0.17   0.24    0.36    0.44    0.56    0.87  1989
+mu          1223.00    3.04 133.09 946.77 1146.97 1229.94 1309.04 1456.73  1916
+phi           13.98    0.11   7.12   3.44    8.75   12.85   18.01   30.31  4000
+            Rhat
+alpha0         1
+gamma0         1
+sigma_beta0    1
+mu             1
+phi            1
+
+Samples were drawn using NUTS(diag_e) at Mon Jul 31 13:42:05 2017.
+For each parameter, n_eff is a crude measure of effective sample size,
+and Rhat is the potential scale reduction factor on split chains (at 
+convergence, Rhat=1).
+[1] "done making samps"
+[1] "2017-07-31 13:42:13 EDT"
+ num [1:1336, 1:10] 0.473 0.757 0.696 0.472 0.367 ...
+ - attr(*, "dimnames")=List of 2
+  ..$ : chr [1:1336] "sigma_beta0" "alpha0" "gamma0" "beta0[1]" ...
+  ..$ : chr [1:10] "mean" "se_mean" "sd" "2.5%" ...
+NULL
+ [1] "mean"    "se_mean" "sd"      "2.5%"    "25%"     "50%"     "75%"    
+ [8] "97.5%"   "n_eff"   "Rhat"   
+[1] "alpha0"      "gamma0"      "sigma_beta0" "mu"          "phi"        
+[1] "done making par_ests"
+[1] "2017-07-31 13:42:13 EDT"
+[1] "making par_ests"
+[1] "2017-07-31 13:42:13 EDT"
+[1] "printing par_ests"
+[1] "2017-07-31 13:42:13 EDT"
+'data.frame':	5 obs. of  11 variables:
+ $ mean   : num  0.757 0.696 0.473 1223.004 13.984
+ $ se_mean: num  0.00397 0.01285 0.0037 3.04061 0.11255
+ $ sd     : num  0.212 0.646 0.165 133.092 7.119
+ $ 2.5%   : num  0.348 -0.597 0.237 946.768 3.444
+ $ 25%    : num  0.621 0.301 0.357 1146.975 8.754
+ $ 50%    : num  0.756 0.694 0.444 1229.943 12.852
+ $ 75%    : num  0.889 1.087 0.559 1309.043 18.009
+ $ 97.5%  : num  1.19 1.969 0.871 1456.729 30.307
+ $ n_eff  : num  2853 2525 1989 1916 4000
+ $ Rhat   : num  0.999 1.001 1 1.002 1
+ $ NA     : Factor w/ 5 levels "alpha0","gamma0",..: 1 2 5 3 4
+NULL
+[1] "summarizing draws"
+# A tibble: 2 x 9
+     param         mean           sd         p025          p25          p50
+     <chr>        <dbl>        <dbl>        <dbl>        <dbl>        <dbl>
+1    N_new 1.232503e+05 1.255676e+04 9.755712e+04 1.160105e+05 1.239530e+05
+2 ybar_new 6.842969e-01 3.654575e-02 6.051864e-01 6.614768e-01 6.854719e-01
+# ... with 3 more variables: p75 <dbl>, p975 <dbl>, truth <dbl>
+NULL
+##################################################################################
+NULL
+CURRENTLY ON: num_clusters = 30 , num_units = 0.1 , use_sizes = 1 , size_model = multinomial , stanmod = negbin_binary 
+Sampling data
+[1] "2017-07-31 13:42:35 EDT"
+DONE sampling
+Running stan
+[1] "2017-07-31 13:42:36 EDT"
+[1] "2017-07-31 13:42:36 EDT"
+[1] "making stan data"
+[1] "2017-07-31 13:42:36 EDT"
+List of 7
+ $ J            : num 100
+ $ K            : num 30
+ $ n            : int 3561
+ $ y            : int [1:3561] 1 1 1 1 1 1 1 1 1 1 ...
+ $ cluster_id   : int [1:3561] 1 1 1 1 1 1 1 1 1 1 ...
+ $ Nj_sample    : num [1:30] 541 606 731 779 791 ...
+ $ log_Nj_sample: num [1:30] -0.669 -0.555 -0.368 -0.304 -0.289 ...
+NULL
+[1] "2017-07-31 13:42:36 EDT"
+
+SAMPLING FOR MODEL 'negbin_binary' NOW (CHAIN 1).
+
+Chain 1, Iteration:    1 / 2000 [  0%]  (Warmup)
+Chain 1, Iteration:  200 / 2000 [ 10%]  (Warmup)
+Chain 1, Iteration:  400 / 2000 [ 20%]  (Warmup)
+Chain 1, Iteration:  600 / 2000 [ 30%]  (Warmup)
+Chain 1, Iteration:  800 / 2000 [ 40%]  (Warmup)
+Chain 1, Iteration: 1000 / 2000 [ 50%]  (Warmup)
+Chain 1, Iteration: 1001 / 2000 [ 50%]  (Sampling)
+Chain 1, Iteration: 1200 / 2000 [ 60%]  (Sampling)
+Chain 1, Iteration: 1400 / 2000 [ 70%]  (Sampling)
+Chain 1, Iteration: 1600 / 2000 [ 80%]  (Sampling)
+Chain 1, Iteration: 1800 / 2000 [ 90%]  (Sampling)
+Chain 1, Iteration: 2000 / 2000 [100%]  (Sampling)
+ Elapsed Time: 30.96 seconds (Warm-up)
+               19.44 seconds (Sampling)
+               50.4 seconds (Total)
+
+
+SAMPLING FOR MODEL 'negbin_binary' NOW (CHAIN 2).
+
+Chain 2, Iteration:    1 / 2000 [  0%]  (Warmup)
+Chain 2, Iteration:  200 / 2000 [ 10%]  (Warmup)
+Chain 2, Iteration:  400 / 2000 [ 20%]  (Warmup)
+Chain 2, Iteration:  600 / 2000 [ 30%]  (Warmup)
+Chain 2, Iteration:  800 / 2000 [ 40%]  (Warmup)
+Chain 2, Iteration: 1000 / 2000 [ 50%]  (Warmup)
+Chain 2, Iteration: 1001 / 2000 [ 50%]  (Sampling)
+Chain 2, Iteration: 1200 / 2000 [ 60%]  (Sampling)
+Chain 2, Iteration: 1400 / 2000 [ 70%]  (Sampling)
+Chain 2, Iteration: 1600 / 2000 [ 80%]  (Sampling)
+Chain 2, Iteration: 1800 / 2000 [ 90%]  (Sampling)
+Chain 2, Iteration: 2000 / 2000 [100%]  (Sampling)
+ Elapsed Time: 31.44 seconds (Warm-up)
+               18.52 seconds (Sampling)
+               49.96 seconds (Total)
+
+
+SAMPLING FOR MODEL 'negbin_binary' NOW (CHAIN 3).
+
+Chain 3, Iteration:    1 / 2000 [  0%]  (Warmup)
+Chain 3, Iteration:  200 / 2000 [ 10%]  (Warmup)
+Chain 3, Iteration:  400 / 2000 [ 20%]  (Warmup)
+Chain 3, Iteration:  600 / 2000 [ 30%]  (Warmup)
+Chain 3, Iteration:  800 / 2000 [ 40%]  (Warmup)
+Chain 3, Iteration: 1000 / 2000 [ 50%]  (Warmup)
+Chain 3, Iteration: 1001 / 2000 [ 50%]  (Sampling)
+Chain 3, Iteration: 1200 / 2000 [ 60%]  (Sampling)
+Chain 3, Iteration: 1400 / 2000 [ 70%]  (Sampling)
+Chain 3, Iteration: 1600 / 2000 [ 80%]  (Sampling)
+Chain 3, Iteration: 1800 / 2000 [ 90%]  (Sampling)
+Chain 3, Iteration: 2000 / 2000 [100%]  (Sampling)
+ Elapsed Time: 29.45 seconds (Warm-up)
+               18.5 seconds (Sampling)
+               47.95 seconds (Total)
+
+
+SAMPLING FOR MODEL 'negbin_binary' NOW (CHAIN 4).
+
+Chain 4, Iteration:    1 / 2000 [  0%]  (Warmup)
+Chain 4, Iteration:  200 / 2000 [ 10%]  (Warmup)
+Chain 4, Iteration:  400 / 2000 [ 20%]  (Warmup)
+Chain 4, Iteration:  600 / 2000 [ 30%]  (Warmup)
+Chain 4, Iteration:  800 / 2000 [ 40%]  (Warmup)
+Chain 4, Iteration: 1000 / 2000 [ 50%]  (Warmup)
+Chain 4, Iteration: 1001 / 2000 [ 50%]  (Sampling)
+Chain 4, Iteration: 1200 / 2000 [ 60%]  (Sampling)
+Chain 4, Iteration: 1400 / 2000 [ 70%]  (Sampling)
+Chain 4, Iteration: 1600 / 2000 [ 80%]  (Sampling)
+Chain 4, Iteration: 1800 / 2000 [ 90%]  (Sampling)
+Chain 4, Iteration: 2000 / 2000 [100%]  (Sampling)
+ Elapsed Time: 30.32 seconds (Warm-up)
+               26.11 seconds (Sampling)
+               56.43 seconds (Total)
+
+[1] "done fitting stan model"
+[1] "2017-07-31 13:46:03 EDT"
+NULL
+Inference for Stan model: negbin_binary.
+4 chains, each with iter=2000; warmup=1000; thin=1; 
+post-warmup draws per chain=1000, total post-warmup draws=4000.
+
+               mean se_mean    sd   2.5%     25%     50%     75%   97.5% n_eff
+alpha0         0.87    0.00  0.15   0.57    0.77    0.87    0.97    1.17  4000
+gamma0        -0.10    0.01  0.53  -1.13   -0.46   -0.11    0.25    0.97  4000
+sigma_beta0    0.76    0.00  0.12   0.56    0.68    0.75    0.84    1.03  4000
+mu          1098.02    0.95 60.23 975.85 1058.48 1099.33 1138.55 1211.78  4000
+phi           12.37    0.05  3.43   6.55    9.94   12.05   14.53   19.89  4000
+            Rhat
+alpha0         1
+gamma0         1
+sigma_beta0    1
+mu             1
+phi            1
+
+Samples were drawn using NUTS(diag_e) at Mon Jul 31 13:46:02 2017.
+For each parameter, n_eff is a crude measure of effective sample size,
+and Rhat is the potential scale reduction factor on split chains (at 
+convergence, Rhat=1).
+[1] "done making samps"
+[1] "2017-07-31 13:46:21 EDT"
+ num [1:3600, 1:10] 0.765 0.871 -0.104 2.109 1.266 ...
+ - attr(*, "dimnames")=List of 2
+  ..$ : chr [1:3600] "sigma_beta0" "alpha0" "gamma0" "beta0[1]" ...
+  ..$ : chr [1:10] "mean" "se_mean" "sd" "2.5%" ...
+NULL
+ [1] "mean"    "se_mean" "sd"      "2.5%"    "25%"     "50%"     "75%"    
+ [8] "97.5%"   "n_eff"   "Rhat"   
+[1] "alpha0"      "gamma0"      "sigma_beta0" "mu"          "phi"        
+[1] "done making par_ests"
+[1] "2017-07-31 13:46:21 EDT"
+[1] "making par_ests"
+[1] "2017-07-31 13:46:21 EDT"
+[1] "printing par_ests"
+[1] "2017-07-31 13:46:21 EDT"
+'data.frame':	5 obs. of  11 variables:
+ $ mean   : num  0.871 -0.104 0.765 1098.018 12.371
+ $ se_mean: num  0.0024 0.00843 0.0019 0.95236 0.0542
+ $ sd     : num  0.151 0.533 0.12 60.233 3.428
+ $ 2.5%   : num  0.571 -1.127 0.564 975.847 6.546
+ $ 25%    : num  0.771 -0.458 0.68 1058.477 9.943
+ $ 50%    : num  0.869 -0.109 0.752 1099.333 12.051
+ $ 75%    : num  0.967 0.251 0.84 1138.554 14.529
+ $ 97.5%  : num  1.172 0.967 1.032 1211.777 19.89
+ $ n_eff  : num  4000 4000 4000 4000 4000
+ $ Rhat   : num  1.001 1.001 1 0.999 1
+ $ NA     : Factor w/ 5 levels "alpha0","gamma0",..: 1 2 5 3 4
+NULL
+[1] "summarizing draws"
+# A tibble: 2 x 9
+     param         mean           sd         p025          p25          p50
+     <chr>        <dbl>        <dbl>        <dbl>        <dbl>        <dbl>
+1    N_new 1.125339e+05 4.986345e+03 1.025018e+05 1.092240e+05 1.125980e+05
+2 ybar_new 6.830950e-01 2.358804e-02 6.346706e-01 6.676619e-01 6.843284e-01
+# ... with 3 more variables: p75 <dbl>, p975 <dbl>, truth <dbl>
+NULL
+##################################################################################
+NULL
+CURRENTLY ON: num_clusters = 50 , num_units = 0.1 , use_sizes = 1 , size_model = multinomial , stanmod = negbin_binary 
+Sampling data
+[1] "2017-07-31 13:46:46 EDT"
+DONE sampling
+Running stan
+[1] "2017-07-31 13:46:47 EDT"
+[1] "2017-07-31 13:46:47 EDT"
+[1] "making stan data"
+[1] "2017-07-31 13:46:47 EDT"
+List of 7
+ $ J            : num 100
+ $ K            : num 50
+ $ n            : int 5952
+ $ y            : int [1:5952] 1 1 1 1 0 1 1 0 1 1 ...
+ $ cluster_id   : int [1:5952] 1 1 1 1 1 1 1 1 1 1 ...
+ $ Nj_sample    : num [1:50] 487 606 660 757 760 779 779 924 934 944 ...
+ $ log_Nj_sample: num [1:50] -0.774 -0.555 -0.47 -0.333 -0.329 ...
+NULL
+[1] "2017-07-31 13:46:47 EDT"
+
+SAMPLING FOR MODEL 'negbin_binary' NOW (CHAIN 1).
+
+Chain 1, Iteration:    1 / 2000 [  0%]  (Warmup)
+Chain 1, Iteration:  200 / 2000 [ 10%]  (Warmup)
+Chain 1, Iteration:  400 / 2000 [ 20%]  (Warmup)
+Chain 1, Iteration:  600 / 2000 [ 30%]  (Warmup)
+Chain 1, Iteration:  800 / 2000 [ 40%]  (Warmup)
+Chain 1, Iteration: 1000 / 2000 [ 50%]  (Warmup)
+Chain 1, Iteration: 1001 / 2000 [ 50%]  (Sampling)
+Chain 1, Iteration: 1200 / 2000 [ 60%]  (Sampling)
+Chain 1, Iteration: 1400 / 2000 [ 70%]  (Sampling)
+Chain 1, Iteration: 1600 / 2000 [ 80%]  (Sampling)
+Chain 1, Iteration: 1800 / 2000 [ 90%]  (Sampling)
+Chain 1, Iteration: 2000 / 2000 [100%]  (Sampling)
+ Elapsed Time: 44.57 seconds (Warm-up)
+               31.02 seconds (Sampling)
+               75.59 seconds (Total)
+
+
+SAMPLING FOR MODEL 'negbin_binary' NOW (CHAIN 2).
+
+Chain 2, Iteration:    1 / 2000 [  0%]  (Warmup)
+Chain 2, Iteration:  200 / 2000 [ 10%]  (Warmup)
+Chain 2, Iteration:  400 / 2000 [ 20%]  (Warmup)
+Chain 2, Iteration:  600 / 2000 [ 30%]  (Warmup)
+Chain 2, Iteration:  800 / 2000 [ 40%]  (Warmup)
+Chain 2, Iteration: 1000 / 2000 [ 50%]  (Warmup)
+Chain 2, Iteration: 1001 / 2000 [ 50%]  (Sampling)
+Chain 2, Iteration: 1200 / 2000 [ 60%]  (Sampling)
+Chain 2, Iteration: 1400 / 2000 [ 70%]  (Sampling)
+Chain 2, Iteration: 1600 / 2000 [ 80%]  (Sampling)
+Chain 2, Iteration: 1800 / 2000 [ 90%]  (Sampling)
+Chain 2, Iteration: 2000 / 2000 [100%]  (Sampling)
+ Elapsed Time: 49 seconds (Warm-up)
+               30.77 seconds (Sampling)
+               79.77 seconds (Total)
+
+
+SAMPLING FOR MODEL 'negbin_binary' NOW (CHAIN 3).
+
+Chain 3, Iteration:    1 / 2000 [  0%]  (Warmup)
+Chain 3, Iteration:  200 / 2000 [ 10%]  (Warmup)
+Chain 3, Iteration:  400 / 2000 [ 20%]  (Warmup)
+Chain 3, Iteration:  600 / 2000 [ 30%]  (Warmup)
+Chain 3, Iteration:  800 / 2000 [ 40%]  (Warmup)
+Chain 3, Iteration: 1000 / 2000 [ 50%]  (Warmup)
+Chain 3, Iteration: 1001 / 2000 [ 50%]  (Sampling)
+Chain 3, Iteration: 1200 / 2000 [ 60%]  (Sampling)
+Chain 3, Iteration: 1400 / 2000 [ 70%]  (Sampling)
+Chain 3, Iteration: 1600 / 2000 [ 80%]  (Sampling)
+Chain 3, Iteration: 1800 / 2000 [ 90%]  (Sampling)
+Chain 3, Iteration: 2000 / 2000 [100%]  (Sampling)
+ Elapsed Time: 53.08 seconds (Warm-up)
+               30.78 seconds (Sampling)
+               83.86 seconds (Total)
+
+
+SAMPLING FOR MODEL 'negbin_binary' NOW (CHAIN 4).
+
+Chain 4, Iteration:    1 / 2000 [  0%]  (Warmup)
+Chain 4, Iteration:  200 / 2000 [ 10%]  (Warmup)
+Chain 4, Iteration:  400 / 2000 [ 20%]  (Warmup)
+Chain 4, Iteration:  600 / 2000 [ 30%]  (Warmup)
+Chain 4, Iteration:  800 / 2000 [ 40%]  (Warmup)
+Chain 4, Iteration: 1000 / 2000 [ 50%]  (Warmup)
+Chain 4, Iteration: 1001 / 2000 [ 50%]  (Sampling)
+Chain 4, Iteration: 1200 / 2000 [ 60%]  (Sampling)
+Chain 4, Iteration: 1400 / 2000 [ 70%]  (Sampling)
+Chain 4, Iteration: 1600 / 2000 [ 80%]  (Sampling)
+Chain 4, Iteration: 1800 / 2000 [ 90%]  (Sampling)
+Chain 4, Iteration: 2000 / 2000 [100%]  (Sampling)
+ Elapsed Time: 51.35 seconds (Warm-up)
+               30.8 seconds (Sampling)
+               82.15 seconds (Total)
+
+[1] "done fitting stan model"
+[1] "2017-07-31 13:52:13 EDT"
+NULL
+Inference for Stan model: negbin_binary.
+4 chains, each with iter=2000; warmup=1000; thin=1; 
+post-warmup draws per chain=1000, total post-warmup draws=4000.
+
+               mean se_mean    sd    2.5%     25%     50%     75%   97.5% n_eff
+alpha0         0.86    0.00  0.10    0.66    0.79    0.85    0.92    1.06  4000
+gamma0         0.08    0.01  0.35   -0.63   -0.16    0.08    0.31    0.77  4000
+sigma_beta0    0.62    0.00  0.07    0.50    0.57    0.62    0.67    0.78  4000
+mu          1111.89    0.71 45.08 1018.26 1083.15 1113.27 1143.77 1195.09  4000
+phi           14.18    0.05  3.04    8.75   12.07   13.94   16.09   20.63  4000
+            Rhat
+alpha0         1
+gamma0         1
+sigma_beta0    1
+mu             1
+phi            1
+
+Samples were drawn using NUTS(diag_e) at Mon Jul 31 13:52:12 2017.
+For each parameter, n_eff is a crude measure of effective sample size,
+and Rhat is the potential scale reduction factor on split chains (at 
+convergence, Rhat=1).
+[1] "done making samps"
+[1] "2017-07-31 13:52:44 EDT"
+ num [1:6011, 1:10] 0.6229 0.8555 0.0767 1.0656 1.0766 ...
+ - attr(*, "dimnames")=List of 2
+  ..$ : chr [1:6011] "sigma_beta0" "alpha0" "gamma0" "beta0[1]" ...
+  ..$ : chr [1:10] "mean" "se_mean" "sd" "2.5%" ...
+NULL
+ [1] "mean"    "se_mean" "sd"      "2.5%"    "25%"     "50%"     "75%"    
+ [8] "97.5%"   "n_eff"   "Rhat"   
+[1] "alpha0"      "gamma0"      "sigma_beta0" "mu"          "phi"        
+[1] "done making par_ests"
+[1] "2017-07-31 13:52:44 EDT"
+[1] "making par_ests"
+[1] "2017-07-31 13:52:44 EDT"
+[1] "printing par_ests"
+[1] "2017-07-31 13:52:44 EDT"
+'data.frame':	5 obs. of  11 variables:
+ $ mean   : num  8.55e-01 7.67e-02 6.23e-01 1.11e+03 1.42e+01
+ $ se_mean: num  0.00158 0.00561 0.00115 0.7127 0.04807
+ $ sd     : num  0.0999 0.3546 0.0726 45.0752 3.0402
+ $ 2.5%   : num  0.662 -0.63 0.497 1018.26 8.755
+ $ 25%    : num  0.79 -0.156 0.572 1083.151 12.072
+ $ 50%    : num  8.55e-01 8.04e-02 6.17e-01 1.11e+03 1.39e+01
+ $ 75%    : num  0.921 0.312 0.67 1143.772 16.092
+ $ 97.5%  : num  1.058 0.768 0.778 1195.093 20.626
+ $ n_eff  : num  4000 4000 4000 4000 4000
+ $ Rhat   : num  0.999 0.999 1 1 0.999
+ $ NA     : Factor w/ 5 levels "alpha0","gamma0",..: 1 2 5 3 4
+NULL
+[1] "summarizing draws"
+# A tibble: 2 x 9
+     param         mean           sd         p025          p25          p50
+     <chr>        <dbl>        <dbl>        <dbl>        <dbl>        <dbl>
+1    N_new 1.152305e+05 3.094282e+03 1.092076e+05 1.131868e+05 1.152015e+05
+2 ybar_new 6.899021e-01 1.416293e-02 6.605063e-01 6.804382e-01 6.901786e-01
+# ... with 3 more variables: p75 <dbl>, p975 <dbl>, truth <dbl>
+NULL
+##################################################################################
+NULL
+CURRENTLY ON: num_clusters = 5 , num_units = 0.25 , use_sizes = 1 , size_model = multinomial , stanmod = negbin_binary 
+Sampling data
+[1] "2017-07-31 13:53:14 EDT"
+DONE sampling
+Running stan
+[1] "2017-07-31 13:53:14 EDT"
+[1] "2017-07-31 13:53:14 EDT"
+[1] "making stan data"
+[1] "2017-07-31 13:53:14 EDT"
+List of 7
+ $ J            : num 100
+ $ K            : num 5
+ $ n            : int 1377
+ $ y            : int [1:1377] 0 1 1 0 0 1 0 1 0 1 ...
+ $ cluster_id   : int [1:1377] 1 1 1 1 1 1 1 1 1 1 ...
+ $ Nj_sample    : num [1:5] 757 943 984 1398 1425
+ $ log_Nj_sample: num [1:5] -0.3327 -0.113 -0.0705 0.2807 0.2998
+NULL
+[1] "2017-07-31 13:53:15 EDT"
+
+SAMPLING FOR MODEL 'negbin_binary' NOW (CHAIN 1).
+
+Chain 1, Iteration:    1 / 2000 [  0%]  (Warmup)
+Chain 1, Iteration:  200 / 2000 [ 10%]  (Warmup)
+Chain 1, Iteration:  400 / 2000 [ 20%]  (Warmup)
+Chain 1, Iteration:  600 / 2000 [ 30%]  (Warmup)
+Chain 1, Iteration:  800 / 2000 [ 40%]  (Warmup)
+Chain 1, Iteration: 1000 / 2000 [ 50%]  (Warmup)
+Chain 1, Iteration: 1001 / 2000 [ 50%]  (Sampling)
+Chain 1, Iteration: 1200 / 2000 [ 60%]  (Sampling)
+Chain 1, Iteration: 1400 / 2000 [ 70%]  (Sampling)
+Chain 1, Iteration: 1600 / 2000 [ 80%]  (Sampling)
+Chain 1, Iteration: 1800 / 2000 [ 90%]  (Sampling)
+Chain 1, Iteration: 2000 / 2000 [100%]  (Sampling)
+ Elapsed Time: 14.38 seconds (Warm-up)
+               5.26 seconds (Sampling)
+               19.64 seconds (Total)
+
+
+SAMPLING FOR MODEL 'negbin_binary' NOW (CHAIN 2).
+
+Chain 2, Iteration:    1 / 2000 [  0%]  (Warmup)
+Chain 2, Iteration:  200 / 2000 [ 10%]  (Warmup)
+Chain 2, Iteration:  400 / 2000 [ 20%]  (Warmup)
+Chain 2, Iteration:  600 / 2000 [ 30%]  (Warmup)
+Chain 2, Iteration:  800 / 2000 [ 40%]  (Warmup)
+Chain 2, Iteration: 1000 / 2000 [ 50%]  (Warmup)
+Chain 2, Iteration: 1001 / 2000 [ 50%]  (Sampling)
+Chain 2, Iteration: 1200 / 2000 [ 60%]  (Sampling)
+Chain 2, Iteration: 1400 / 2000 [ 70%]  (Sampling)
+Chain 2, Iteration: 1600 / 2000 [ 80%]  (Sampling)
+Chain 2, Iteration: 1800 / 2000 [ 90%]  (Sampling)
+Chain 2, Iteration: 2000 / 2000 [100%]  (Sampling)
+ Elapsed Time: 15.23 seconds (Warm-up)
+               7.07 seconds (Sampling)
+               22.3 seconds (Total)
+
+
+SAMPLING FOR MODEL 'negbin_binary' NOW (CHAIN 3).
+
+Chain 3, Iteration:    1 / 2000 [  0%]  (Warmup)
+Chain 3, Iteration:  200 / 2000 [ 10%]  (Warmup)
+Chain 3, Iteration:  400 / 2000 [ 20%]  (Warmup)
+Chain 3, Iteration:  600 / 2000 [ 30%]  (Warmup)
+Chain 3, Iteration:  800 / 2000 [ 40%]  (Warmup)
+Chain 3, Iteration: 1000 / 2000 [ 50%]  (Warmup)
+Chain 3, Iteration: 1001 / 2000 [ 50%]  (Sampling)
+Chain 3, Iteration: 1200 / 2000 [ 60%]  (Sampling)
+Chain 3, Iteration: 1400 / 2000 [ 70%]  (Sampling)
+Chain 3, Iteration: 1600 / 2000 [ 80%]  (Sampling)
+Chain 3, Iteration: 1800 / 2000 [ 90%]  (Sampling)
+Chain 3, Iteration: 2000 / 2000 [100%]  (Sampling)
+ Elapsed Time: 17.35 seconds (Warm-up)
+               6.92 seconds (Sampling)
+               24.27 seconds (Total)
+
+
+SAMPLING FOR MODEL 'negbin_binary' NOW (CHAIN 4).
+
+Chain 4, Iteration:    1 / 2000 [  0%]  (Warmup)
+Chain 4, Iteration:  200 / 2000 [ 10%]  (Warmup)
+Chain 4, Iteration:  400 / 2000 [ 20%]  (Warmup)
+Chain 4, Iteration:  600 / 2000 [ 30%]  (Warmup)
+Chain 4, Iteration:  800 / 2000 [ 40%]  (Warmup)
+Chain 4, Iteration: 1000 / 2000 [ 50%]  (Warmup)
+Chain 4, Iteration: 1001 / 2000 [ 50%]  (Sampling)
+Chain 4, Iteration: 1200 / 2000 [ 60%]  (Sampling)
+Chain 4, Iteration: 1400 / 2000 [ 70%]  (Sampling)
+Chain 4, Iteration: 1600 / 2000 [ 80%]  (Sampling)
+Chain 4, Iteration: 1800 / 2000 [ 90%]  (Sampling)
+Chain 4, Iteration: 2000 / 2000 [100%]  (Sampling)
+ Elapsed Time: 13.17 seconds (Warm-up)
+               7.09 seconds (Sampling)
+               20.26 seconds (Total)
+
+[1] "done fitting stan model"
+[1] "2017-07-31 13:54:42 EDT"
+NULL
+Inference for Stan model: negbin_binary.
+4 chains, each with iter=2000; warmup=1000; thin=1; 
+post-warmup draws per chain=1000, total post-warmup draws=4000.
+
+               mean se_mean     sd   2.5%    25%     50%     75%   97.5% n_eff
+alpha0         0.37    0.01   0.55  -0.74   0.12    0.38    0.62    1.45  1574
+gamma0         1.29    0.04   2.00  -2.96   0.29    1.32    2.29    5.28  2436
+sigma_beta0    1.02    0.02   0.63   0.38   0.62    0.84    1.22    2.65  1307
+mu          1012.07    4.63 175.63 647.33 908.47 1016.60 1120.47 1352.44  1441
+phi           12.05    0.14   8.72   1.53   5.71    9.95   16.02   35.59  4000
+            Rhat
+alpha0         1
+gamma0         1
+sigma_beta0    1
+mu             1
+phi            1
+
+Samples were drawn using NUTS(diag_e) at Mon Jul 31 13:54:41 2017.
+For each parameter, n_eff is a crude measure of effective sample size,
+and Rhat is the potential scale reduction factor on split chains (at 
+convergence, Rhat=1).
+[1] "done making samps"
+[1] "2017-07-31 13:54:49 EDT"
+ num [1:1391, 1:10] 1.024 0.372 1.287 -0.539 0.305 ...
+ - attr(*, "dimnames")=List of 2
+  ..$ : chr [1:1391] "sigma_beta0" "alpha0" "gamma0" "beta0[1]" ...
+  ..$ : chr [1:10] "mean" "se_mean" "sd" "2.5%" ...
+NULL
+ [1] "mean"    "se_mean" "sd"      "2.5%"    "25%"     "50%"     "75%"    
+ [8] "97.5%"   "n_eff"   "Rhat"   
+[1] "alpha0"      "gamma0"      "sigma_beta0" "mu"          "phi"        
+[1] "done making par_ests"
+[1] "2017-07-31 13:54:49 EDT"
+[1] "making par_ests"
+[1] "2017-07-31 13:54:49 EDT"
+[1] "printing par_ests"
+[1] "2017-07-31 13:54:49 EDT"
+'data.frame':	5 obs. of  11 variables:
+ $ mean   : num  0.372 1.287 1.024 1012.069 12.048
+ $ se_mean: num  0.0139 0.0405 0.0174 4.6263 0.1379
+ $ sd     : num  0.553 1.999 0.63 175.626 8.722
+ $ 2.5%   : num  -0.743 -2.957 0.381 647.33 1.534
+ $ 25%    : num  0.122 0.294 0.618 908.475 5.709
+ $ 50%    : num  0.377 1.32 0.836 1016.596 9.954
+ $ 75%    : num  0.622 2.294 1.225 1120.469 16.015
+ $ 97.5%  : num  1.45 5.28 2.65 1352.44 35.59
+ $ n_eff  : num  1574 2436 1307 1441 4000
+ $ Rhat   : num  1 1 1 1 1
+ $ NA     : Factor w/ 5 levels "alpha0","gamma0",..: 1 2 5 3 4
+NULL
+[1] "summarizing draws"
+# A tibble: 2 x 9
+     param         mean           sd         p025          p25          p50
+     <chr>        <dbl>        <dbl>        <dbl>        <dbl>        <dbl>
+1    N_new 1.016641e+05 1.715562e+04 6.483968e+04 9.171650e+04 1.020895e+05
+2 ybar_new 6.009947e-01 9.522288e-02 3.888191e-01 5.504452e-01 6.069506e-01
+# ... with 3 more variables: p75 <dbl>, p975 <dbl>, truth <dbl>
+NULL
+##################################################################################
+NULL
+CURRENTLY ON: num_clusters = 10 , num_units = 0.25 , use_sizes = 1 , size_model = multinomial , stanmod = negbin_binary 
+Sampling data
+[1] "2017-07-31 13:55:06 EDT"
+DONE sampling
+Running stan
+[1] "2017-07-31 13:55:06 EDT"
+[1] "2017-07-31 13:55:06 EDT"
+[1] "making stan data"
+[1] "2017-07-31 13:55:06 EDT"
+List of 7
+ $ J            : num 100
+ $ K            : num 10
+ $ n            : int 3057
+ $ y            : int [1:3057] 0 1 1 1 1 0 1 0 1 1 ...
+ $ cluster_id   : int [1:3057] 1 1 1 1 1 1 1 1 1 1 ...
+ $ Nj_sample    : num [1:10] 779 990 1001 1027 1027 ...
+ $ log_Nj_sample: num [1:10] -0.3041 -0.0644 -0.0534 -0.0277 -0.0277 ...
+NULL
+[1] "2017-07-31 13:55:06 EDT"
+
+SAMPLING FOR MODEL 'negbin_binary' NOW (CHAIN 1).
+
+Chain 1, Iteration:    1 / 2000 [  0%]  (Warmup)
+Chain 1, Iteration:  200 / 2000 [ 10%]  (Warmup)
+Chain 1, Iteration:  400 / 2000 [ 20%]  (Warmup)
+Chain 1, Iteration:  600 / 2000 [ 30%]  (Warmup)
+Chain 1, Iteration:  800 / 2000 [ 40%]  (Warmup)
+Chain 1, Iteration: 1000 / 2000 [ 50%]  (Warmup)
+Chain 1, Iteration: 1001 / 2000 [ 50%]  (Sampling)
+Chain 1, Iteration: 1200 / 2000 [ 60%]  (Sampling)
+Chain 1, Iteration: 1400 / 2000 [ 70%]  (Sampling)
+Chain 1, Iteration: 1600 / 2000 [ 80%]  (Sampling)
+Chain 1, Iteration: 1800 / 2000 [ 90%]  (Sampling)
+Chain 1, Iteration: 2000 / 2000 [100%]  (Sampling)
+ Elapsed Time: 21.03 seconds (Warm-up)
+               12.62 seconds (Sampling)
+               33.65 seconds (Total)
+
+
+SAMPLING FOR MODEL 'negbin_binary' NOW (CHAIN 2).
+
+Chain 2, Iteration:    1 / 2000 [  0%]  (Warmup)
+Chain 2, Iteration:  200 / 2000 [ 10%]  (Warmup)
+Chain 2, Iteration:  400 / 2000 [ 20%]  (Warmup)
+Chain 2, Iteration:  600 / 2000 [ 30%]  (Warmup)
+Chain 2, Iteration:  800 / 2000 [ 40%]  (Warmup)
+Chain 2, Iteration: 1000 / 2000 [ 50%]  (Warmup)
+Chain 2, Iteration: 1001 / 2000 [ 50%]  (Sampling)
+Chain 2, Iteration: 1200 / 2000 [ 60%]  (Sampling)
+Chain 2, Iteration: 1400 / 2000 [ 70%]  (Sampling)
+Chain 2, Iteration: 1600 / 2000 [ 80%]  (Sampling)
+Chain 2, Iteration: 1800 / 2000 [ 90%]  (Sampling)
+Chain 2, Iteration: 2000 / 2000 [100%]  (Sampling)
+ Elapsed Time: 23.29 seconds (Warm-up)
+               13.76 seconds (Sampling)
+               37.05 seconds (Total)
+
+
+SAMPLING FOR MODEL 'negbin_binary' NOW (CHAIN 3).
+
+Chain 3, Iteration:    1 / 2000 [  0%]  (Warmup)
+Chain 3, Iteration:  200 / 2000 [ 10%]  (Warmup)
+Chain 3, Iteration:  400 / 2000 [ 20%]  (Warmup)
+Chain 3, Iteration:  600 / 2000 [ 30%]  (Warmup)
+Chain 3, Iteration:  800 / 2000 [ 40%]  (Warmup)
+Chain 3, Iteration: 1000 / 2000 [ 50%]  (Warmup)
+Chain 3, Iteration: 1001 / 2000 [ 50%]  (Sampling)
+Chain 3, Iteration: 1200 / 2000 [ 60%]  (Sampling)
+Chain 3, Iteration: 1400 / 2000 [ 70%]  (Sampling)
+Chain 3, Iteration: 1600 / 2000 [ 80%]  (Sampling)
+Chain 3, Iteration: 1800 / 2000 [ 90%]  (Sampling)
+Chain 3, Iteration: 2000 / 2000 [100%]  (Sampling)
+ Elapsed Time: 21.93 seconds (Warm-up)
+               14.67 seconds (Sampling)
+               36.6 seconds (Total)
+
+
+SAMPLING FOR MODEL 'negbin_binary' NOW (CHAIN 4).
+
+Chain 4, Iteration:    1 / 2000 [  0%]  (Warmup)
+Chain 4, Iteration:  200 / 2000 [ 10%]  (Warmup)
+Chain 4, Iteration:  400 / 2000 [ 20%]  (Warmup)
+Chain 4, Iteration:  600 / 2000 [ 30%]  (Warmup)
+Chain 4, Iteration:  800 / 2000 [ 40%]  (Warmup)
+Chain 4, Iteration: 1000 / 2000 [ 50%]  (Warmup)
+Chain 4, Iteration: 1001 / 2000 [ 50%]  (Sampling)
+Chain 4, Iteration: 1200 / 2000 [ 60%]  (Sampling)
+Chain 4, Iteration: 1400 / 2000 [ 70%]  (Sampling)
+Chain 4, Iteration: 1600 / 2000 [ 80%]  (Sampling)
+Chain 4, Iteration: 1800 / 2000 [ 90%]  (Sampling)
+Chain 4, Iteration: 2000 / 2000 [100%]  (Sampling)
+ Elapsed Time: 20.28 seconds (Warm-up)
+               15.21 seconds (Sampling)
+               35.49 seconds (Total)
+
+[1] "done fitting stan model"
+[1] "2017-07-31 13:57:30 EDT"
+NULL
+Inference for Stan model: negbin_binary.
+4 chains, each with iter=2000; warmup=1000; thin=1; 
+post-warmup draws per chain=1000, total post-warmup draws=4000.
+
+               mean se_mean     sd   2.5%     25%     50%     75%   97.5% n_eff
+alpha0         1.07    0.00   0.20   0.65    0.95    1.07    1.20    1.47  2429
+gamma0        -0.99    0.02   0.77  -2.52   -1.46   -0.98   -0.52    0.54  2607
+sigma_beta0    0.54    0.00   0.17   0.30    0.42    0.51    0.62    0.95  2278
+mu          1141.41    2.36 113.22 898.70 1076.27 1146.53 1213.02 1355.33  2294
+phi           15.39    0.12   7.88   3.74    9.72   14.06   19.78   33.90  4000
+            Rhat
+alpha0         1
+gamma0         1
+sigma_beta0    1
+mu             1
+phi            1
+
+Samples were drawn using NUTS(diag_e) at Mon Jul 31 13:57:30 2017.
+For each parameter, n_eff is a crude measure of effective sample size,
+and Rhat is the potential scale reduction factor on split chains (at 
+convergence, Rhat=1).
+[1] "done making samps"
+[1] "2017-07-31 13:57:46 EDT"
+ num [1:3076, 1:10] 0.538 1.069 -0.985 1.254 1.009 ...
+ - attr(*, "dimnames")=List of 2
+  ..$ : chr [1:3076] "sigma_beta0" "alpha0" "gamma0" "beta0[1]" ...
+  ..$ : chr [1:10] "mean" "se_mean" "sd" "2.5%" ...
+NULL
+ [1] "mean"    "se_mean" "sd"      "2.5%"    "25%"     "50%"     "75%"    
+ [8] "97.5%"   "n_eff"   "Rhat"   
+[1] "alpha0"      "gamma0"      "sigma_beta0" "mu"          "phi"        
+[1] "done making par_ests"
+[1] "2017-07-31 13:57:46 EDT"
+[1] "making par_ests"
+[1] "2017-07-31 13:57:46 EDT"
+[1] "printing par_ests"
+[1] "2017-07-31 13:57:46 EDT"
+'data.frame':	5 obs. of  11 variables:
+ $ mean   : num  1.069 -0.985 0.538 1141.413 15.39
+ $ se_mean: num  0.00413 0.01507 0.00363 2.36365 0.12454
+ $ sd     : num  0.204 0.77 0.173 113.221 7.877
+ $ 2.5%   : num  0.648 -2.521 0.299 898.701 3.741
+ $ 25%    : num  0.948 -1.46 0.416 1076.266 9.722
+ $ 50%    : num  1.072 -0.98 0.506 1146.535 14.06
+ $ 75%    : num  1.196 -0.518 0.618 1213.016 19.782
+ $ 97.5%  : num  1.474 0.541 0.946 1355.331 33.899
+ $ n_eff  : num  2429 2607 2278 2294 4000
+ $ Rhat   : num  1 1 1 1 1
+ $ NA     : Factor w/ 5 levels "alpha0","gamma0",..: 1 2 5 3 4
+NULL
+[1] "summarizing draws"
+# A tibble: 2 x 9
+     param         mean           sd         p025          p25          p50
+     <chr>        <dbl>        <dbl>        <dbl>        <dbl>        <dbl>
+1    N_new 1.149694e+05 1.065128e+04 9.248432e+04 1.086795e+05 1.153940e+05
+2 ybar_new 7.100086e-01 3.709912e-02 6.253808e-01 6.894429e-01 7.135197e-01
+# ... with 3 more variables: p75 <dbl>, p975 <dbl>, truth <dbl>
+NULL
+##################################################################################
+NULL
+CURRENTLY ON: num_clusters = 30 , num_units = 0.25 , use_sizes = 1 , size_model = multinomial , stanmod = negbin_binary 
+Sampling data
+[1] "2017-07-31 13:58:04 EDT"
+DONE sampling
+Running stan
+[1] "2017-07-31 13:58:05 EDT"
+[1] "2017-07-31 13:58:05 EDT"
+[1] "making stan data"
+[1] "2017-07-31 13:58:05 EDT"
+List of 7
+ $ J            : num 100
+ $ K            : num 30
+ $ n            : int 8987
+ $ y            : int [1:8987] 1 1 1 1 1 0 0 0 1 0 ...
+ $ cluster_id   : int [1:8987] 1 1 1 1 1 1 1 1 1 1 ...
+ $ Nj_sample    : num [1:30] 487 660 679 779 791 ...
+ $ log_Nj_sample: num [1:30] -0.774 -0.47 -0.441 -0.304 -0.289 ...
+NULL
+[1] "2017-07-31 13:58:05 EDT"
+
+SAMPLING FOR MODEL 'negbin_binary' NOW (CHAIN 1).
+
+Chain 1, Iteration:    1 / 2000 [  0%]  (Warmup)
+Chain 1, Iteration:  200 / 2000 [ 10%]  (Warmup)
+Chain 1, Iteration:  400 / 2000 [ 20%]  (Warmup)
+Chain 1, Iteration:  600 / 2000 [ 30%]  (Warmup)
+Chain 1, Iteration:  800 / 2000 [ 40%]  (Warmup)
+Chain 1, Iteration: 1000 / 2000 [ 50%]  (Warmup)
+Chain 1, Iteration: 1001 / 2000 [ 50%]  (Sampling)
+Chain 1, Iteration: 1200 / 2000 [ 60%]  (Sampling)
+Chain 1, Iteration: 1400 / 2000 [ 70%]  (Sampling)
+Chain 1, Iteration: 1600 / 2000 [ 80%]  (Sampling)
+Chain 1, Iteration: 1800 / 2000 [ 90%]  (Sampling)
+Chain 1, Iteration: 2000 / 2000 [100%]  (Sampling)
+ Elapsed Time: 53.44 seconds (Warm-up)
+               48.77 seconds (Sampling)
+               102.21 seconds (Total)
+
+
+SAMPLING FOR MODEL 'negbin_binary' NOW (CHAIN 2).
+
+Chain 2, Iteration:    1 / 2000 [  0%]  (Warmup)
+Chain 2, Iteration:  200 / 2000 [ 10%]  (Warmup)
+Chain 2, Iteration:  400 / 2000 [ 20%]  (Warmup)
+Chain 2, Iteration:  600 / 2000 [ 30%]  (Warmup)
+Chain 2, Iteration:  800 / 2000 [ 40%]  (Warmup)
+Chain 2, Iteration: 1000 / 2000 [ 50%]  (Warmup)
+Chain 2, Iteration: 1001 / 2000 [ 50%]  (Sampling)
+Chain 2, Iteration: 1200 / 2000 [ 60%]  (Sampling)
+Chain 2, Iteration: 1400 / 2000 [ 70%]  (Sampling)
+Chain 2, Iteration: 1600 / 2000 [ 80%]  (Sampling)
+Chain 2, Iteration: 1800 / 2000 [ 90%]  (Sampling)
+Chain 2, Iteration: 2000 / 2000 [100%]  (Sampling)
+ Elapsed Time: 64.2 seconds (Warm-up)
+               48.53 seconds (Sampling)
+               112.73 seconds (Total)
+
+
+SAMPLING FOR MODEL 'negbin_binary' NOW (CHAIN 3).
+
+Chain 3, Iteration:    1 / 2000 [  0%]  (Warmup)
+Chain 3, Iteration:  200 / 2000 [ 10%]  (Warmup)
+Chain 3, Iteration:  400 / 2000 [ 20%]  (Warmup)
+Chain 3, Iteration:  600 / 2000 [ 30%]  (Warmup)
+Chain 3, Iteration:  800 / 2000 [ 40%]  (Warmup)
+Chain 3, Iteration: 1000 / 2000 [ 50%]  (Warmup)
+Chain 3, Iteration: 1001 / 2000 [ 50%]  (Sampling)
+Chain 3, Iteration: 1200 / 2000 [ 60%]  (Sampling)
+Chain 3, Iteration: 1400 / 2000 [ 70%]  (Sampling)
+Chain 3, Iteration: 1600 / 2000 [ 80%]  (Sampling)
+Chain 3, Iteration: 1800 / 2000 [ 90%]  (Sampling)
+Chain 3, Iteration: 2000 / 2000 [100%]  (Sampling)
+ Elapsed Time: 61.4 seconds (Warm-up)
+               48.54 seconds (Sampling)
+               109.94 seconds (Total)
+
+
+SAMPLING FOR MODEL 'negbin_binary' NOW (CHAIN 4).
+
+Chain 4, Iteration:    1 / 2000 [  0%]  (Warmup)
+Chain 4, Iteration:  200 / 2000 [ 10%]  (Warmup)
+Chain 4, Iteration:  400 / 2000 [ 20%]  (Warmup)
+Chain 4, Iteration:  600 / 2000 [ 30%]  (Warmup)
+Chain 4, Iteration:  800 / 2000 [ 40%]  (Warmup)
+Chain 4, Iteration: 1000 / 2000 [ 50%]  (Warmup)
+Chain 4, Iteration: 1001 / 2000 [ 50%]  (Sampling)
+Chain 4, Iteration: 1200 / 2000 [ 60%]  (Sampling)
+Chain 4, Iteration: 1400 / 2000 [ 70%]  (Sampling)
+Chain 4, Iteration: 1600 / 2000 [ 80%]  (Sampling)
+Chain 4, Iteration: 1800 / 2000 [ 90%]  (Sampling)
+Chain 4, Iteration: 2000 / 2000 [100%]  (Sampling)
+ Elapsed Time: 77.87 seconds (Warm-up)
+               48.31 seconds (Sampling)
+               126.18 seconds (Total)
+
+[1] "done fitting stan model"
+[1] "2017-07-31 14:05:45 EDT"
+NULL
+Inference for Stan model: negbin_binary.
+4 chains, each with iter=2000; warmup=1000; thin=1; 
+post-warmup draws per chain=1000, total post-warmup draws=4000.
+
+               mean se_mean    sd   2.5%     25%     50%     75%   97.5% n_eff
+alpha0         0.85    0.00  0.11   0.63    0.78    0.84    0.92    1.06  4000
+gamma0        -0.09    0.01  0.35  -0.79   -0.32   -0.09    0.15    0.60  4000
+sigma_beta0    0.56    0.00  0.08   0.42    0.50    0.55    0.61    0.73  4000
+mu          1099.65    1.02 64.38 965.06 1058.11 1102.09 1141.58 1224.73  4000
+phi           11.20    0.05  3.16   5.94    8.99   10.93   13.04   18.40  4000
+            Rhat
+alpha0         1
+gamma0         1
+sigma_beta0    1
+mu             1
+phi            1
+
+Samples were drawn using NUTS(diag_e) at Mon Jul 31 14:05:44 2017.
+For each parameter, n_eff is a crude measure of effective sample size,
+and Rhat is the potential scale reduction factor on split chains (at 
+convergence, Rhat=1).
+[1] "done making samps"
+[1] "2017-07-31 14:06:36 EDT"
+ num [1:9026, 1:10] 0.5573 0.8463 -0.0896 0.8461 0.1715 ...
+ - attr(*, "dimnames")=List of 2
+  ..$ : chr [1:9026] "sigma_beta0" "alpha0" "gamma0" "beta0[1]" ...
+  ..$ : chr [1:10] "mean" "se_mean" "sd" "2.5%" ...
+NULL
+ [1] "mean"    "se_mean" "sd"      "2.5%"    "25%"     "50%"     "75%"    
+ [8] "97.5%"   "n_eff"   "Rhat"   
+[1] "alpha0"      "gamma0"      "sigma_beta0" "mu"          "phi"        
+[1] "done making par_ests"
+[1] "2017-07-31 14:06:36 EDT"
+[1] "making par_ests"
+[1] "2017-07-31 14:06:36 EDT"
+[1] "printing par_ests"
+[1] "2017-07-31 14:06:36 EDT"
+'data.frame':	5 obs. of  11 variables:
+ $ mean   : num  0.8463 -0.0896 0.5573 1099.651 11.2001
+ $ se_mean: num  0.00172 0.0055 0.00127 1.01801 0.04989
+ $ sd     : num  0.1086 0.348 0.0803 64.3848 3.1554
+ $ 2.5%   : num  0.629 -0.791 0.424 965.065 5.943
+ $ 25%    : num  0.777 -0.323 0.498 1058.106 8.989
+ $ 50%    : num  0.845 -0.089 0.55 1102.089 10.926
+ $ 75%    : num  0.918 0.146 0.607 1141.584 13.042
+ $ 97.5%  : num  1.055 0.604 0.733 1224.729 18.401
+ $ n_eff  : num  4000 4000 4000 4000 4000
+ $ Rhat   : num  1 1 1 0.999 0.999
+ $ NA     : Factor w/ 5 levels "alpha0","gamma0",..: 1 2 5 3 4
+NULL
+[1] "summarizing draws"
+# A tibble: 2 x 9
+     param         mean           sd         p025          p25          p50
+     <chr>        <dbl>        <dbl>        <dbl>        <dbl>        <dbl>
+1    N_new 1.129241e+05 5.364288e+03 1.018958e+05 1.093745e+05 1.130535e+05
+2 ybar_new 6.863288e-01 1.766022e-02 6.494938e-01 6.750091e-01 6.868284e-01
+# ... with 3 more variables: p75 <dbl>, p975 <dbl>, truth <dbl>
+NULL
+##################################################################################
+NULL
+CURRENTLY ON: num_clusters = 50 , num_units = 0.25 , use_sizes = 1 , size_model = multinomial , stanmod = negbin_binary 
+Sampling data
+[1] "2017-07-31 14:07:03 EDT"
+DONE sampling
+Running stan
+[1] "2017-07-31 14:07:04 EDT"
+[1] "2017-07-31 14:07:04 EDT"
+[1] "making stan data"
+[1] "2017-07-31 14:07:04 EDT"
+List of 7
+ $ J            : num 100
+ $ K            : num 50
+ $ n            : int 14088
+ $ y            : int [1:14088] 1 1 1 1 1 0 1 1 1 1 ...
+ $ cluster_id   : int [1:14088] 1 1 1 1 1 1 1 1 1 1 ...
+ $ Nj_sample    : num [1:50] 496 541 606 660 660 703 724 760 779 779 ...
+ $ log_Nj_sample: num [1:50] -0.756 -0.669 -0.555 -0.47 -0.47 ...
+NULL
+[1] "2017-07-31 14:07:04 EDT"
+
+SAMPLING FOR MODEL 'negbin_binary' NOW (CHAIN 1).
+
+Chain 1, Iteration:    1 / 2000 [  0%]  (Warmup)
+Chain 1, Iteration:  200 / 2000 [ 10%]  (Warmup)
+Chain 1, Iteration:  400 / 2000 [ 20%]  (Warmup)
+Chain 1, Iteration:  600 / 2000 [ 30%]  (Warmup)
+Chain 1, Iteration:  800 / 2000 [ 40%]  (Warmup)
+Chain 1, Iteration: 1000 / 2000 [ 50%]  (Warmup)
+Chain 1, Iteration: 1001 / 2000 [ 50%]  (Sampling)
+Chain 1, Iteration: 1200 / 2000 [ 60%]  (Sampling)
+Chain 1, Iteration: 1400 / 2000 [ 70%]  (Sampling)
+Chain 1, Iteration: 1600 / 2000 [ 80%]  (Sampling)
+Chain 1, Iteration: 1800 / 2000 [ 90%]  (Sampling)
+Chain 1, Iteration: 2000 / 2000 [100%]  (Sampling)
+ Elapsed Time: 108.51 seconds (Warm-up)
+               76.34 seconds (Sampling)
+               184.85 seconds (Total)
+
+
+SAMPLING FOR MODEL 'negbin_binary' NOW (CHAIN 2).
+
+Chain 2, Iteration:    1 / 2000 [  0%]  (Warmup)
+Chain 2, Iteration:  200 / 2000 [ 10%]  (Warmup)
+Chain 2, Iteration:  400 / 2000 [ 20%]  (Warmup)
+Chain 2, Iteration:  600 / 2000 [ 30%]  (Warmup)
+Chain 2, Iteration:  800 / 2000 [ 40%]  (Warmup)
+Chain 2, Iteration: 1000 / 2000 [ 50%]  (Warmup)
+Chain 2, Iteration: 1001 / 2000 [ 50%]  (Sampling)
+Chain 2, Iteration: 1200 / 2000 [ 60%]  (Sampling)
+Chain 2, Iteration: 1400 / 2000 [ 70%]  (Sampling)
+Chain 2, Iteration: 1600 / 2000 [ 80%]  (Sampling)
+Chain 2, Iteration: 1800 / 2000 [ 90%]  (Sampling)
+Chain 2, Iteration: 2000 / 2000 [100%]  (Sampling)
+ Elapsed Time: 92.26 seconds (Warm-up)
+               75.88 seconds (Sampling)
+               168.14 seconds (Total)
+
+
+SAMPLING FOR MODEL 'negbin_binary' NOW (CHAIN 3).
+
+Chain 3, Iteration:    1 / 2000 [  0%]  (Warmup)
+Chain 3, Iteration:  200 / 2000 [ 10%]  (Warmup)
+Chain 3, Iteration:  400 / 2000 [ 20%]  (Warmup)
+Chain 3, Iteration:  600 / 2000 [ 30%]  (Warmup)
+Chain 3, Iteration:  800 / 2000 [ 40%]  (Warmup)
+Chain 3, Iteration: 1000 / 2000 [ 50%]  (Warmup)
+Chain 3, Iteration: 1001 / 2000 [ 50%]  (Sampling)
+Chain 3, Iteration: 1200 / 2000 [ 60%]  (Sampling)
+Chain 3, Iteration: 1400 / 2000 [ 70%]  (Sampling)
+Chain 3, Iteration: 1600 / 2000 [ 80%]  (Sampling)
+Chain 3, Iteration: 1800 / 2000 [ 90%]  (Sampling)
+Chain 3, Iteration: 2000 / 2000 [100%]  (Sampling)
+ Elapsed Time: 105.87 seconds (Warm-up)
+               75.83 seconds (Sampling)
+               181.7 seconds (Total)
+
+
+SAMPLING FOR MODEL 'negbin_binary' NOW (CHAIN 4).
+
+Chain 4, Iteration:    1 / 2000 [  0%]  (Warmup)
+Chain 4, Iteration:  200 / 2000 [ 10%]  (Warmup)
+Chain 4, Iteration:  400 / 2000 [ 20%]  (Warmup)
+Chain 4, Iteration:  600 / 2000 [ 30%]  (Warmup)
+Chain 4, Iteration:  800 / 2000 [ 40%]  (Warmup)
+Chain 4, Iteration: 1000 / 2000 [ 50%]  (Warmup)
+Chain 4, Iteration: 1001 / 2000 [ 50%]  (Sampling)

@@ -35,25 +35,29 @@
 ################################################################################
 # Get the values of the sim_parameters for this iteration
 ################################################################################
-  sp1 <- expand.grid(use_sizes = c(0, 1),
-                     outcome_type = c("binary", "continuous"),
-                     size_model = c("multinomial", "poisson"),
-                     model_name = c("bb", "cluster_inds_only",
-                                    "knowsizes", "lognormal", "negbin"),
-                     num_clusters = c(5, 10, 20, 30),
-                     num_units = c(0.05, 0.1, 0.25, 0.5, 1, 10, 30, 60))
-  sp2 <- expand.grid(use_sizes = c(0, 1),
-                     outcome_type = c("binary", "continuous"),
-                     size_model = "ff",
-                     model_name = c("bb", "cluster_inds_only",
-                                    "knowsizes", "lognormal", "negbin"),
-                     num_clusters = 16,
-                     num_units = 99)
-  if (rownum <= nrow(sp1)) {
-    curr_params <- sp1[rownum, ]
-  } else {
-    curr_params <- sp2[rownum - nrow(sp1), ]
-  }
+#  sp1 <- expand.grid(use_sizes = c(0, 1),
+#                     outcome_type = c("binary", "continuous"),
+#                     size_model = c("multinomial", "poisson"),
+#                     model_name = c("bb", "cluster_inds_only",
+#                                    "knowsizes", "lognormal", "negbin"),
+#                     num_clusters = c(5, 10, 20, 30),
+#                     num_units = c(0.05, 0.1, 0.25, 0.5, 1, 10, 30, 60))
+#  sp2 <- expand.grid(use_sizes = c(0, 1),
+#                     outcome_type = c("binary", "continuous"),
+#                     size_model = "ff",
+#                     model_name = c("bb", "cluster_inds_only",
+#                                    "knowsizes", "lognormal", "negbin"),
+#                     num_clusters = 16,
+#                     num_units = 99)
+#  if (rownum <= nrow(sp1)) {
+#    curr_params <- sp1[rownum, ]
+#  } else {
+#    curr_params <- sp2[rownum - nrow(sp1), ]
+#  }
+
+curr_params <- data.frame(use_sizes = 1, outcome_type = "continuous",
+                          size_model = "poisson", model_name = "negbin",
+                          num_clusters = 30, num_units = 0.1)
 
   cat("####################################################################\n")
   cat("current set of params is for rownum", rownum, "\n")
@@ -125,6 +129,7 @@ print(str(popdata))
 ### Preallocate space to hold all results
 ################################################################################
   num_div_trans <- 0
+  num_rhat_fails <- 0
   n_sims <- 100
   ybar_ests <- data.frame(true  = rep(ybar_true, n_sims),
                           mean  = rep(NA, n_sims),
@@ -179,9 +184,16 @@ print(str(popdata))
   
     # see if this was a case of divergent transitions we couldn't get rid of
     if (length(curr_fil) == 1) {
-      num_div_trans <- num_div_trans + 1
-      next
-    }
+      if (length(curr_fil) == 1) {
+        if (grepl("Rhat", curr_fil)) {
+          cat("Rhat fail for sim=", simno, "\n")
+          num_rhat_fails <- num_rhat_fails + 1
+        } else {
+          cat("Div trans for sim=", simno, "\n")
+          num_div_trans <- num_div_trans + 1                                         
+        }
+        next                                                                      
+      }                                                                           
 
     ### PARAM ESTS
     # pull out parameter estimates, make so that statistics are long
@@ -189,32 +201,12 @@ print(str(popdata))
     tmp$param_name <- rownames(tmp)
 
     # don't need to keep params like mu_star, etc
-#print("BEFORE")
-#print("unique(param_ests$param_name)")
-#print(unique(param_ests$param_name))
-#print(tmp$param_name)
-#print("tmp$param_name")
-#print(tmp$param_name)
     tmp <- tmp[tmp$param_name %in% unique(param_ests$param_name), ]
     tmp <- tmp[, c("param_name", keep_param_stats)]
     names(tmp) <- c("param_name", stat_list)
 
     # replace the appropriate part of param_ests with tmp
     inds <- param_ests$simno == simno
-#cat("simno:", simno, "\n")
-#print("tmp")
-#print(tmp)
-#print("str(tmp)")
-#print(str(tmp))
-#print("tmp$param_name")
-#print(tmp$param_name)
-#print("str(param_ests[inds, ])")
-#print(str(param_ests[inds, ]))
-#print("str(param_ests[inds, names(tmp)])")
-#print(str(param_ests[inds, names(tmp)]))
-#print("stat_list")
-#print(stat_list)
-
     param_ests[inds, names(tmp)] <- tmp
 
     ### YBAR ESTS
@@ -235,16 +227,6 @@ print(str(popdata))
 
     # replace the appropriate part of ybar_ests with tmp
     inds <- ybar_ests$simno == simno
-#print("tmp")
-#print(tmp)
-#print("str(tmp)")
-#print(str(tmp))
-#print("str(ybar_ests[inds, ])")
-#print(str(ybar_ests[inds, ]))
-#print("str(ybar_ests[inds, names(tmp)])")
-#print(str(ybar_ests[inds, names(tmp)]))
-#print("str(ybar_ests[inds, ])")
-#print(str(ybar_ests[inds, ]))
     ybar_ests[inds, names(tmp)] <- tmp
  
     ### NJ NEW
@@ -263,39 +245,86 @@ print(str(popdata))
                        p50  = quantile(Nj_new, 0.50),
                        p75  = quantile(Nj_new, 0.75),
                        p975 = quantile(Nj_new, 0.975))
-print("tmp:")
-print(tmp)
-print(warnings())
     tmp <- tmp %>%
       tidyr::gather(key = stat, value = est)
-print("tmp:")
-print(tmp)
-print(warnings())
+    print(warnings())
     
     # replace the appropriate part of param_ests with tmp
     inds <- Nj_ests$simno == simno
-#cat("simno:", simno, "\n")
-#print("tmp:")
-#print(tmp)
-#print("dim(tmp):")
-#print(dim(tmp))
-#print("str(Nj_ests):")
-#print(str(Nj_ests))
-#print("Nj_ests$stat[inds]")
-#print(Nj_ests$stat[inds])
-#print("dim(Nj_ests[inds])")
-#print(dim(Nj_ests[inds,]))
-#print("tmp$stat:")
-#print(tmp$stat)
     Nj_ests$stat[inds]       <- tmp$stat
-#print("HERE")
     Nj_ests$est[inds]        <- tmp$est
   } # end file for loop
 
-  # Print number of times we couln't get rid of divergent transitions
-  cat("Number of times we couldn't get rid of divergent transitions:",
-      num_div_trans, "\n")
+################################################################################
+### Plot results for selected cases
+################################################################################
+  if (grepl("lognormal", model_name) || grepl("negbin", model_name)) {
+    if (grepl("lognormal", model_name)) {
+      plot_pars <- c("mu", "sigma")
+    } else {
+      plot_pars <- c(*"mu", "phi")
+    }
 
+    # Param ests
+    ggplot(param_ests[param_ests$param_name %in% plot_pars, ],
+           aes(x = simno, y = mean)) +
+      geom_point() +
+      geom_errorbar(aes(ymin = p25, ymax = p75), size = 1.5, width = 0) +
+      geom_errorbar(aes(ymin = p025, ymax = p975), width = 0) +
+      facet_wrap(~ param_name, scales = "free") +
+      ggtitle(paste0(size_model, " ", model_name, "\ndiv trans: ", num_div_trans,
+                     "; Rhat fails: ", num_rhat_fails)) +
+      theme_bw()
+    ggsave(paste0(rootdir, "output/figures/size_pars_usesizes_", use_sizes, "_",       
+                  outcome_type, "_", size_model, "_", model_name,
+                  "_nclusters_", num_clusters,
+                  "_nunits_", num_units, ".png"),
+           width = 6, height = 4)
+
+    # Ybar ests
+    ggplot(ybar_ests, aes(x = simno, y = mean)) +
+      geom_point() +
+      geom_errorbar(aes(ymin = p25, ymax = p75), size = 1.5, width = 0) +
+      geom_errorbar(aes(ymin = p025, ymax = p975), width = 0) +
+      geom_hline(yintercept = ybar_true, colour = "grey50") +
+      ylab("ybar") +
+      ggtitle(paste0(size_model, " ", model_name, "\ndiv trans: ", num_div_trans,
+                     "; Rhat fails: ", num_rhat_fails)) +
+      theme_bw()
+    ggsave(paste0(rootdir, "output/figures/ybar_usesizes_", use_sizes, "_",       
+                  outcome_type, "_", size_model, "_", model_name,
+                  "_nclusters_", num_clusters,
+                  "_nunits_", num_units, ".png"),
+           width = 6, height = 4)
+
+    # Nj_ests
+    Nj_ests_w <- Nj_ests %>%
+      dplyr::select(-true) %>%
+      tidyr::spread(key = stat, value = est)
+    
+    ggplot(Nj_ests_w, aes(x = simno, y = mean)) +
+      geom_point() +
+      geom_errorbar(aes(ymin = p25, ymax = p75), size = 1.5, width = 0) +
+      geom_errorbar(aes(ymin = p025, ymax = p975), width = 0) +
+      geom_hline(yintercept = Nj_ests$true[Nj_ests$simno == 1 & Nj_ests$stat == "mean"],
+                 colour = "grey50") +
+      ylab("Mean(Nj)") +
+      ggtitle(paste0(size_model, " ", model_name, "\ndiv trans: ", num_div_trans,
+                     "; Rhat fails: ", num_rhat_fails)) +
+      theme_bw()
+    ggsave(paste0(rootdir, "output/figures/Nj_estsr_usesizes_", use_sizes, "_",       
+                  outcome_type, "_", size_model, "_", model_name,
+                  "_nclusters_", num_clusters,
+                  "_nunits_", num_units, ".png"),
+           width = 6, height = 4)
+  }
+  
+  
+  # Print number of times we couln't get rid of divergent transitions or had
+  # Rhat failures
+  cat("There were", num_div_trans, "sims with divergent transitions and",
+      num_rhat_fail, "sims with Rhat fails\n")
+  
   # Now collapse across all sim_ to get means, CIs, etc
   ### PARAM ESTS
   param_ests_summ <- param_ests %>%

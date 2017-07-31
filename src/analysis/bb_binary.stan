@@ -83,18 +83,15 @@ parameters {
   real<lower=0> sigma_beta0;
   real alpha0;
   real gamma0;
-  vector[K] eta0;
+  vector[K] beta0;
   simplex[M] phi;
 }
 transformed parameters {
-  vector[K] beta0;
   vector[n] y_prob;
   vector[M] phi_star_unnorm;
   simplex[M] phi_star;
   real cee; // normalizer for phi_star
   real pii;
-
-  beta0 = alpha0 + gamma0 * log_Nj_sample + eta0 * sigma_beta0;
 
   for (i in 1:n) {
     y_prob[i] = beta0[cluster_id[i]];
@@ -109,9 +106,9 @@ transformed parameters {
 }
 model {
   sigma_beta0 ~ cauchy(0, 2.5);
-  alpha0 ~ normal(0, 1);
-  gamma0 ~ normal(0, 1);
-  eta0 ~ normal(0, 1);
+  alpha0 ~ normal(0, 10);
+  gamma0 ~ normal(0, 10);
+  beta0 ~ normal(alpha0 + gamma0 * log_Nj_sample, sigma_beta0);
   y ~ bernoulli_logit(y_prob);
   phi ~ dirichlet(alpha_phi);
   M_counts ~ multinomial(phi);

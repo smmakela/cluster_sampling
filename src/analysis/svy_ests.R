@@ -14,7 +14,8 @@ svy_ests <- function(J, num.clusters, num.units, rootdir, sim, popseed, use.size
     library(survey)
 
   # load pop data -- use this to get the total sample size so we can calculate the sampling probs (here we are assuming we know M_j in all clusters, so obviously we can calculate the sampling probs
-    load(paste(rootdir, "/Data/Simplify/vary_K/popdata_usesizes_", use.sizes, "_seed_", popseed, ".RData", sep = ""))
+    popdata <- readRDS(paste0(rootdir, "/output/simulation/popdata_usesizes_", use.sizes,
+                              "_", outcome.type, ".rds"))
     pop.data <- popdata[["pop.data"]]
     sizetot <- sum(pop.data$Mj)
     ybar_true <- mean(pop.data$yi)
@@ -25,8 +26,12 @@ svy_ests <- function(J, num.clusters, num.units, rootdir, sim, popseed, use.size
     } else {
       nunits <- num.units
     }
-    load(paste(rootdir, "/Data/Simplify/vary_K/sampledata_usesizes_", use.sizes, "_nclusters_", num.clusters,
-               "_nunits_", nunits, "_sim_", sim, ".RData", sep = ""))
+    simdata <- readRDS(paste0(rootdir, "output/simulation/simdata_usesizes_",
+                              use.sizes, "_", outcome.type,
+                              "_nclusters_", num.clusters, "_nunits_", nunits,
+                              "_simno_", sim, ".rds"))
+    PI <- simdata[["PI"]]
+    sample.data <- simdata[["sample.data"]]
     sample.data$fpc <- J # fpc is the number of clusters in the pop
     sample.data$prob <- num.clusters*sample.data$Mj/sizetot # prob of selecting the cluster
     if (num.units > 1) {
@@ -39,7 +44,8 @@ svy_ests <- function(J, num.clusters, num.units, rootdir, sim, popseed, use.size
   # HT ESTIMATE
   # describe survey design
     #des <- svydesign(id = ~new.cluster.id, fpc = ~fpc, weights = ~wt, data = sample.data)
-    des <- svydesign(id = ~cluster.id+unit.id, fpc = ~prob+prob2, data = sample.data, pps = "brewer")
+    des <- svydesign(id = ~cluster.id+unit.id, fpc = ~prob+prob2,
+                     data = sample.data, pps = ppsmat(PI), variance = "YG")
 
   # estimate pop mean, pull out std err
     tt <- svymean(~yi, des)
@@ -47,12 +53,12 @@ svy_ests <- function(J, num.clusters, num.units, rootdir, sim, popseed, use.size
     ybar_se <- as.numeric(sqrt(attr(tt,"var")))
 
   # if we got an estimate that's way off from the truth, record the info here
-    if (abs((ybar_hat - ybar_true)/ybar_true) > 2) {
-      write.table(sample, file = paste(rootdir, "/Results/Simplify/vary_K/svydesign_usesizes_", use.sizes, "_nclusters_", num.clusters,
-                             "_nunits_", nunits, "_sim_", sim, ".txt", sep = "")) 
-      save(des, file = paste(rootdir, "/Results/Simplify/vary_K/svydesign_usesizes_", use.sizes, "_nclusters_", num.clusters,
-                             "_nunits_", nunits, "_sim_", sim, ".txt", sep = "")) 
-    }
+    #if (abs((ybar_hat - ybar_true)/ybar_true) > 2) {
+    #  write.table(sample, file = paste(rootdir, "/Results/Simplify/vary_K/svydesign_usesizes_", use.sizes, "_nclusters_", num.clusters,
+    #                         "_nunits_", nunits, "_sim_", sim, ".txt", sep = "")) 
+    #  save(des, file = paste(rootdir, "/Results/Simplify/vary_K/svydesign_usesizes_", use.sizes, "_nclusters_", num.clusters,
+    #                         "_nunits_", nunits, "_sim_", sim, ".txt", sep = "")) 
+    #}
 
   # GREG ESTIMATE
     ptot <- sum(pop.data$xi)
@@ -67,13 +73,13 @@ svy_ests <- function(J, num.clusters, num.units, rootdir, sim, popseed, use.size
     ybar_se2 <- as.numeric(sqrt(attr(tt2,"var")))
 
   # if we got an estimate that's way off from the truth, record the info here
-    d1 <- abs((ybar_hat - ybar_true)/ybar_true)
-    d2 <- abs((ybar_hat2 - ybar_true)/ybar_true)
-    if ((d1 > 2) | (d2 > 2)) {
-      write.csv(sample.data, file = paste(rootdir, "/Results/Simplify/vary_K/sampdat_weird_svy_usesizes_", use.sizes,
-                                          "_nclusters_", num.clusters, "_nunits_", nunits, "_sim_", sim, ".txt", sep = ""))
-                              
-    }
+    #d1 <- abs((ybar_hat - ybar_true)/ybar_true)
+    #d2 <- abs((ybar_hat2 - ybar_true)/ybar_true)
+    #if ((d1 > 2) | (d2 > 2)) {
+    #  write.csv(sample.data, file = paste(rootdir, "/Results/Simplify/vary_K/sampdat_weird_svy_usesizes_", use.sizes,
+    #                                      "_nclusters_", num.clusters, "_nunits_", nunits, "_sim_", sim, ".txt", sep = ""))
+    #                          
+    #}
 
   # print
     print("**************************************************")
