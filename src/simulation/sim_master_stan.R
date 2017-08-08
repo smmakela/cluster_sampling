@@ -62,10 +62,10 @@ Options:
   #############################################################################
   ### Create list of parameters to loop through for sim
   #############################################################################
-    num_clusters.list <- c(5, 10, 30, 50)
-    num_units.list <- c(0.05, 0.1, 0.25, 0.5, 1, 10, 30, 60)
-    #num_clusters.list <- 5
-    #num_units.list <- 0.5
+    #num_clusters.list <- c(5, 10, 30, 50)
+    #num_units.list <- c(0.05, 0.1, 0.25, 0.5, 1, 10, 30, 60)
+    num_clusters.list <- 10
+    num_units.list <- 0.1
     if (outcome_type == "binary") {
       stanmod_name <- paste0(model_name, "_binary")
     } else {
@@ -84,13 +84,16 @@ Options:
         ", size_model =", size_model, ", stanmod =", stanmod_name, "\n")
     print(Sys.time())
 
-    if (size_model == "ff") {
+    if (grepl("ff", size_model)) {
       num_clusters <- 16
       num_units <- 99
-      #stanmod_name <- paste0(stanmod_name, "_ff2")
+      #if (size_model == "ffstrat") {
+      #  stanmod_name <- paste0(stanmod_name, "_strat")
+      #}
 
       # Print a message about which parameters we're running now
       cat("CURRENTLY ON:", 
+          "outcome_type =", outcome_type,
           ", use_sizes =", use_sizes,
           ", size_model =", size_model,
           ", stanmod =", stanmod_name, "\n")
@@ -112,9 +115,11 @@ Options:
       # Sample data using above parameters
       cat("Sampling data\n")
       print(Sys.time())
-      sim_data <- sampledata(num_clusters, num_units, use_sizes, outcome_type,
-                             size_model)
+      sim_data <- sampledata(J = 77, num_clusters, num_units, use_sizes,
+                             outcome_type, size_model)
       cat("DONE sampling\n")
+saveRDS(sim_data, file = paste0(rootdir, "/output/simulation/simdataTEMP_", use_sizes, "_", outcome_type,
+                          "_", size_model, "_", model_name, "_sim_", simno, ".rds")) 
  
       # Run stan model
       cat("Running stan\n")
@@ -123,7 +128,7 @@ Options:
       print(Sys.time())
       stan_res <- runstan(num_clusters, num_units, use_sizes, outcome_type,
                           size_model, rootdir, simno, stanmod, stanmod_name,
-                          sim_data, num_iter = 1000, num_chains = 4)
+                          sim_data, num_iter = 2000, num_chains = 4)
       cat("##################################################################################\n")
       print(warnings()) 
     } else {
@@ -162,8 +167,8 @@ Options:
         # Sample data using above parameters
         cat("Sampling data\n")
         print(Sys.time())
-        sim_data <- sampledata(num_clusters, num_units, use_sizes, outcome_type,
-                               size_model)
+        sim_data <- sampledata(J = numclusters, num_clusters, num_units, use_sizes,
+                               outcome_type, size_model)
         cat("DONE sampling\n")
 saveRDS(sim_data, file = paste0(rootdir, "/output/simulation/simdataTEMP_", use_sizes, "_", outcome_type,
                           "_", size_model, "_", model_name, "_sim_", simno, ".rds")) 
@@ -189,8 +194,8 @@ saveRDS(sim_data, file = paste0(rootdir, "/output/simulation/simdataTEMP_", use_
                           "_", size_model, "_", model_name, ".*_sim_", simno, ".rds")
     sim.files <- list.files(path = res.path, pattern = res.pattern)
     cat("length(sim.files)=", length(sim.files), "\n")
-    if ((size_model != "ff" & length(sim.files) == nrow(sim.params)) | 
-        (size_model == "ff" & length(sim.files) == 1)) {
+    if ((!grepl("ff", size_model) & length(sim.files) == nrow(sim.params)) | 
+        (grepl("ff", size_model) & length(sim.files) == 1)) {
       sink(paste0(rootdir, "output/simulation/stan_check_usesizes_",
                   use_sizes, "_", outcome_type, "_", size_model, "_", model_name,
                   "_sim_", simno, ".txt"), split = FALSE)

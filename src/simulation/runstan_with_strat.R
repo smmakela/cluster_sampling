@@ -27,8 +27,6 @@ runstan <- function(num_clusters, num_units, use_sizes, outcome_type, size_model
   } else {
     nunits <- num_units
   }
-print("str(sim_data)")
-print(str(sim_data))
   for (j in names(sim_data)) {
     assign(j, sim_data[[j]])
   }
@@ -72,41 +70,38 @@ print(str(sim_data))
 
   # Get pop data at cluster level -- calculate mean of x, grouping by cluster_id,
   # stratum_id, Mj, logMj_c (cluster_id is the most detailed)
-  #if (size_model == "ffstrat") {
-print("ONE")
-  if (grepl("strat", stanmod_name)) {
-    cluster_data_pop <- pop_data %>%
-      dplyr::select(cluster_id, stratum_id, Mj, logMj_c, x) %>%
-      dplyr::group_by(cluster_id, stratum_id, Mj, logMj_c) %>%
-      dplyr::summarise(xbar_pop = mean(x)) %>%
-      dplyr::arrange(cluster_id)
-  } else {
+  #if (size_model == "ff") {
+  #  cluster_data_pop <- pop_data %>%
+  #    dplyr::select(cluster_id, stratum_id, Mj, logMj_c, x) %>%
+  #    dplyr::group_by(cluster_id, stratum_id, Mj, logMj_c) %>%
+  #    dplyr::summarise(xbar_pop = mean(x)) %>%
+  #    dplyr::arrange(cluster_id)
+  #} else {
     cluster_data_pop <- pop_data %>%
       dplyr::select(cluster_id, Mj, logMj_c, x) %>%
       dplyr::group_by(cluster_id, Mj, logMj_c) %>%
       dplyr::summarise(xbar_pop = mean(x)) %>%
       dplyr::arrange(cluster_id)
-  }
-print("str(cluster_data_pop)")
-print(str(cluster_data_pop))
+  #}
   Nj_pop <- cluster_data_pop$Mj
   N <- sum(Nj_pop)
   xbar_pop <- cluster_data_pop$xbar_pop
 
   # Get sample data at cluster level
-print("TWO")
-  if (grepl("strat", stanmod_name)) {
-    stratum_id <- sampled_cluster_data$stratum_id
-  }
-  sampled_cluster_data <- dplyr::arrange(sampled_cluster_data, cluster_id)
-  Nj_sample <- sampled_cluster_data$Mj
-  log_Nj_sample <- sampled_cluster_data$logMj_c
+  sam_dat <- dplyr::filter(pop_data, insample == 1)
+  #if (size_model == "ff") {
+  #  sam_dat <- dplyr::distinct(sam_dat, cluster_id, stratum_id, Mj, logMj_c)
+  #  stratum_id <- sam_dat$stratum_id
+  #} else {
+    sam_dat <- dplyr::distinct(sam_dat, cluster_id, Mj, logMj_c)
+  #}
+  sam_dat <- dplyr::arrange(sam_dat, cluster_id)
+  Nj_sample <- sam_dat$Mj
+  log_Nj_sample <- sam_dat$logMj_c
 
   # special data for bb
-  n_dat <- sampled_cluster_data %>%
-    dplyr::arrange(cluster_id) %>%
-    dplyr::group_by(cluster_id, Mj) %>%
-    dplyr::summarise(n = n_distinct(cluster_id))
+  n_dat <- summarise(group_by(sam_dat, Mj),
+                     n = n_distinct(cluster_id))
   M <- nrow(n_dat)      # number of unique cluster sizes
   M_counts <- n_dat$n   # counts of unique cluster sizes
   Nj_unique <- n_dat$Mj # vector of unique cluster sizes
@@ -121,8 +116,7 @@ print("TWO")
   parlist <- c("alpha0", "gamma0", "alpha1", "gamma1",
                "sigma_beta0", "sigma_beta1", "sigma_y")
   betapars <- c("beta0", "beta1")
-print("THREE")
-  if (grepl("strat", stanmod_name)) {
+  if (size_model == "ff_strat") {
     kappapars <- c("kappa0", "kappa1")
     if (grepl("lognormal", stanmod_name)) {
       sbpars <- c("mu", "phi")
@@ -170,11 +164,8 @@ print("THREE")
                      cluster_id = cluster_id,
                      Nj_sample = Nj_sample,
                      log_Nj_sample = log_Nj_sample)
-    if (!grepl("strat", stanmod_name)) {
-      parlist <- c(parlist, "mu_star", "sigma", "mu", "mu_star_scaled", "sigma_scaled")
-    }
+    parlist <- c(parlist, "mu_star", "sigma", "mu", "mu_star_scaled", "sigma_scaled")
   } else if (grepl("negbin", stanmod_name)) {
-print("FOUR")
     standata <- list(J = J,
                      K = K,
                      n = n,
@@ -183,17 +174,11 @@ print("FOUR")
                      cluster_id = cluster_id,
                      Nj_sample = Nj_sample,
                      log_Nj_sample = log_Nj_sample)
-    #if (size_model != "ffstrat") {
-    if (!grepl("strat", stanmod_name)) {
-      parlist <- c(parlist, "mu", "phi")
-    }
   } else {
     stop("Invalid stan model")
   }
-  #if (size_model == "ffstrat") {
-  if (grepl("strat", stanmod_name)) {
-print("FIVE")
-    stratum_matrix <- model.matrix(~ 0 + factor(stratum_id), sampled_cluster_data)
+  if (size_model == "ff_strat") {
+    stratum_matrix <- model.matrix(~ 0 + factor(stratum_id), sam_dat)
     stratum_matrix_pop <- model.matrix(~ 0 + factor(stratum_id), cluster_data_pop)
     standata <- c(standata, list(stratum_id = stratum_id, S = 2,
                                  stratum_matrix = stratum_matrix))
@@ -324,10 +309,6 @@ print("FIVE")
                                   "_", model_name, "_nclusters_", num_clusters,
                                  "_nunits_", nunits, "_simno_", simno,".rds"))
       print("done saving stanfit object")
-      cat("filename:", paste0(rootdir, "/output/simulation/stanfit_usesizes_",
-                                 use_sizes, "_", outcome_type, "_", size_model,
-                                  "_", model_name, "_nclusters_", num_clusters,
-                                 "_nunits_", nunits, "_simno_", simno,".rds"))
       print(Sys.time())
     }
 
@@ -389,39 +370,29 @@ print("FIVE")
       dplyr::mutate(draw_num = row_number()) %>%
       tidyr::spread(key = par, value = value) -> beta_samps
 
-  # same for the kappas and sb pars, if we're doing ff
-  #if (size_model == "ffstrat") {
-  if (grepl("strat", stanmod_name)) {
+  # same for the kappas and sb pars, if we're doing ff_strat
+  if (size_model == "ff_strat") {
     kappa_samps_orig <- data.frame(rstan::extract(fit, pars = kappapars))
-    # this is for when we only have two strata
-    kappa_samps <- kappa_samps_orig %>%
-      dplyr::mutate(draw_num = row_number(),
-                    stratum_id = 2)
-    kappa_tmp <- kappa_samps
-    kappa_tmp$stratum_id <- 1
-    kappa_tmp$kappa0 <- 0.0
-    kappa_tmp$kappa1 <- 0.0
-    kappa_samps <- rbind(kappa_samps, kappa_tmp)
-    #nck <- nchar("kappa0")
-    #kappa_samps <- kappa_samps_orig %>%
-    #    tidyr::gather(key = pname, value = value) %>%
-    #    dplyr::mutate(par = substr(pname, 1, nck),
-    #                  cluster_id = as.numeric(substr(pname, nck+2, nchar(pname))),
-    #                  pname = NULL) %>%
-    #    dplyr::group_by(par, cluster_id) %>%
-    #    dplyr::mutate(draw_num = row_number()) %>%
-    #    tidyr::spread(key = par, value = value) 
-    if (grepl("lognormal", stanmod_name) || grepl("negbin", stanmod_name)) {
-      sb_samps_orig <- data.frame(rstan::extract(fit, pars = sbpars))
-      sb_samps <- sb_samps_orig %>%
-          dplyr::mutate(draw_num = row_number()) %>%
-          tidyr::gather(key = pname, value = value, -draw_num) %>%
-          tidyr::separate(col = pname, into = c("par", "stratum_id"), sep = "\\.") %>%
-          dplyr::mutate(stratum_id = as.numeric(stratum_id)) 
-      sb_samps <- sb_samps %>%
-          tidyr::spread(key = par, value = value)
-    }
+    nck <- nchar("kappa0")
+    kappa_samps_orig %>%
+        tidyr::gather(key = pname, value = value) %>%
+        dplyr::mutate(par = substr(pname, 1, nck),
+                      cluster_id = as.numeric(substr(pname, nck+2, nchar(pname))),
+                      pname = NULL) %>%
+        dplyr::group_by(par, cluster_id) %>%
+        dplyr::mutate(draw_num = row_number()) %>%
+        tidyr::spread(key = par, value = value) -> kappa_samps
+    #if (grepl("lognormal", stanmod_name) || grepl("negbin", stanmod_name)) {
+    #  sb_samps_orig <- data.frame(rstan::extract(fit, pars = sbpars))
+    #  sb_samps_orig %>%
+    #      tidyr::gather(key = pname, value = value) %>%
+    #      tidyr::separate(pname, into = c("par", "cluster_id"), sep = "\\.") %>%
+    #      dplyr::group_by(par, cluster_id) %>%
+    #      dplyr::mutate(draw_num = row_number()) %>%
+    #      tidyr::spread(key = par, value = value) -> sb_samps
+    #}
   }
+
   # same for phi_star, if we're doing bb
   if (grepl("bb", stanmod_name)) {
     nc2 <- nchar("phi_star")
@@ -442,14 +413,10 @@ print("FIVE")
   print(Sys.time())
 
   tt <- summary(fit)$summary
-  #if (size_model != "ffstrat") {
-  if (!grepl("strat", stanmod_name)) {
-    par_ests <- tt[parlist, ]
-  } else {
-    ii <- which(grepl(sbpars[1], rownames(tt)) | grepl(sbpars[2], rownames(tt)))
-    jj <- which(grepl(kappapars[1], rownames(tt)) | grepl(kappapars[2], rownames(tt)))
-    par_ests <- tt[c(parlist, rownames(tt)[c(ii, jj)]), ]
-  }
+print(str(tt))
+print(attr(tt, "dimnames")[[2]])
+print(parlist)
+  par_ests <- tt[parlist, ]
   rm(fit)
   print("done making par_ests")
   print(Sys.time())
@@ -597,9 +564,7 @@ print("FIVE")
     } # end num_draws loop
   } else if (stanmod_name == "negbin") {
     for (s in 1:num_draws) {
-      beta_samps_sub <- beta_samps %>%
-        dplyr::filter(draw_num == s) %>%
-        dplyr::arrange(cluster_id)
+      beta_samps_sub <- dplyr::filter(beta_samps, draw_num == s)
       Nj_new <- Nj_new_nb_rng(J, K, Nj_sample, param_samps$mu[s],
                               param_samps$phi[s])
       Nj_new_df$Nj_new[Nj_new_df$draw_num == s] <- Nj_new
@@ -632,7 +597,7 @@ print("FIVE")
   } else if (stanmod_name == "negbin_strat" & outcome_type == "continuous") {
     for (s in 1:num_draws) {
       beta_samps_sub <- dplyr::filter(beta_samps, draw_num == s)
-      kappa_samps_sub <- dplyr::filter(kappa_samps, draw_num == s & stratum_id == 2)
+      kappa_samps_sub <- dplyr::filter(kappa_samps, draw_num == s)
       sb_samps_sub <- dplyr::filter(sb_samps, draw_num == s)
       # make strat_inds so we only take the stratum id's for the nonsampled
       # clusters
@@ -684,15 +649,6 @@ print("FIVE")
   } else {
     stop("Invalid stan model")
   }
-  print("done drawing Nj_new, ybar_new")
-  print(Sys.time())      
-
-yn_list <- list(ybar_new = ybar_new, Nj_new_df = Nj_new_df)
-  saveRDS(yn_list,
-          paste0(rootdir, "output/simulation/yn_list_usesizes_",
-                 use_sizes, "_", outcome_type, "_", size_model, "_", model_name,
-                 "_nclusters_", num_clusters, "_nunits_", nunits,
-                 "_sim_", simno, ".rds"))
 
   ##########################################
   ### Plot draws of cluster sizes vs truth
@@ -724,8 +680,6 @@ yn_list <- list(ybar_new = ybar_new, Nj_new_df = Nj_new_df)
                               "_nunits_", nunits, "_sim_", simno, ".png"),
            width = 10, height = 8)
   }
-  print("done plotting Nj_new")
-  print(Sys.time())      
 
   ##########################################
   ### Plot draws of ybar_new
@@ -745,9 +699,6 @@ yn_list <- list(ybar_new = ybar_new, Nj_new_df = Nj_new_df)
                               "_nunits_", nunits, "_sim_", simno, ".png"),
            width = 10, height = 8)
   }
-  print("done making plots")
-  print(Sys.time())      
-
   ##########################################
   ### Summarise Nj_new, ybar_new and add to parameter estimates
   ##########################################
@@ -786,7 +737,6 @@ yn_list <- list(ybar_new = ybar_new, Nj_new_df = Nj_new_df)
                        p975 = quantile(value, 0.975)) %>%
       dplyr::left_join(., true_vals, by = "param") -> draw_summ
   }
-  print(Sys.time())      
   print(draw_summ)
   print(warnings())
   results_list <- list(par_ests = par_ests, Nj_new_means = Nj_new_means,
@@ -796,11 +746,6 @@ yn_list <- list(ybar_new = ybar_new, Nj_new_df = Nj_new_df)
                  use_sizes, "_", outcome_type, "_", size_model, "_", model_name,
                  "_nclusters_", num_clusters, "_nunits_", nunits,
                  "_sim_", simno, ".rds"))
-  cat("results saved to:", 
-      paste0(rootdir, "output/simulation/stan_results_usesizes_",
-             use_sizes, "_", outcome_type, "_", size_model, "_", model_name,
-             "_nclusters_", num_clusters, "_nunits_", nunits,
-             "_sim_", simno, ".rds"), "\n")
 
   return(NULL)
 }

@@ -55,7 +55,7 @@
       }
       print(str(get(curr_name)))
     }
-    if (size_model == "ff") {
+    if (grepl("ff", size_model)) {
       J <- 77 # number of cities in FF data
     } else {
       J <- numclusters
@@ -114,6 +114,8 @@
       # by mn_draws
       Mj <- as.numeric(round(rep(100*gamma_draws, times = mn_draws)))
       stratum_id <- rep(1, length(Mj)) # filler
+      # Collect all into data frame
+      pop_dat <- data.frame(cluster_id = c(1:J), Mj, stratum_id)
     } else if (size_model == "poisson") {
       Mj <- rpois(J, 500)
       # make sure we don't get any cluster sizes smaller than 325 (max number of
@@ -122,24 +124,30 @@
         Mj <- rpois(J, 500)
       }
       stratum_id <- rep(1, length(Mj))
-    } else { # size_model == "ff"
+      # Collect all into data frame
+      pop_dat <- data.frame(cluster_id = c(1:J), Mj, stratum_id)
+    } else { # size_model == "ffstrat" or "ff"
       codedir <- "/vega/stats/users/smm2253/cluster_sampling/src/simulation"
       pop_dat <- read.csv(paste0(codedir, "/observed_city_pops.csv"), header = TRUE)
-      Mj <- as.integer(round(pop_dat$population/1000))
-      stratum_id <- pop_dat$stratum # have their own numbering scheme
+      pop_dat$Mj <- as.integer(round(pop_dat$population/1000))
+      pop_dat$stratum_id <- pop_dat$stratum # have their own numbering scheme
+      # make a shorter version that only has 2 strata
+      pop_dat$stratum_id[pop_dat$stratum_id != 999] <- 1
+      pop_dat$stratum_id[pop_dat$stratum_id == 999] <- 2
       # renumber 1-num_strat -- checked that this makes the non-extreme stratum
-      # be number 9, which is what we want
-      stratum_id <- as.integer(factor(stratum_id)) 
-      tot_births <- pop_dat$ubrth + pop_dat$mbrth
+      # be number 9, which is what we want (not needed for short stratum id version)
+      #stratum_id <- as.integer(factor(stratum_id)) 
+      pop_dat$tot_births <- pop_dat$ubrth + pop_dat$mbrth
     }
 
     # Calculate log cluster size, generate unit-level covariate
-    logMj_c <- log(Mj) - mean(log(Mj))
-    if (size_model == "ff") {
+    pop_dat$logMj_c <- log(pop_dat$Mj) - mean(log(pop_dat$Mj))
+    if (grepl("ff", size_model)) {
       x <- base::sample(c(unitcovar_range[1]:unitcovar_range[2]),
-                        sum(tot_births), replace = TRUE)
+                        sum(pop_dat$tot_births), replace = TRUE)
     } else {
-      x <- base::sample(c(unitcovar_range[1]:unitcovar_range[2]), sum(Mj),
+      x <- base::sample(c(unitcovar_range[1]:unitcovar_range[2]),
+                        sum(pop_dat$Mj),
                         replace = TRUE)
     }
     x <- x - mean(x)
@@ -159,14 +167,16 @@
       sigma_beta1 <- abs(rnorm(1, 0, 0.5))
       sigma_y <- abs(rnorm(1, 0, 0.75))
         
-      beta0 <- rnorm(n = J, mean = alpha0 + gamma0 * logMj_c, sd = sigma_beta0)
-      beta1 <- rnorm(n = J, mean = alpha1 + gamma1 * logMj_c, sd = sigma_beta1)
-      if (size_model == "ff") {
-        beta0_rep <- rep(beta0, tot_births)
-        beta1_rep <- rep(beta1, tot_births)
+      pop_dat$beta0 <- rnorm(n = J, mean = alpha0 + gamma0 * pop_dat$logMj_c,
+                             sd = sigma_beta0)
+      pop_dat$beta1 <- rnorm(n = J, mean = alpha1 + gamma1 * pop_dat$logMj_c,
+                             sd = sigma_beta1)
+      if (grepl("ff", size_model)) {
+        beta0_rep <- rep(pop_dat$beta0, pop_dat$tot_births)
+        beta1_rep <- rep(pop_dat$beta1, pop_dat$tot_births)
       } else {
-        beta0_rep <- rep(beta0, Mj)
-        beta1_rep <- rep(beta1, Mj)
+        beta0_rep <- rep(pop_dat$beta0, pop_dat$Mj)
+        beta1_rep <- rep(pop_dat$beta1, pop_dat$Mj)
       }
       ymean <- beta0_rep + beta1_rep * x 
       y <- rnorm(ymean, mean = ymean, sd = sigma_y)
@@ -179,11 +189,11 @@
       }
       sigma_beta0 <- abs(rnorm(1, 0, 0.5))
         
-      beta0 <- rnorm(n = J, mean = alpha0 + gamma0 * logMj_c, sd = sigma_beta0)
-      if (size_model == "ff") {
-        beta0_rep <- rep(beta0, tot_births)
+      pop_dat$beta0 <- rnorm(n = J, mean = alpha0 + gamma0 * pop_dat$logMj_c, sd = sigma_beta0)
+      if (grepl("ff", size_model)) {
+        beta0_rep <- rep(pop_dat$beta0, pop_dat$tot_births)
       } else {
-        beta0_rep <- rep(beta0, Mj)
+        beta0_rep <- rep(pop_dat$beta0, pop_dat$Mj)
       }
       y_prob <- inv_logit(beta0_rep) 
       y <- rbinom(y_prob, size = 1, prob = y_prob)
@@ -192,37 +202,55 @@
       x <- x_new
     }
 
-    # Make data frame of pop data
-    if (size_model == "ff") {
-      pop_data <- data_frame(y, x, logMj_c = rep(logMj_c, tot_births),
-                             stratum_id = rep(stratum_id, tot_births),
-                             Mj = rep(Mj, tot_births),
-                             tot_births = rep(tot_births, tot_births))
-      pop_data$cluster_id <- rep(c(1:J), times = tot_births)
-      pop_data$unit_id <- unlist(lapply(tot_births, seq_len))
+    # Make data frame of pop data -- pop_dat and pop_data were bad name choices
+    # but not changing them anymore
+    cluster_level_data <- pop_dat
+    if (grepl("ff", size_model)) {
+      pop_data <- data.frame(y, x,
+                             logMj_c = rep(cluster_level_data$logMj_c,
+                                           cluster_level_data$tot_births),
+                             stratum_id = rep(cluster_level_data$stratum_id, 
+                                              cluster_level_data$tot_births),
+                             Mj = rep(cluster_level_data$Mj,
+                                      cluster_level_data$tot_births),
+                             tot_births = rep(cluster_level_data$tot_births,
+                                              cluster_level_data$tot_births))
+      pop_data$cluster_id <- rep(c(1:J), times = cluster_level_data$tot_births)
+      pop_data$unit_id <- unlist(lapply(cluster_level_data$tot_births, seq_len))
     } else {
-      pop_data <- data_frame(y, x, logMj_c = rep(logMj_c, Mj), Mj = rep(Mj, Mj))
-      pop_data$cluster_id <- rep(c(1:J), times = Mj)
-      pop_data$unit_id <- unlist(lapply(Mj, seq_len))
+      pop_data <- data.frame(y, x,
+                             logMj_c = rep(cluster_level_data$logMj_c,
+                                           cluster_level_data$Mj),
+                             Mj = rep(cluster_level_data$Mj,
+                                      cluster_level_data$Mj))
+      pop_data$cluster_id <- rep(c(1:J), times = cluster_level_data$Mj)
+      pop_data$unit_id <- unlist(lapply(cluster_level_data$Mj, seq_len))
     }
 
     # Make list of things to save
     ybar_true <- mean(pop_data$y)
     if (outcome_type == "continuous") {
-      truepars <- data_frame(alpha0, gamma0, alpha1, gamma1, sigma_beta0,
+      truepars <- data.frame(alpha0, gamma0, alpha1, gamma1, sigma_beta0,
                              sigma_beta1, sigma_y, ybar_true)
     } else {
-      truepars <- data_frame(alpha0, gamma0, sigma_beta0, ybar_true)
+      truepars <- data.frame(alpha0, gamma0, sigma_beta0, ybar_true)
       beta1 <- NA
     }
-    if (size_model == "ff") {
-      popdata <- list(pop_data = pop_data, J = J, Mj = Mj, logMj_c = logMj_c,
-                      tot_births = tot_births, stratum_id = stratum_id,
-                      beta0 = beta0, beta1 = beta1, truepars = truepars)
-    } else {
-      popdata <- list(pop_data = pop_data, J = J, Mj = Mj, logMj_c = logMj_c,
-                      beta0 = beta0, beta1 = beta1, truepars = truepars)
-    }
+   # if (grepl("ff", size_model)) {
+   #   popdata <- list(pop_data = pop_data, J = J, Mj = cluster_level_data$Mj,
+   #                   logMj_c = cluster_level_data$logMj_c,
+   #                   tot_births = cluster_level_data$tot_births,
+   #                   stratum_id = cluster_level_data$stratum_id,
+   #                   beta0 = cluster_level_data$beta0,
+   #                   beta1 = cluster_level_data$beta1, truepars = truepars)
+   # } else {
+   #   popdata <- list(pop_data = pop_data, J = J, Mj = cluster_level_data$Mj,
+   #                   logMj_c = cluster_level_data$logMj_c,
+   #                   beta0 = cluster_level_data$beta0,
+   #                   beta1 = cluster_level_data$beta1, truepars = truepars)
+   # }
+    popdata <- list(pop_data = pop_data, truepars = truepars,
+                    cluster_level_data = cluster_level_data)
     print(str(popdata))
     saveRDS(popdata,
             file = paste0(rootdir, "/output/simulation/popdata_usesizes_",

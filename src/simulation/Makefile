@@ -24,10 +24,10 @@ R_OPTS         = --no-save --no-restore --no-init-file --no-site-file
 # Hard-code highest-level simulation parameters
 NUM_POP_CLUSTERS = 100
 NUM_SIMS         = 100
-USE_SIZE_VALS    = 0 1
-OUTCOME_TYPES    = binary continuous
-SIZE_MODEL_NAMES = poisson multinomial
-STAN_MODEL_NAMES = negbin
+USE_SIZE_VALS    = 1
+OUTCOME_TYPES    = continuous
+SIZE_MODEL_NAMES = multinomial ff ffstrat
+STAN_MODEL_NAMES = knowsizes negbin lognormal
 
 # Variables that store filenames of population data
 # e.g. <file path>/popdata_usesizes_<0,1>_<continuous, binary>.<rds, Rout>
@@ -136,8 +136,18 @@ $(MODEL_SRC_DIR)/%.rds: $(MODEL_SRC_DIR)/%.stan
 # the % will be of the from x_y, where x is either 0 or 1 (one of the possible
 # values of $US_VAL) and y is either "continuous" or "discrete", the two
 # possible values of $OT_VAL
+# $(SIM_OUT_DIR)/total_stan_check_usesizes_%.txt: $(SIM_OUT_DIR)/popdata_usesizes_*.Rout $(STAN_PREREQS)
+#$(SIM_OUT_DIR)/total_stan_check_usesizes_%.txt: $$(subst $$(space),, $$(SIM_OUT_DIR)/popdata_usesizes_$$(subst $$(to_remove),, $$*).Rout) $(STAN_PREREQS)
 # FIRST RUN STAN
-$(SIM_OUT_DIR)/total_stan_check_usesizes_%.txt: $(SIM_OUT_DIR)/popdata_usesizes_*.Rout $(STAN_PREREQS)
+to_remove := $(addprefix _, $(STAN_MODEL_NAMES))
+#TEST := $(subst $(space),, $(SIM_OUT_DIR)/popdata_usesizes_$(subst $(filter 1_continuous_ffstrat_negbin, $(to_remove)), $(to_remove),, 1_continuous_ffstrat_negbin).Rout)
+TT := $(subst $(space),, $(SIM_OUT_DIR)/popdata_usesizes_$(subst $(strip $(foreach tt, $(to_remove), $(findstring $(tt), 1_continuous_ffstrat_negbin))),, 1_continuous_ffstrat_negbin).Rout)
+#TT := $(foreach tt, $(to_remove), $(tt))
+FF := $(foreach tt, $(to_remove), $(findstring $(tt), 1_continuous_ffstrat_negbin))
+FF2 := $(strip $(foreach tt, $(to_remove), $(findstring $(tt), 1_continuous_ffstrat_negbin)))
+TEST := $(subst $(space),, $(SIM_OUT_DIR)/popdata_usesizes_$(subst $(to_remove),, 1_continuous_ffstrat_negbin).Rout)
+.SECONDEXPANSION:
+$(SIM_OUT_DIR)/total_stan_check_usesizes_%.txt: $$(subst $$(space),, $$(SIM_OUT_DIR)/popdata_usesizes_$$(subst $$(strip $$(foreach tt, $$(to_remove), $$(findstring $$(tt), $$*))),, $$*).Rout) $(STAN_PREREQS)
 	@echo ---------------------- doing run_sim_stan.sh -------------------------
 	echo $@
 	USV=$(call get_firstword, $*);\
