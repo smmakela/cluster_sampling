@@ -32,6 +32,7 @@ Options:
     require(plyr)
     require(dplyr)
     require(tidyr)
+    require(data.table)
     require(pps)
     require(rstan)
     require(sampling)
@@ -88,7 +89,7 @@ Options:
       num_clusters <- 16
       num_units <- 99
       #if (size_model == "ffstrat") {
-      #  stanmod_name <- paste0(stanmod_name, "_strat")
+        stanmod_name <- paste0(stanmod_name, "_", size_model)
       #}
 
       # Print a message about which parameters we're running now

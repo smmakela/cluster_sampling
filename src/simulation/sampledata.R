@@ -109,24 +109,10 @@ print(str(pop_data))
       PI_ij <- UPtillepi2(cluster_level_data$pik) # pairwise selection probabilities
     }
 
-    # use unit_sampler to sample the right number of units in each sampled
-    # cluster because we 1) renumbered clusters in pop_data and 2) remade Mj
-    # from the updated pop_data with the renumbered clusters, we can just
-    # pull out the first num_clusters obs in both Mj and num_units_vec
-    tt <- cbind(cluster_size = sampled_cluster_data$tot_births,
-                nunits = sampled_cluster_data$num_units_to_sample)
-    sampled_unit_list <- plyr::mlply(tt, unit_sampler)
-
+    # UNITS ALREADY SAMPLED (see makepopdata.R), so we only need to keep the
+    # clusters we just picked
     pop_data$insample <- 0
-
-    # pull out sampled data
-    for (j in 1:num_clusters) {
-      curr_units <- sampled_unit_list[[j]]
-      pop_data <- dplyr::mutate(pop_data,
-                                insample = replace(insample,
-                                                   cluster_id == j &
-                                                    unit_id %in% curr_units, 1))
-    }
+    pop_data$insample[pop_data$cluster_id %in% c(1:num_clusters)] <- 1
     sample_data <- pop_data %>%
       dplyr::filter(insample == 1) %>%
       dplyr::select(-insample)
@@ -141,6 +127,18 @@ print(str(sample_data))
     cluster_level_data$pik <- inclusionprobabilities(cluster_level_data$Mj, num_clusters)
     PI_full <- UPtillepi2(cluster_level_data$pik)
     cluster_level_data$is_sampled_cluster <- UPtille(cluster_level_data$pik) == 1
+
+    # if num_units <= 1, then it's actually a proportion, so we need to convert
+    # it to a vector of integers by multiplying by Mj
+    if (num_units <= 1) {
+      cluster_level_data$num_units_to_sample <- round(cluster_level_data$Mj * num_units)
+      # need at least 2 samples per cluster so that we can estimate a variance,
+      # so if any elements of num_units_to_sample are < 2, set them to at least 2
+      bad_inds <- which(cluster_level_data$num_units_to_sample < 2)
+      cluster_level_data$num_units_to_sample[bad_inds] <- cluster_level_data$num_units_to_sample[bad_inds] + 1
+    } else {
+      cluster_level_data$num_units_to_sample <- num_units
+    }
 
     # Create map for renumber clusters so that sampled clusters run from 
     # 1:num_clusters and the rest from (num_clusters + 1):J
@@ -162,6 +160,8 @@ print(str(sample_data))
     # Create data frame of just sampled clusters
     sampled_cluster_data <- cluster_level_data %>%
       dplyr::filter(is_sampled_cluster == 1)
+print("str(sampled_cluster_data)")
+print(str(sampled_cluster_data))
 
     # Merge map to pop_data also
     pop_data <- pop_data %>%
@@ -169,43 +169,23 @@ print(str(sample_data))
      dplyr::left_join(., cluster_level_data, by = "orig_cluster_id") %>%
      dplyr::select(-contains(".y")) %>%
      dplyr::rename_(.dots = setNames(names(.), gsub("\\.x", "", names(.))))
+print("str(pop_data)")
+print(str(pop_data))
 
     # Calculate PI_i and PI_ij
     PI_i <- cluster_level_data$pik
     PI_ij <- UPtillepi2(cluster_level_data$pik) # pairwise selection probabilities
 
-    # if num_units <= 1, then it's actually a proportion, so we need to convert
-    # it to a vector of integers by multiplying by Mj
-    if (num_units <= 1) {
-      sampled_cluster_data$num_units_vec <- round(sampled_cluster_data$Mj * num_units)
-      # need at least 2 samples per cluster so that we can estimate a variance,
-      # so if any elements of num_units_vec are < 2, set them to at least 2
-      bad_inds <- which(sampled_cluster_data$num_units_vec < 2)
-      sampled_cluster_data$num_units_vec[bad_inds] <- sampled_cluster_data$num_units_vec[bad_inds] + 1
-    } else {
-      sampled_cluster_data$num_units_vec <- num_units
-    }
+    # Sample units within selected clusters by first inner_join-ing with
+    # sampled_cluster_data, then by randomly sampling the units in each cluster
+    # using a data.table trick (makes it go way faster)
+    sample_data <- pop_data %>%
+      dplyr::filter(is_sampled_cluster)
+print("str(sample_data)")
+print(str(sample_data))
 
-    # use unit_sampler to sample the right number of units in each sampled
-    # cluster because we 1) renumbered clusters in pop_data and 2) remade Mj
-    # from the updated pop_data with the renumbered clusters, we can just
-    # pull out the first num_clusters obs in both Mj and num_units_vec
-    tt <- cbind(cluster_size = sampled_cluster_data$Mj,
-                nunits = sampled_cluster_data$num_units_vec)
-    sampled_unit_list <- plyr::mlply(tt, unit_sampler)
-
-    pop_data$insample <- 0
-
-    # pull out sampled data
-    for (j in 1:num_clusters) {
-      curr_units <- sampled_unit_list[[j]]
-      pop_data <- dplyr::mutate(pop_data,
-                                insample = replace(insample,
-                                                   cluster_id == j &
-                                                    unit_id %in% curr_units, 1))
-    }
-    sample_data <- dplyr::filter(pop_data, insample == 1)
-    sample_data$insample <- NULL
+    sample_data <- setDT(sample_data)
+    sample_data <- sample_data[, .SD[sample(.N, num_units_to_sample)], by = cluster_id]
   }
 
   ##########################################
