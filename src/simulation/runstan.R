@@ -17,6 +17,15 @@ runstan <- function(num_clusters, num_units, use_sizes, outcome_type, size_model
   # num_chains -- number of chains to run in stan
 
   ##########################################
+  ### Source functions
+  ##########################################
+  source(paste0(rootdir, "src/simulation/make_stan_data.R"))
+  source(paste0(rootdir, "src/simulation/check_for_div_trans.R"))
+  source(paste0(rootdir, "src/simulation/process_fit.R"))
+  source(paste0(rootdir, "src/simulation/make_pp_draws.R"))
+  source(paste0(rootdir, "src/simulation/make_pp_draw_plots.R"))
+
+  ##########################################
   ### Load pop and sample data
   ##########################################
   rstan_options(auto_write = TRUE)
@@ -28,14 +37,15 @@ runstan <- function(num_clusters, num_units, use_sizes, outcome_type, size_model
     nunits <- num_units
   }
 
-  print("str(sim_data)")
-  print(str(sim_data))
+  print("str(sim_data, give.attr = FALSE)")
+  print(str(sim_data, give.attr = FALSE))
 
+  # Add elements of sim_data to current enviroment
   for (j in names(sim_data)) {
     assign(j, sim_data[[j]])
   }
   rm(sim_data)
-  ybar_true <- mean(pop_data$y)
+  ybar_true <- truepars$ybar_true
 
   model_name <- gsub("_binary", "", stanmod_name)
 
@@ -51,75 +61,42 @@ runstan <- function(num_clusters, num_units, use_sizes, outcome_type, size_model
     K <- J
   }
 
-  # SORT pop and sample data by cluster_id
-  pop_data <- dplyr::arrange(pop_data, cluster_id)
-  sample_data <- dplyr::arrange(sample_data, cluster_id)
-
-  # Take things directly from sample_data
-  x <- sample_data$x
-  y <- sample_data$y
-  cluster_id <- sample_data$cluster_id
-  n <- nrow(sample_data)
-
-  # Get pop data at cluster level -- calculate mean of x, grouping by cluster_id,
-  # stratum_id, Mj, logMj_c (cluster_id is the most detailed)
-  if (grepl("strat", stanmod_name)) {
-    cluster_data_pop <- pop_data %>%
-      dplyr::select(cluster_id, stratum_id, Mj, logMj_c, x) %>%
-      dplyr::group_by(cluster_id, stratum_id, Mj, logMj_c) %>%
-      dplyr::summarise(xbar_pop = mean(x)) %>%
-      dplyr::arrange(cluster_id)
-  } else {
-    cluster_data_pop <- pop_data %>%
-      dplyr::select(cluster_id, Mj, logMj_c, x) %>%
-      dplyr::group_by(cluster_id, Mj, logMj_c) %>%
-      dplyr::summarise(xbar_pop = mean(x)) %>%
-      dplyr::arrange(cluster_id)
-  }
-print("str(cluster_data_pop)")
-print(str(cluster_data_pop))
-  Nj_pop <- cluster_data_pop$Mj
-  N <- sum(Nj_pop)
-  xbar_pop <- cluster_data_pop$xbar_pop
-
-  # Get sample data at cluster level
-  if (grepl("strat", stanmod_name)) {
-    stratum_id <- sampled_cluster_data$stratum_id
-  }
-  sampled_cluster_data <- dplyr::arrange(sampled_cluster_data, cluster_id)
-  Nj_sample <- sampled_cluster_data$Mj
-  log_Nj_sample <- sampled_cluster_data$logMj_c
-
-  # special data for bb
-  n_dat <- sampled_cluster_data %>%
-    dplyr::arrange(cluster_id) %>%
-    dplyr::group_by(cluster_id, Mj) %>%
-    dplyr::summarise(n = n_distinct(cluster_id))
-  M <- nrow(n_dat)      # number of unique cluster sizes
-  M_counts <- n_dat$n   # counts of unique cluster sizes
-  Nj_unique <- n_dat$Mj # vector of unique cluster sizes
-
   ##########################################
   ### Make inputs to stan -- data list, parameters, functions
   ##########################################
-  source(paste0(rootdir, "src/simulation/make_stan_data.R"))
+  res <-  make_stan_data(stanmod_name, sample_data, pop_cluster_data,
+                         sampled_cluster_data) 
+  for (j in names(res)) {
+    assign(j, res[[j]])
+  }
+
+  print("parlist post make stan data:")
+  print(parlist)
+  #source(paste0(rootdir, "src/simulation/make_stan_data.R"))
 
   ##########################################
   ### Run stan
   ##########################################
   print(Sys.time())
-
+print(str(standata, give.attr = FALSE))
+print(str(standata$Nj_sample, give.attr = FALSE))
   fit <- sampling(stanmod, data = standata,
                   iter = num_iter, chains = num_chains,
                   control = list(stepsize = 0.001, adapt_delta = 0.999))
   print("done fitting stan model")
   print(Sys.time())
   print(warnings())
+  print("parlist post fitting stan model:")
+  print(parlist)
 
   ##########################################
   ### See if there are any divergent transitions -- if so need to rerun 
   ##########################################
-  source(paste0(rootdir, "src/simulation/check_for_div_trans.R"))
+  fit <- check_for_div_trans(num_clusters, num_units, use_sizes, outcome_type,
+                             size_model, rootdir, simno, stanmod, standata,
+                             num_iter, num_chains, fit)
+  print("parlist post check div trans:")
+  print(parlist)
 
   # Save the current fit
   if (simno == 1) {
@@ -136,22 +113,52 @@ print(str(cluster_data_pop))
   }
 
   # Print summary for the basic parameters
+  print("parlist post save:")
+  print(parlist)
   print(fit, pars = parlist)
 
   ##########################################
   ### Extract samples, format param estimates to just keep necessary info 
   ##########################################
-  source(paste0(rootdir, "src/simulation/process_fit.R"))
+  if (!exists("kappapars")) {
+    kappapars <- NA
+  }
+  if (!exists("sbpars")) {
+    kappapars <- NA
+  }
+  res <- process_fit(fit, parlist, betapars, kappapars, sbpars, stanmod_name) 
+  for (j in names(res)) {
+    assign(j, res[[j]])
+  }
+  rm(res)
 
   ##########################################
   ### Draw new cluster sizes (if needed) and ybar_new
   ##########################################
-  source(paste0(rootdir, "src/simulation/make_pp_draws.R"))
+  if (!exists("phi_star_samps")) {
+    phi_star_samps <- NA
+  }
+  if (!exists("sb_samps")) {
+    sb_samp <- NA
+  }
+print("STANMOD_NAME:")
+print(stanmod_name)
+print("str(param_samps, give.attr = FALSE):")
+print(str(param_samps, give.attr = FALSE))
+  res <- make_pp_draws(stanmod, stanmod_name, param_samps, beta_samps,
+                       phi_star_samps, sb_samps, pop_cluster_data,
+                       sampled_cluster_data) 
+  for (j in names(res)) {
+    assign(j, res[[j]])
+  }
+  rm(res)
+print("str(Mj_new_df, give.attr = FALSE):")
+print(str(Mj_new_df, give.attr = FALSE))
 
-  print("done drawing Nj_new, ybar_new")
+  print("done drawing Mj_new, ybar_new")
   print(Sys.time())      
 
-  yn_list <- list(ybar_new = ybar_new, Nj_new_df = Nj_new_df)
+  yn_list <- list(ybar_new = ybar_new, Mj_new_df = Mj_new_df)
   saveRDS(yn_list,
           paste0(rootdir, "output/simulation/yn_list_usesizes_",
                  use_sizes, "_", outcome_type, "_", size_model, "_", model_name,
@@ -159,32 +166,43 @@ print(str(cluster_data_pop))
                  "_sim_", simno, ".rds"))
 
   ##########################################
-  ### Summarise Nj_new, ybar_new and add to parameter estimates
+  ### Plot Mj_new, ybar_new
+  ##########################################
+  if (simno == 1) {
+    make_pp_draw_plots(Mj_new_df, ybar_new, ybar_true,
+                       num_clusters, num_units, use_sizes, outcome_type,
+                       size_model, rootdir, stanmod_name,
+                       pop_cluster_data, sampled_cluster_data) 
+  }
+
+  ##########################################
+  ### Summarise Mj_new, ybar_new and add to parameter estimates
   ##########################################
   print("summarizing draws")
+  num_draws <- nrow(param_samps)
   if (grepl("cluster_inds_only", stanmod_name) ||
       grepl("knowsizes", stanmod_name)) {
-    Nj_new_means <- NA
+    Mj_new_means <- NA
     tmp <- data.frame(ybar_new, draw_num = c(1:num_draws))
-    tmp %>%
+    draw_summ <- tmp %>%
       dplyr::summarise(mean = mean(ybar_new),
                        sd = sd(ybar_new),
                        p025 = quantile(ybar_new, 0.025),
                        p25 = quantile(ybar_new, 0.25),
                        p50 = quantile(ybar_new, 0.50),
                        p75 = quantile(ybar_new, 0.75),
-                       p975 = quantile(ybar_new, 0.975)) -> draw_summ
+                       p975 = quantile(ybar_new, 0.975)) 
     draw_summ$truth <- ybar_true
   } else {
-    Nj_new_df %>%
+    Mj_new_means <- Mj_new_df %>%
       dplyr::group_by(cluster_id) %>%
-      dplyr::summarise(Nj_new = mean(Nj_new)) -> Nj_new_means
-    Nj_new_means$truth <- Nj_pop
+      dplyr::summarise(Mj_new = mean(Mj_new)) 
+    Mj_new_means$truth <- pop_cluster_data$Mj
 
-    true_vals <- data.frame(param = c("N_new", "ybar_new"),
-                            truth = c(N, ybar_true))
-    tmp <- data.frame(N_new, ybar_new, draw_num = c(1:num_draws))
-    tmp %>%
+    true_vals <- data.frame(param = c("M_tot_new", "ybar_new"),
+                            truth = c(sum(pop_cluster_data$Mj), ybar_true))
+    tmp <- data.frame(M_tot_new, ybar_new, draw_num = c(1:num_draws))
+    draw_summ <- tmp %>%
       tidyr::gather(key = param, value = value, -draw_num) %>%
       dplyr::group_by(param) %>%
       dplyr::summarise(mean = mean(value),
@@ -194,7 +212,7 @@ print(str(cluster_data_pop))
                        p50 = quantile(value, 0.50),
                        p75 = quantile(value, 0.75),
                        p975 = quantile(value, 0.975)) %>%
-      dplyr::left_join(., true_vals, by = "param") -> draw_summ
+      dplyr::left_join(., true_vals, by = "param") 
   }
   print(Sys.time())      
   print(draw_summ)
@@ -203,8 +221,8 @@ print(str(cluster_data_pop))
   ##########################################
   ### Save results
   ##########################################
-  results_list <- list(par_ests = par_ests, Nj_new_means = Nj_new_means,
-                       draw_summ = draw_summ, Nj_sample = Nj_sample)
+  results_list <- list(par_ests = par_ests, Mj_new_means = Mj_new_means,
+                       draw_summ = draw_summ, Mj_sample = sampled_cluster_data$Mj)
   saveRDS(results_list,
           paste0(rootdir, "output/simulation/stan_results_usesizes_",
                  use_sizes, "_", outcome_type, "_", size_model, "_", model_name,

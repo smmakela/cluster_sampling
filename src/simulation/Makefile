@@ -23,11 +23,11 @@ R_OPTS         = --no-save --no-restore --no-init-file --no-site-file
 
 # Hard-code highest-level simulation parameters
 NUM_POP_CLUSTERS = 100
-NUM_SIMS         = 100
-USE_SIZE_VALS    = 0 1
-OUTCOME_TYPES    = continuous binary
-SIZE_MODEL_NAMES = multinomial poisson
-STAN_MODEL_NAMES = bb cluster_inds_only knowsizes lognormal negbin
+NUM_SIMS         = 1
+USE_SIZE_VALS    = 1
+OUTCOME_TYPES    = continuous
+SIZE_MODEL_NAMES = multinomial
+STAN_MODEL_NAMES = bb
 
 # Variables that store filenames of population data
 # e.g. <file path>/popdata_usesizes_<0,1>_<continuous, binary>.<rds, Rout>
@@ -161,7 +161,7 @@ $(SIM_OUT_DIR)/total_stan_check_usesizes_%.txt: $$(subst $$(space),, $$(SIM_OUT_
 	#--outcome_type ${OTV} --num_sims ${NUM_SIMS} --model_name ${MN};
 
 # THEN RUN SVY, LMER
-$(SIM_OUT_DIR)/total_db_check_usesizes_%.txt: $(SIM_OUT_DIR)/popdata_usesizes_*.Rout $(DB_PREREQS)
+$(SIM_OUT_DIR)/total_db_check_usesizes_%.txt: $$(subst $$(space),, $$(SIM_OUT_DIR)/popdata_usesizes_$$(subst $$(strip $$(foreach tt, $$(TO_REMOVE), $$(findstring $$(tt), $$*))),, $$*).Rout) $(DB_PREREQS)
 	@echo ---------------------- doing run_sim_db.sh -------------------------
 	USV=$(call get_firstword, $*);\
 	OTV=$(call get_secondword, $*);\

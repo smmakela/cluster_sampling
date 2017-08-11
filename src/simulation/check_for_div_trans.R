@@ -1,7 +1,7 @@
 
-#check_for_div_trans <- function(num_clusters, num_units, use_sizes, outcome_type,
-#                                size_model, rootdir, simno, stanmod, standata
-#                                num_iter, num_chains, fit) {
+check_for_div_trans <- function(num_clusters, num_units, use_sizes, outcome_type,
+                                size_model, rootdir, simno, stanmod, standata,
+                                num_iter, num_chains, fit) {
   # num_clusters -- number of clusters to sample
   # num_units -- number of units to sample
   # use_sizes -- 0/1 for whether cluster sizes used in pop data
@@ -19,6 +19,11 @@
   # Otherwise, run with a higher value of adapt_delta until we switch to the
   # ncp version of the model. If that fails, then return a message saying we
   # can't get rid of the divergent transitions
+  if (num_units <= 1) {
+    nunits <- paste(100*num_units, "pct", sep = "")
+  } else {
+    nunits <- num_units
+  }
 
     samp_params <- get_sampler_params(fit)
     num_div_trans <- 0
@@ -110,9 +115,26 @@
   # Make sure things converged in terms of Rhat too
   rhat_check_df <- data.frame(summary(fit)$summary)
   rhat_check <- rhat_check_df$Rhat
+  counter <- 0
+  num_iter <- num_iter + 1000
+  while (max(rhat_check) >= 1.1 & counter <= 3) {
+    cat("----------------------------------------------------------------\n")
+    cat("Rhat too big, running with more iterations\n")
+    cat("num_clusters =", num_clusters, "num_units=", num_units, "\n")
+    fit <- sampling(stanmod, data = standata,
+                    iter = num_iter, chains = num_chains,
+                    control = list(stepsize = 0.001, adapt_delta = ad_val))
+    print("done fitting stan model")
+    print(Sys.time())
+    print(warnings())
+    rhat_check_df <- data.frame(summary(fit)$summary)
+    rhat_check <- rhat_check_df$Rhat
+    counter <- counter + 1
+    num_iter <- num_iter + 1000
+  }
   if (max(rhat_check) >= 1.1) {
     out_msg <- paste0("Rhat check failed! Max Rhat is", max(rhat_check))
-    cat("Rhat check for alpha0 failed! Rhat is", max(rhat_check), "\n")
+    cat("Rhat check failed! Rhat is", max(rhat_check), "\n")
     print(rhat_check_df)
     print(summary(rhat_check_df[!grepl("\\[", rownames(rhat_check_df)), ]))
     saveRDS(out_msg,
@@ -127,7 +149,7 @@
     return(NULL)
   }
 
-#  return(fit)
+  return(fit)
 
-#}
+}
 

@@ -1,13 +1,14 @@
 functions {
   // draw new cluster sizes using nb model
-  vector Mj_new_nb_rng(int J, int K, vector Mj_sample, real mu, real phi,
-                       real a, real b, real tau) {
+  //matrix Mj_new_nb_rng(int J, int K, vector Mj_sample, vector Nj_sample,
+  //                     real mu, real phi, real a, real b) {
+  vector Mj_new_nb_rng(int J, int K, vector Mj_sample, real mu, real phi) {
 
     // need to make Mj_new_tmp b/c negbin rng function can only work w/ ints
     int Mj_new_tmp[J-K];
     vector[J] Mj_new;
-    vector[J] Nj_new;
-    matrix[J, 2] Mj_Nj;
+    //vector[J] Nj_new;
+    //matrix[J, 2] Mj_Nj;
 
     for (k in 1:(J-K)) {
       Mj_new_tmp[k] = neg_binomial_2_rng(mu, phi);
@@ -19,21 +20,23 @@ functions {
     Mj_new[1:K] = Mj_sample;
     Mj_new[(K+1):J] = to_vector(Mj_new_tmp);
 
-    Nj_new[1:K] = Nj_sample;
-    Nj_new[(K+1):J] = a + b*Nj_new[(K+1):J];
+    return Mj_new;
 
-    Mj_Nj[1,] = Mj_new;
-    Mj_Nj[2,] = Nj_new;
+    //Nj_new[1:K] = Nj_sample;
+    //Nj_new[(K+1):J] = a + b*Mj_new[(K+1):J];
 
-    return Mj_Nj;
+    //Mj_Nj[,1] = Mj_new;
+    //Mj_Nj[,2] = Nj_new;
+
+    //return Mj_Nj;
   }
   // estimate ybar using drawn cluster sizes
-  real ybar_new_nb_rng(int J, int K, vector xbar_pop,
+  vector ybar_new_nb_rng(int J, int K, vector xbar_pop,
                        vector beta0, vector beta1,
                        real alpha0, real gamma0,
                        real alpha1, real gamma1,
                        real sigma_beta0, real sigma_beta1,
-                       real sigma_y, vector Nj_new, vector Mj_new) {
+                       real sigma_y, vector Mj_new, vector Nj_new) {
 
     vector[J] beta0_new;
     vector[J] beta1_new;
@@ -54,9 +57,10 @@ functions {
                               sigma_y/sqrt(Nj_new[j]));
     }
     
-    ybar_new = sum(yj_new .* to_vector(Nj_new)) / sum(Nj_new);
+    return yj_new;
+    //ybar_new = sum(yj_new .* to_vector(Nj_new)) / sum(Nj_new);
 
-    return ybar_new; 
+    //return ybar_new; 
   } 
 } # end functions block
 data {
@@ -67,7 +71,7 @@ data {
   vector[n] y;
   int cluster_id[n]; // vector of cluster id's for each sampled unit
   int Mj_sample[K];
-  int Nj_sample[K];
+  //int Nj_sample[K];
   vector[K] log_Mj_sample;
 }
 transformed data {
@@ -90,9 +94,9 @@ parameters {
   // reparameterize phi in terms of sqrt of CV of gamma dist
   real<lower=0> recip_sqrt_alpha_nb;
   // parameters for regressing Nj on Mj
-  real a;
-  real b;
-  real<lower=0> tau;
+  //real a;
+  //real b;
+  //real<lower=0> tau;
 }
 transformed parameters {
   vector[n] ymean;
@@ -110,7 +114,7 @@ transformed parameters {
 }
 model {
   recip_sqrt_alpha_nb ~ exponential(1); // it can be that this is close to 1
-  tau ~ cauchy(0, 2.5);
+  //tau ~ cauchy(0, 2.5);
   sigma_beta0 ~ cauchy(0, 2.5);
   sigma_beta1 ~ cauchy(0, 2.5);
   sigma_y ~ cauchy(0, 2.5);
@@ -122,6 +126,6 @@ model {
   beta1 ~ normal(alpha1 + gamma1 * log_Mj_sample, sigma_beta1);
   y ~ normal(ymean, sigma_y);
   Mj_sample_minus1 ~ neg_binomial_2(mu_star, phi_star);
-  Nj_sample ~ normal(a + b * Mj_sample, tau);
+  //to_vector(Nj_sample) ~ normal(a + b * to_vector(Mj_sample), tau);
 }
 

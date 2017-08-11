@@ -24,6 +24,7 @@ Options:
     source(paste0(rootdir, "src/simulation/sampledata.R"))
     source(paste0(rootdir, "src/simulation/runstan.R"))
 
+
   #############################################################################
   ### Load libraries, get options, set up parallel stuff
   #############################################################################
@@ -46,7 +47,7 @@ Options:
     print(opts.names)
     opts.names <- opts.names[-grep("--", opts.names)]
     opts <- opts[opts.names]
-    print(str(opts))
+    print(str(opts, give.attr = FALSE))
     print(opts.names)
 
     # The options are read in as strings, so make them numeric here
@@ -63,6 +64,8 @@ Options:
   #############################################################################
   ### Create list of parameters to loop through for sim
   #############################################################################
+    #num_clusters.list <- c(10, 50)
+    #num_units.list <- c(0.1, 0.5, 10, 50)
     #num_clusters.list <- c(5, 10, 30, 50)
     #num_units.list <- c(0.05, 0.1, 0.25, 0.5, 1, 10, 30, 60)
     num_clusters.list <- 10
@@ -89,7 +92,7 @@ Options:
       num_clusters <- 16
       num_units <- 99
       #if (size_model == "ffstrat") {
-        stanmod_name <- paste0(stanmod_name, "_", size_model)
+      #  stanmod_name <- paste0(stanmod_name, "_", size_model)
       #}
 
       # Print a message about which parameters we're running now
@@ -119,8 +122,8 @@ Options:
       sim_data <- sampledata(J = 77, num_clusters, num_units, use_sizes,
                              outcome_type, size_model)
       cat("DONE sampling\n")
-saveRDS(sim_data, file = paste0(rootdir, "/output/simulation/simdataTEMP_", use_sizes, "_", outcome_type,
-                          "_", size_model, "_", model_name, "_sim_", simno, ".rds")) 
+#saveRDS(sim_data, file = paste0(rootdir, "/output/simulation/simdataTEMP_", use_sizes, "_", outcome_type,
+#                          "_", size_model, "_", model_name, "_sim_", simno, ".rds")) 
  
       # Run stan model
       cat("Running stan\n")

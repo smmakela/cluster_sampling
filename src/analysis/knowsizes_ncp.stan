@@ -5,23 +5,23 @@ functions {
                          real alpha0, real gamma0,
                          real alpha1, real gamma1,
                          real sigma_beta0, real sigma_beta1,
-                         real sigma_y, vector Nj_pop) {
+                         real sigma_y, vector Mj_pop, vector Nj_pop) {
 
     vector[J] beta0_new;
     vector[J] beta1_new;
-    vector[J] log_Nj_pop;
+    vector[J] log_Mj_pop;
     vector[J] yj_new;
     real ybar_new;
     
-    log_Nj_pop = log(Nj_pop) - mean(log(Nj_pop));
+    log_Mj_pop = log(Mj_pop) - mean(log(Mj_pop));
 
     beta0_new[1:K] = beta0;
     beta1_new[1:K] = beta1;
     yj_new[1:K] = beta0 + beta1 .* xbar_pop[1:K];
   
     for (j in (K+1):J) {
-      beta0_new[j] = normal_rng(alpha0 + gamma0 * log_Nj_pop[j], sigma_beta0);
-      beta1_new[j] = normal_rng(alpha1 + gamma1 * log_Nj_pop[j], sigma_beta1);
+      beta0_new[j] = normal_rng(alpha0 + gamma0 * log_Mj_pop[j], sigma_beta0);
+      beta1_new[j] = normal_rng(alpha1 + gamma1 * log_Mj_pop[j], sigma_beta1);
       yj_new[j]  = normal_rng(beta0_new[j] + beta1_new[j] * xbar_pop[j],
                               sigma_y/sqrt(Nj_pop[j]));
     }
@@ -38,8 +38,8 @@ data {
   int cluster_id[n]; // cluster ids for sample units
   vector[n] x;            // individual-level covar ("age")
   vector[n] y;            // outcomes
-  vector[K] Nj_sample;       // vector of cluster sizes for sampled clusters
-  vector[K] log_Nj_sample;    // log of cluster sizes for sampled clusters
+  vector[K] Mj_sample;       // vector of cluster sizes for sampled clusters
+  vector[K] log_Mj_sample;    // log of cluster sizes for sampled clusters
 }
 parameters {
   real<lower=0> sigma_beta0;
@@ -57,8 +57,8 @@ transformed parameters {
   vector[K] beta1;
   vector[n] ymean;
 
-  beta0 = alpha0 + gamma0 * log_Nj_sample + eta0 * sigma_beta0;
-  beta1 = alpha1 + gamma1 * log_Nj_sample + eta1 * sigma_beta1;
+  beta0 = alpha0 + gamma0 * log_Mj_sample + eta0 * sigma_beta0;
+  beta1 = alpha1 + gamma1 * log_Mj_sample + eta1 * sigma_beta1;
   for (i in 1:n) {
     ymean[i] = beta0[cluster_id[i]] + beta1[cluster_id[i]]*x[i];
   }

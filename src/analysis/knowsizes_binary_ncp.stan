@@ -4,14 +4,15 @@ functions {
                          vector beta0,
                          real alpha0, real gamma0,
                          real sigma_beta0, 
+                         vector Mj_pop,
                          vector Nj_pop) {
 
     vector[J] beta0_new;
-    vector[J] log_Nj_pop;
+    vector[J] log_Mj_pop;
     vector[J] theta_new;
     real ybar_new;
     
-    log_Nj_pop = log(Nj_pop) - mean(log(Nj_pop));
+    log_Mj_pop = log(Mj_pop) - mean(log(Mj_pop));
 
     beta0_new[1:K] = beta0;
     for (j in 1:K) {
@@ -19,7 +20,7 @@ functions {
     }
   
     for (j in (K+1):J) {
-      beta0_new[j] = normal_rng(alpha0 + gamma0 * log_Nj_pop[j], sigma_beta0);
+      beta0_new[j] = normal_rng(alpha0 + gamma0 * log_Mj_pop[j], sigma_beta0);
       theta_new[j] = inv_logit(beta0_new[j]);
     }
     
@@ -34,8 +35,8 @@ data {
   int<lower=0> n;         // sample size
   int cluster_id[n]; // cluster ids for sample units
   int<lower=0,upper=1> y[n];             // outcomes
-  vector[K] Nj_sample;       // vector of cluster sizes for sampled clusters
-  vector[K] log_Nj_sample;    // log of cluster sizes for sampled clusters
+  vector[K] Mj_sample;       // vector of cluster sizes for sampled clusters
+  vector[K] log_Mj_sample;    // log of cluster sizes for sampled clusters
 }
 parameters {
   real<lower=0> sigma_beta0;
@@ -47,7 +48,7 @@ transformed parameters {
   vector[K] beta0;
   vector[n] y_prob;
 
-  beta0 = alpha0 + gamma0 * log_Nj_sample + eta0 * sigma_beta0;
+  beta0 = alpha0 + gamma0 * log_Mj_sample + eta0 * sigma_beta0;
 
   for (i in 1:n) {
     y_prob[i] = beta0[cluster_id[i]];

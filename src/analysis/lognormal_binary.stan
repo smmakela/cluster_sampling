@@ -1,30 +1,31 @@
 functions {
   // draw new cluster sizes using ln model
-  vector Nj_new_ln_rng(int J, int K, vector Nj_sample,
+  vector Mj_new_ln_rng(int J, int K, vector Mj_sample,
                        real mu, real sigma) {
 
-    vector[J] Nj_new;
+    vector[J] Mj_new;
 
-    Nj_new[1:K] = Nj_sample;
+    Mj_new[1:K] = Mj_sample;
     for (k in (K+1):J) {
-      Nj_new[k] = lognormal_rng(mu, sigma);
+      Mj_new[k] = lognormal_rng(mu, sigma);
     }
 
-    return Nj_new;
+    return Mj_new;
   }
   // estimate ybar using drawn cluster sizes
   real ybar_new_ln_rng(int J, int K,
                        vector beta0,
                        real alpha0, real gamma0,
                        real sigma_beta0,
+                       vector Mj_new,
                        vector Nj_new) {
 
     vector[J] beta0_new;
-    vector[J] log_Nj_new;
+    vector[J] log_Mj_new;
     vector[J] theta_new;
     real ybar_new;
     
-    log_Nj_new = log(Nj_new) - mean(log(Nj_new));
+    log_Mj_new = log(Mj_new) - mean(log(Mj_new));
 
     beta0_new[1:K] = beta0;
     for (j in 1:K) {
@@ -32,7 +33,7 @@ functions {
     }
   
     for (j in (K+1):J) {
-      beta0_new[j] = normal_rng(alpha0 + gamma0 * log_Nj_new[j], sigma_beta0);
+      beta0_new[j] = normal_rng(alpha0 + gamma0 * log_Mj_new[j], sigma_beta0);
       theta_new[j] = inv_logit(beta0_new[j]);
     }
     
@@ -47,12 +48,12 @@ data {
   int n; // total sample size
   int<lower=0,upper=1> y[n];             // outcomes
   int cluster_id[n]; // vector of cluster id's for each sampled unit
-  vector[K] Nj_sample;
-  vector[K] log_Nj_sample;
+  vector[K] Mj_sample;
+  vector[K] log_Mj_sample;
 }
 transformed data {
-  vector[K] log_Nj_sample_scaled;
-  log_Nj_sample_scaled = (log(Nj_sample) - mean(log(Nj_sample))) / sd(log(Nj_sample));
+  vector[K] log_Mj_sample_scaled;
+  log_Mj_sample_scaled = (log(Mj_sample) - mean(log(Mj_sample))) / sd(log(Mj_sample));
 }
 parameters {
   real<lower=0> sigma_beta0;
@@ -68,8 +69,8 @@ transformed parameters {
   real mu;
   real<lower=0> sigma;
 
-  mu_star = mu_star_scaled + mean(log(Nj_sample));
-  sigma = sigma_scaled * sd(log(Nj_sample));
+  mu_star = mu_star_scaled + mean(log(Mj_sample));
+  sigma = sigma_scaled * sd(log(Mj_sample));
   mu = mu_star - sigma^2;
 
 
@@ -83,8 +84,8 @@ model {
   sigma_beta0 ~ cauchy(0, 2.5);
   alpha0 ~ normal(0, 10);
   gamma0 ~ normal(0, 10);
-  beta0 ~ normal(alpha0 + gamma0 * log_Nj_sample, sigma_beta0);
+  beta0 ~ normal(alpha0 + gamma0 * log_Mj_sample, sigma_beta0);
   y ~ bernoulli_logit(y_prob);
-  log_Nj_sample ~ normal(mu_star_scaled, sigma_scaled);
+  log_Mj_sample ~ normal(mu_star_scaled, sigma_scaled);
 }
 

@@ -1,5 +1,5 @@
-#process_fit <- function(fit, parlist, betapars, kappapars = NA, sbpars = NA,
-#                        stanmod_name) {
+process_fit <- function(fit, parlist, betapars, kappapars = NA, sbpars = NA,
+                        stanmod_name) {
 
   # fit -- output of sampling()
   # parlist -- vector of regression parameter names
@@ -11,6 +11,8 @@
   ##########################################
   ### Extract samples
   ##########################################
+print("parlist:")
+print(parlist)
   param_samps <- data.frame(rstan::extract(fit, pars = parlist))
 
   # since the betas have to be passed in as a vector, deal with them separately
@@ -87,6 +89,8 @@
     par_ests <- tt[c(parlist, rownames(tt)[c(ii, jj)]), ]
   }
   rm(fit)
+  print("str(par_ests)")
+  print(str(par_ests))
   print("done making par_ests")
   print(Sys.time())
 
@@ -96,24 +100,26 @@
   par_ests_rownames <- gsub("\\[", "", par_ests_rownames) 
   par_ests_rownames <- gsub("\\]", "", par_ests_rownames) 
   par_ests_colnames <- attr(par_ests, "dimnames")[[2]]
-  par_ests <- data.frame(par_ests, row_names = par_ests_rownames)
+  par_ests <- data.frame(par_ests)
   colnames(par_ests) <- par_ests_colnames
+  par_ests$param_name = par_ests_rownames
 
   print("printing par_ests")
   print(Sys.time())      
   print(str(par_ests))
 
-#  to_return <- list(par_ests = par_ests, beta_samps = beta_samps)
-#  if (grepl("bb", stanmod_name)) {
-#    to_return <- c(to_return, list(phi_star_samps = phi_star_samps))
-#  }
-#  if (grepl("strat", stanmod_name)) {
-#    to_return <- c(to_return, list(kappa_samps = kappa_samps))
-#    if (grepl("lognormal", stanmod_name) || grepl("negbin", stanmod_name)) {
-#      to_return <- c(to_return, list(sb_samps = sb_samps))
-#    }
-#  }
-#  return(to_return)
-#
-#} # end function
+  to_return <- list(param_samps = param_samps, par_ests = par_ests,
+                    beta_samps = beta_samps)
+  if (grepl("bb", stanmod_name)) {
+    to_return <- c(to_return, list(phi_star_samps = phi_star_samps))
+  }
+  if (grepl("strat", stanmod_name)) {
+    to_return <- c(to_return, list(kappa_samps = kappa_samps))
+    if (grepl("lognormal", stanmod_name) || grepl("negbin", stanmod_name)) {
+      to_return <- c(to_return, list(sb_samps = sb_samps))
+    }
+  }
+  return(to_return)
+
+} # end function
 

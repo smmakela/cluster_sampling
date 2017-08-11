@@ -34,6 +34,7 @@ Options:
     require(dplyr)
     require(tidyr)
     require(lme4)
+    require(data.table)
     require(pps)
     require(survey)
     require(sampling)
@@ -63,8 +64,10 @@ Options:
   #############################################################################
   ### Create list of parameters to loop through for sim
   #############################################################################
-    num_clusters_list <- c(5, 10, 20, 30)
-    num_units_list <- c(0.05, 0.1, 0.25, 0.5, 1, 10, 30, 60)
+    #num_clusters_list <- c(5, 10, 20, 30)
+    #num_units_list <- c(0.05, 0.1, 0.25, 0.5, 1, 10, 30, 60)
+    num_clusters_list <- 10
+    num_units_list <- 0.1
     tmplist <- list(num_clusters_list = num_clusters_list,
                     num_units_list    = num_units_list)
     sim_params <- expand.grid(tmplist)
@@ -88,8 +91,8 @@ Options:
       # Sample data using above parameters
       cat("Sampling data\n")
       print(Sys.time())
-      sim_data <- sampledata(num_clusters, num_units, use_sizes, outcome_type,
-                             size_model)
+      sim_data <- sampledata(J = numclusters, num_clusters, num_units, use_sizes,
+                             outcome_type, size_model)
       cat("DONE sampling\n")
  
       # Compare parameter estimates from lmer
@@ -103,9 +106,8 @@ Options:
       print("Running svy_ests")
       print(Sys.time())
       J <- 77 # number of clusters in FF data
-      svy_res <- svy_ests_strat(J, num_clusters, num_units, use_sizes, 
-                                outcome_type, size_model, sim_data, rootdir,
-                                simno)
+      svy_res <- svy_ests(J, num_clusters, num_units, use_sizes, 
+                          outcome_type, size_model, sim_data, rootdir, simno)
       cat("##################################################################################\n")
       print(warnings()) 
     } else {
@@ -119,21 +121,21 @@ Options:
         } else {
           nunits <- num_units
         }
-        fil1 <- paste0(rootdir, "output/simulation/lmer_ests_usesizes_",
-                       use_sizes, "_", outcome_type, "_", size_model,
-                       "_nclusters_", num_clusters,
-                       "_nunits_", nunits, "_simno_", simno, ".rds")
-        fil2 <- paste0(rootdir, "output/simulation/svy_ests_usesizes_",
-                       use_sizes, "_", outcome_type, "_", size_model,
-                       "_nclusters_", num_clusters,
-                       "_nunits_", nunits, "_simno_", simno, ".rds")
-        if (file.exists(fil1) & file.exists(fil2)) {
-          cat("----------------------------------------------------\n")
-          cat("Both files already exist, next!\n")
-          cat(fil1, "\n")
-          cat("----------------------------------------------------\n")
-          next
-        }
+        #fil1 <- paste0(rootdir, "output/simulation/lmer_ests_usesizes_",
+        #               use_sizes, "_", outcome_type, "_", size_model,
+        #               "_nclusters_", num_clusters,
+        #               "_nunits_", nunits, "_simno_", simno, ".rds")
+        #fil2 <- paste0(rootdir, "output/simulation/svy_ests_usesizes_",
+        #               use_sizes, "_", outcome_type, "_", size_model,
+        #               "_nclusters_", num_clusters,
+        #               "_nunits_", nunits, "_simno_", simno, ".rds")
+        #if (file.exists(fil1) & file.exists(fil2)) {
+        #  cat("----------------------------------------------------\n")
+        #  cat("Both files already exist, next!\n")
+        #  cat(fil1, "\n")
+        #  cat("----------------------------------------------------\n")
+        #  next
+        #}
 
         # Print a message about which parameters we're running now
         cat("Running design-based models for", num_clusters, "clusters,",
@@ -143,8 +145,8 @@ Options:
         # Sample data using above parameters
         cat("Sampling data\n")
         print(Sys.time())
-        sim_data <- sampledata(num_clusters, num_units, use_sizes, outcome_type,
-                               size_model)
+        sim_data <- sampledata(J = numclusters, num_clusters, num_units, use_sizes,
+                               outcome_type, size_model)
         cat("DONE sampling\n")
  
         # Compare parameter estimates from lmer

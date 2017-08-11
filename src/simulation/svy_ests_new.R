@@ -50,15 +50,13 @@ svy_ests <- function(J, num_clusters, num_units, use_sizes, outcome_type,
       #    cluster i_ as shown on the bottom of p 323 just below 8_9_30,
       #    t_xi_bold is the sum over ALL units in cluster i, while
       #    t_xi_bold_hat is the sum over all SAMPLED units in cluster i
-      #sum_x_1 <- pop_cluster_data$Nj_pop[pop_cluster_data$cluster_id <= num_clusters]
-      #sum_x_2 <- pop_cluster_data$sum_x_i[pop_cluster_data$cluster_id <= num_clusters]
-      sum_x_1 <- sampled_cluster_data$Nj
-      sum_x_2 <- sampled_cluster_data$sum_x_pop
+      sum_x_1 <- cluster_data_pop$Nj_pop[cluster_data_pop$cluster_id <= num_clusters]
+      sum_x_2 <- cluster_data_pop$sum_x_i[cluster_data_pop$cluster_id <= num_clusters]
       t_xi_bold <- cbind(sum_x_1, sum_x_2)
       # in t_xi_bold_hat, we can do the division outside of the summation in
-      # sampled_cluster_data$sum_x_i because PI_k_given_i is constant within clusters
+      # cluster_data$sum_x_i because PI_k_given_i is constant within clusters
       sum_x_1 <- n_vec$n
-      sum_x_2 <- sampled_cluster_data$sum_x_sam
+      sum_x_2 <- cluster_data$sum_x_i
       t_xi_bold_hat <- cbind(sum_x_1, sum_x_2) / PI_k_given_i
       t_diff <- colSums((t_xi_bold - t_xi_bold_hat) / PI_i)
       # colSums removes the dims from t_diff, so make it into a row vector
@@ -100,19 +98,9 @@ svy_ests <- function(J, num_clusters, num_units, use_sizes, outcome_type,
     pop_cluster_data <- dplyr::arrange(pop_cluster_data, cluster_id)
     sampled_cluster_data <- dplyr::arrange(sampled_cluster_data, cluster_id)
     sample_data <- dplyr::arrange(sample_data, cluster_id)
-
-    # For some estimators, we need the sum of x among ALL units in cluster i
-    # and among only sampled units in cluster i; also get the PI's so we can
-    # add them to sampled_cluster_data. Here it's ok to group by PI_k and
-    # PI_k_given_i since they are all constant within clusters
-    tmp <- sample_data %>%
-      dplyr::group_by(cluster_id, PI_k, PI_k_given_i) %>%
-      dplyr::summarise(sum_x_sam = sum(x), sum_y_sam = sum(y))
-    sampled_cluster_data <- dplyr::left_join(sampled_cluster_data, tmp,
-                                             by = "cluster_id")
-
+ 
     sizetot <- sum(pop_cluster_data$Mj)
-    ybar_true <- sim_data$truepars$ybar_true
+    ybar_true <- mean(pop_data$y)
     rm(sim_data)
 
     Mj_sample <- sampled_cluster_data$Mj
@@ -121,10 +109,10 @@ svy_ests <- function(J, num_clusters, num_units, use_sizes, outcome_type,
     # fpc is the number of clusters in the pop
     sample_data$fpc <- J 
     # prob of selecting the cluster
-    sample_data$prob <- num_clusters*sample_data$Mj/sizetot 
+    sample_data$prob <- num_clusters*Mj_sample/sizetot 
     # prob of selecting each unit within the cluster
     if (num_units > 1) {
-      sample_data$prob2 <- num_units/sample_data$Mj 
+      sample_data$prob2 <- num_units/Mj_sample 
     } else {
       sample_data$prob2 <- num_units
     }
@@ -134,18 +122,20 @@ svy_ests <- function(J, num_clusters, num_units, use_sizes, outcome_type,
   # Make vectors/matrices of inclusion probabilities that we'll need later,
   # and other useful quantities
   #############################################################################
-  # Pull PI's from sampled_cluster_data
-    PI_i <- sampled_cluster_data$PI_i
-    PI_k_given_i <- sampled_cluster_data$PI_k_given_i
-    PI_k <- sampled_cluster_data$PI_k
+  # for the PI's, rename so we can use PI_i etc for the sample values
+    PI_i_all <- PI_i
+    PI_i <- PI_i[1:num_clusters]
     PI_ij_all <- PI_ij
     PI_ij <- PI_ij[1:num_clusters, 1:num_clusters]
   # make vectors of unit/joint inclusion probabilities for units in clusters
   # pi_kl_i and pi_kk_i are vectors of length num_clusters    Mj_sample <- Mj[1:num_clusters]
     if (num_units <= 1) { # sample size = num_units * Mj_sample
+      PI_k_given_i <- num_units
+      PI_k_given_i <- rep(num_units, num_clusters)
       ns <- num_units * Mj_sample # vector of sample sizes
       pi_kl_i <- (ns * (ns - 1)) / (Mj_sample * (Mj_sample - 1))
     } else {
+      PI_k_given_i <- num_units / Mj_sample
       pi_kl_i <- num_units * (num_units - 1) / (Mj_sample * (Mj_sample - 1))
     }
     pi_kk_i <- PI_k_given_i
@@ -154,6 +144,13 @@ svy_ests <- function(J, num_clusters, num_units, use_sizes, outcome_type,
     delta_check_ij <- (PI_ij - outer(PI_i, PI_i)) / PI_ij
     diag(delta_check_ij) <- 1 - PI_i
 
+  # cluster-level data for sample and pop
+    cluster_data <- sample_data %>%
+      dplyr::group_by(cluster_id) %>%
+      dplyr::summarise(sum_y_i = sum(y), sum_x_i = sum(x))
+    cluster_data_pop <- pop_data %>%
+      dplyr::group_by(cluster_id) %>%
+      dplyr::summarise(sum_y_i = sum(y), sum_x_i = sum(x), Nj_pop = mean(Mj))
     sigma2_k <- var(sample_data$y)
 
   # number of sampled units in each sampled column
@@ -161,13 +158,18 @@ svy_ests <- function(J, num_clusters, num_units, use_sizes, outcome_type,
       dplyr::group_by(cluster_id) %>%
       dplyr::summarise(n=n())
 
+  # add PI_i, PI_k_given_i, PI_k to sample_data
+    pi_dat <- data_frame(PI_i, PI_k_given_i, cluster_id = c(1:num_clusters))
+    sample_data <- left_join(sample_data, pi_dat, by = "cluster_id")
+    sample_data$PI_k <- sample_data$PI_i * sample_data$PI_k_given_i
+
   #############################################################################
   # HAJEK ESTIMATE -- result 8_6_1, p314 of Sarndal et al
   #############################################################################
   # Sarndal doesn't actually call this the Hajek estimator,
   # but the mean estimate is the same as with the Hajekestimator function___ 
   # Mean estimate
-    t_yi_star <- sampled_cluster_data$sum_y_sam / PI_k_given_i
+    t_yi_star <- cluster_data$sum_y_i / PI_k_given_i
     num <- sum(t_yi_star / PI_i[1:num_clusters])
     den <- sum(Mj_sample / PI_i[1:num_clusters])
     ybar_hat_8_6_1 <- num / den
@@ -281,7 +283,7 @@ svy_ests <- function(J, num_clusters, num_units, use_sizes, outcome_type,
     # Variance estimate
     V_CEi_hat <- sapply(c(1:num_clusters), ge_mat_sum)
     V_CSSU_hat <- sum(V_CEi_hat / PI_i^2)
-    t_yi_hat <- sampled_cluster_data$sum_y_sam / PI_k_given_i
+    t_yi_hat <- cluster_data$sum_y_i / PI_k_given_i
     t_yj_hat <- t_yi_hat
     pi_i <- PI_i
     pi_j <- pi_i

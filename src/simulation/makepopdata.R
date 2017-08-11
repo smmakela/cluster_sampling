@@ -79,12 +79,6 @@
       return(y)
     }
 
-    # This function is used to pre-sample each cluster's units for ff
-    unit_sampler <- function(cluster_size, nunits) {
-      selection <- sort(sample.int(cluster_size, nunits, replace = FALSE))
-      return(selection)
-    }
-  
   #############################################################################
   ### Checks
   #############################################################################
@@ -131,8 +125,8 @@
       Mj <- as.numeric(round(rep(100*gamma_draws, times = mn_draws)))
       stratum_id <- rep(1, length(Mj)) # filler
       # Collect all into data frame
-      pop_dat <- data.frame(cluster_id = c(1:J), Mj, stratum_id)
-      pop_dat$Nj <- pop_dat$Mj
+      pop_cluster_data <- data.frame(cluster_id = c(1:J), Mj, stratum_id)
+      pop_cluster_data$Nj <- pop_cluster_data$Mj
     } else if (size_model == "poisson") {
       Mj <- rpois(J, 500)
       # make sure we don't get any cluster sizes smaller than 325 (max number of
@@ -142,31 +136,32 @@
       }
       stratum_id <- rep(1, length(Mj))
       # Collect all into data frame
-      pop_dat <- data.frame(cluster_id = c(1:J), Mj, stratum_id)
-      pop_dat$Nj <- pop_dat$Mj
+      pop_cluster_data <- data.frame(cluster_id = c(1:J), Mj, stratum_id)
+      pop_cluster_data$Nj <- pop_cluster_data$Mj
     } else { # size_model == "ffstrat" or "ff"
       codedir <- "/vega/stats/users/smm2253/cluster_sampling/src/simulation"
-      pop_dat <- read.csv(paste0(codedir, "/observed_city_pops.csv"), header = TRUE)
-      pop_dat$Mj <- as.integer(round(pop_dat$population/1000))
-      pop_dat$stratum_id <- pop_dat$stratum # have their own numbering scheme
+      pop_cluster_data <- read.csv(paste0(codedir, "/observed_city_pops.csv"), header = TRUE)
+      pop_cluster_data$Mj <- as.integer(round(pop_cluster_data$population/100))
+      pop_cluster_data$stratum_id <- pop_cluster_data$stratum # have their own numbering scheme
       # make a shorter version that only has 2 strata, along with the number of
       # units to sample in each
-      pop_dat$stratum_id[pop_dat$stratum_id != 999] <- 1
-      pop_dat$stratum_id[pop_dat$stratum_id == 999] <- 2
-      pop_dat$num_units_to_sample <- ifelse(pop_dat$stratum_id == 2, 100, 325)
+      pop_cluster_data$stratum_id[pop_cluster_data$stratum_id != 999] <- 1
+      pop_cluster_data$stratum_id[pop_cluster_data$stratum_id == 999] <- 2
+      pop_cluster_data$num_units_to_sample <- ifelse(pop_cluster_data$stratum_id == 2, 100, 325)
       # renumber 1-num_strat -- checked that this makes the non-extreme stratum
       # be number 9, which is what we want (not needed for short stratum id version)
       #stratum_id <- as.integer(factor(stratum_id)) 
-      pop_dat$tot_births <- pop_dat$ubrth + pop_dat$mbrth
-      pop_dat$Nj <- pop_dat$tot_births
-      pop_dat$cluster_id <- c(1:J)
+      pop_cluster_data$tot_births <- pop_cluster_data$ubrth + pop_cluster_data$mbrth
+      #pop_cluster_data$Nj <- as.integer(round(pop_cluster_data$tot_births))
+      pop_cluster_data$Nj <- pop_cluster_data$Mj
+      pop_cluster_data$cluster_id <- c(1:J)
     }
-    pop_dat <- dplyr::arrange(pop_dat, cluster_id)
+    pop_cluster_data <- dplyr::arrange(pop_cluster_data, cluster_id)
 
     # Calculate log cluster size, generate unit-level covariate
-    pop_dat$logMj_c <- log(pop_dat$Mj) - mean(log(pop_dat$Mj))
+    pop_cluster_data$logMj_c <- log(pop_cluster_data$Mj) - mean(log(pop_cluster_data$Mj))
     x <- base::sample(c(unitcovar_range[1]:unitcovar_range[2]),
-                      sum(pop_dat$Nj), replace = TRUE)
+                      sum(pop_cluster_data$Nj), replace = TRUE)
     x <- x - mean(x)
 
     # Draw hyperparameters, varying slopes and coefficients, and outcomes
@@ -184,12 +179,12 @@
       sigma_beta1 <- abs(rnorm(1, 0, 0.5))
       sigma_y <- abs(rnorm(1, 0, 0.75))
         
-      pop_dat$beta0 <- rnorm(n = J, mean = alpha0 + gamma0 * pop_dat$logMj_c,
-                             sd = sigma_beta0)
-      pop_dat$beta1 <- rnorm(n = J, mean = alpha1 + gamma1 * pop_dat$logMj_c,
-                             sd = sigma_beta1)
-      beta0_rep <- rep(pop_dat$beta0, pop_dat$Nj)
-      beta1_rep <- rep(pop_dat$beta1, pop_dat$Nj)
+      pop_cluster_data$beta0 <- rnorm(n = J, mean = alpha0 + gamma0 * pop_cluster_data$logMj_c,
+                                        sd = sigma_beta0)
+      pop_cluster_data$beta1 <- rnorm(n = J, mean = alpha1 + gamma1 * pop_cluster_data$logMj_c,
+                                        sd = sigma_beta1)
+      beta0_rep <- rep(pop_cluster_data$beta0, pop_cluster_data$Nj)
+      beta1_rep <- rep(pop_cluster_data$beta1, pop_cluster_data$Nj)
       ymean <- beta0_rep + beta1_rep * x 
       y <- rnorm(ymean, mean = ymean, sd = sigma_y)
     } else {
@@ -201,8 +196,8 @@
       }
       sigma_beta0 <- abs(rnorm(1, 0, 0.5))
         
-      pop_dat$beta0 <- rnorm(n = J, mean = alpha0 + gamma0 * pop_dat$logMj_c, sd = sigma_beta0)
-      beta0_rep <- rep(pop_dat$beta0, pop_dat$Nj)
+      pop_cluster_data$beta0 <- rnorm(n = J, mean = alpha0 + gamma0 * pop_cluster_data$logMj_c, sd = sigma_beta0)
+      beta0_rep <- rep(pop_cluster_data$beta0, pop_cluster_data$Nj)
       y_prob <- inv_logit(beta0_rep) 
       y <- rbinom(y_prob, size = 1, prob = y_prob)
       # make x = 0 everywhere so we can still use svy_ests.R
@@ -210,16 +205,25 @@
       x <- x_new
     }
 
-    # Make data frame of pop data (at the unit level) -- pop_dat and pop_data
-    # were bad name choices but not changing them anymore
-    cluster_level_data <- pop_dat
-    pop_data <- data.frame(y, x, cluster_id = rep(c(1:J), times = cluster_level_data$Nj))
-    pop_data <- dplyr::left_join(pop_data, cluster_level_data, by = "cluster_id")
+    # Make data frame of pop data (at the unit level)
+    pop_data <- data.frame(y, x, cluster_id = rep(c(1:J), times = pop_cluster_data$Nj))
+    pop_data <- dplyr::left_join(pop_data, pop_cluster_data, by = "cluster_id")
+    ybar_true <- mean(pop_data$y)
+
+    # Calculate mean, sum of x and sum of y by cluster and add to pop_cluster_data
+    # (sum of x and y are used in svy_ests for design-based estimates)
+    tmp <- pop_data %>%
+      dplyr::group_by(cluster_id) %>%
+      dplyr::summarise(xbar_pop = mean(x),
+                       sum_x_pop = sum(x),
+                       sum_y_pop = sum(y))
+    pop_cluster_data <- dplyr::left_join(pop_cluster_data, tmp, by = "cluster_id")
+
+    # For FF: to save room, sample units in each cluster now, either 325 or 100
+    # depending on whether the cluster was originally a high- or low-sample
+    # city. NOTE we are not sampling the clusters yet, just the units to
+    # save ourselves some storage space
     if (grepl("ff", size_model)) {
-      # To save room, sample units in each cluster now -- either 325 or 100
-      # depending on whether the cluster was originally a high- or low-sample
-      # city -- NOTE we are not sampling the clusters yet, just the units to
-      # save ourselves some storage space
       pop_data <- setDT(pop_data)
       pop_data <- pop_data[, .SD[sample(.N, num_units_to_sample)], by = cluster_id]
     }
@@ -229,7 +233,6 @@
       dplyr::mutate(unit_id = row_number())
 
     # Make list of things to save
-    ybar_true <- mean(pop_data$y)
     if (outcome_type == "continuous") {
       truepars <- data.frame(alpha0, gamma0, alpha1, gamma1, sigma_beta0,
                              sigma_beta1, sigma_y, ybar_true)
@@ -238,7 +241,7 @@
       beta1 <- NA
     }
     popdata <- list(pop_data = pop_data, truepars = truepars,
-                    cluster_level_data = cluster_level_data)
+                    pop_cluster_data = pop_cluster_data)
     print(str(popdata))
     saveRDS(popdata,
             file = paste0(rootdir, "/output/simulation/popdata_usesizes_",

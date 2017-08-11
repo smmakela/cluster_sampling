@@ -1,37 +1,38 @@
 functions {
   // draw new cluster sizes using nb model
-  vector Nj_new_nb_rng(int J, int K, vector Nj_sample,
+  vector Mj_new_nb_rng(int J, int K, vector Mj_sample,
                        real mu, real phi) {
 
-    // need to make Nj_new_tmp b/c negbin rng function can only work w/ ints
-    int Nj_new_tmp[J-K];
-    vector[J] Nj_new;
+    // need to make Mj_new_tmp b/c negbin rng function can only work w/ ints
+    int Mj_new_tmp[J-K];
+    vector[J] Mj_new;
 
     for (k in 1:(J-K)) {
-      Nj_new_tmp[k] = neg_binomial_2_rng(mu, phi);
-      while (Nj_new_tmp[k] == 0) {
-        Nj_new_tmp[k] = neg_binomial_2_rng(mu, phi);
+      Mj_new_tmp[k] = neg_binomial_2_rng(mu, phi);
+      while (Mj_new_tmp[k] == 0) {
+        Mj_new_tmp[k] = neg_binomial_2_rng(mu, phi);
       }
     }
 
-    Nj_new[1:K] = Nj_sample;
-    Nj_new[(K+1):J] = to_vector(Nj_new_tmp);
+    Mj_new[1:K] = Mj_sample;
+    Mj_new[(K+1):J] = to_vector(Mj_new_tmp);
 
-    return Nj_new;
+    return Mj_new;
   }
   // estimate ybar using drawn cluster sizes
   real ybar_new_nb_rng(int J, int K,
                        vector beta0,
                        real alpha0, real gamma0,
                        real sigma_beta0,
+                       vector Mj_new,
                        vector Nj_new) {
 
     vector[J] beta0_new;
-    vector[J] log_Nj_new;
+    vector[J] log_Mj_new;
     vector[J] theta_new;
     real ybar_new;
     
-    log_Nj_new = log(Nj_new) - mean(log(Nj_new));
+    log_Mj_new = log(Mj_new) - mean(log(Mj_new));
 
     beta0_new[1:K] = beta0;
     for (j in 1:K) {
@@ -39,7 +40,7 @@ functions {
     }
   
     for (j in (K+1):J) {
-      beta0_new[j] = normal_rng(alpha0 + gamma0 * log_Nj_new[j], sigma_beta0);
+      beta0_new[j] = normal_rng(alpha0 + gamma0 * log_Mj_new[j], sigma_beta0);
       theta_new[j] = inv_logit(beta0_new[j]);
     }
     
@@ -54,13 +55,13 @@ data {
   int n; // total sample size
   int<lower=0,upper=1> y[n];             // outcomes
   int cluster_id[n]; // vector of cluster id's for each sampled unit
-  int Nj_sample[K];
-  vector[K] log_Nj_sample;
+  int Mj_sample[K];
+  vector[K] log_Mj_sample;
 }
 transformed data {
-  int Nj_sample_minus1[K];
+  int Mj_sample_minus1[K];
   for (k in 1:K) {
-    Nj_sample_minus1[k] = Nj_sample[k] - 1;
+    Mj_sample_minus1[k] = Mj_sample[k] - 1;
   }
 }
 parameters {
@@ -91,8 +92,8 @@ model {
   sigma_beta0 ~ cauchy(0, 2.5);
   alpha0 ~ normal(0, 10);
   gamma0 ~ normal(0, 10);
-  beta0 ~ normal(alpha0 + gamma0 * log_Nj_sample, sigma_beta0);
+  beta0 ~ normal(alpha0 + gamma0 * log_Mj_sample, sigma_beta0);
   y ~ bernoulli_logit(y_prob);
-  Nj_sample_minus1 ~ neg_binomial_2(mu_star, phi_star);
+  Mj_sample_minus1 ~ neg_binomial_2(mu_star, phi_star);
 }
 
